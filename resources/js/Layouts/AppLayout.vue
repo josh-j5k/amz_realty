@@ -6,9 +6,7 @@ import Header from '@/Pages/Partials/Header.vue';
 </script>
 
 <template>
-    <template>
-        <Header />
-    </template>
+    <Header :class="route().current('Home') ? 'absolute inset-0' : ''" />
     <main>
         <slot />
     </main>
