@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -27,6 +28,15 @@ Route::get('/welcome', function () {
 Route::get('/', function () {
     return Inertia::render('Home');
 })->name('Home');
+
+Route::prefix('listings')->group(function () {
+    Route::name('listings.')->group(function () {
+        Route::get('/', [ListingController::class, 'index'])->name('index');
+        Route::get('/create', [ListingController::class, 'create'])->name('create');
+        Route::post('/', [ListingController::class, 'store'])->name('store');
+        Route::get('/{listing}', [ListingController::class, 'show'])->name('show');
+    });
+});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

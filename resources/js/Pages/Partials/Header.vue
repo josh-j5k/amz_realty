@@ -17,7 +17,8 @@ const toggled = ref(false)
             <button id="nav-toggle" type="button" @click="toggled = !toggled" class="md:hidden z-[990] relative "
                 :class="toggled ? 'text-white' : 'text-black'" title="nav toggle" aria-controls="primary-nav"
                 :aria-expanded="toggled" aria-haspopup="true">
-                <span :class="toggled ? 'opacity-0' : 'opacity-100'"><i class="fas fa-bars fa-2xl"></i></span>
+                <span :class="toggled ? 'opacity-0' : 'opacity-100'"><i
+                        class="fas fa-bars fa-2xl text-secondary"></i></span>
                 <span :class="toggled ? 'opacity-100' : 'opacity-0'"><i class="fas fa-xmark fa-xl"></i></span>
             </button>
             <div
@@ -49,7 +50,7 @@ const toggled = ref(false)
                         </span>
                     </button>
                     <button type="button" title="New listing" @click=" route('listings.show')"
-                        class="text-white bg-accent flex gap-2 px-3 py-2 rounded-md">
+                        class="text-white hover:bg-accent-hover bg-accent flex gap-2 px-3 py-2 rounded-md">
                         <span>
                             <i class="fas fa-circle-plus"></i>
                         </span>
