@@ -1,7 +1,7 @@
 <script setup lang="ts">
 
 import Header from '@/Pages/Partials/Header.vue';
-// import Footer from '@/Pages/Partials/Footer.vue';
+import Footer from '@/Pages/Partials/Footer.vue';
 
 </script>
 
@@ -10,5 +10,5 @@ import Header from '@/Pages/Partials/Header.vue';
     <main>
         <slot />
     </main>
-    <!-- <Footer /> -->
+    <Footer />
 </template>
