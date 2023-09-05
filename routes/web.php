@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
@@ -25,9 +26,7 @@ Route::get('/welcome', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-Route::get('/', function () {
-    return Inertia::render('Home');
-})->name('Home');
+Route::get('/', [HomeController::class, 'index'])->name('Home');
 
 Route::prefix('listings')->group(function () {
     Route::name('listings.')->group(function () {

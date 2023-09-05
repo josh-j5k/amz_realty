@@ -1,11 +1,27 @@
 <script setup lang="ts">
+import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useForm } from '@inertiajs/vue3';
+import Card from '@/Components/Card.vue';
+import { Link, useForm } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
+import axios from 'axios';
+
 
 const form = useForm({
     Status: 'any',
     location: '',
     property_type: ''
+})
+
+onMounted(() => {
+
+    // async function getLocation() {
+    //     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=yaounde&components=country:cm&key=AIzaSyAj3t8m1tT8R9LuME3pcNedY9IK6aUjsu4`)
+    //     // const response = axios.get("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Paris&types=geocode&key=AIzaSyAj3t8m1tT8R9LuME3pcNedY9IK6aUjsu4")
+    //     console.log(response)
+    // }
+
+    // getLocation()
 })
 
 </script>
@@ -49,8 +65,9 @@ form
                             Location
                         </label>
                         <div class="flex items-center gap-4 w-full relative">
-                            <input required v-model="form.location" type="text" placeholder="Type your town, region"
-                                id="location" class="border-none bg-gray-100 focus:outline-none focus:ring-0 w-full">
+                            <input autocomplete="" required v-model="form.location" type="text"
+                                placeholder="Type your town, region" id="location"
+                                class="border-none bg-gray-100 focus:outline-none focus:ring-0 w-full">
                             <span class="absolute right-2"><i class="fas fa-map"></i></span>
                         </div>
                     </div>
@@ -112,6 +129,107 @@ form
                     Your property search just got easier
                 </h2>
                 <button type="button" class="border border-white capitalize p-2"> find a house</button>
+            </div>
+        </section>
+        <section class="p-8">
+            <div class="md:w-5/6 w-full mx-auto md:bg-blue-100 rounded-lg">
+                <div class="flex md:justify-between -md:flex-col  md:px-16 py-8">
+                    <h3 class="md:text-2xl text-xl font-bold text-center">
+                        Houses near you
+                    </h3>
+                    <Link href="" class="text-accent flex justify-center mt-3">
+                    <span class="capitalize mr-2">
+                        show more houses
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-circle-right"></i>
+                    </span>
+                    </Link>
+                </div>
+                <div class="px-8 grid md:grid-cols-4 grid-cols-1 gap-3 md:translate-y-1/4">
+                    <template v-for="cards in 4">
+                        <div class="w-full h-80 bg-slate-300 shadow">
+                            <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
+                            <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </section>
+        <section class="min-h-screen p-12 mt-16">
+            <div class="grid md:grid-cols-2 grid-cols-1 items-center justify-center md:w-5/6 mx-auto gap-12">
+                <div>
+                    <h2 class="md:text-3xl text-2xl font-bold mb-6">
+                        Your property search just got easier
+                    </h2>
+                    <p class="mb-4">
+                        We feature thousands of new properties every month, 24 hours or more before they’re advertised on
+                        Rightmove or Zoopla. Find out more about Only With Us properties here.
+                    </p>
+                    <Link href="" class="text-accent ">
+                    <span class="capitalize">
+                        start your search
+                    </span>
+                    <span>
+                        <i class="fa-regular fa-circle-right"></i>
+                    </span>
+                    </Link>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-2">
+                    <div class="w-full h-72 shadow">
+                        <SkeletonLoader class="w-full h-full mx-auto bg-slate-300" />
+                    </div>
+                    <div class=" w-full -md:h-72 md:row-start-1 md:row-end-3 md:col-start-2 md:col-end-3">
+                        <div class="grid items-end h-full w-full">
+                            <SkeletonLoader class="w-full md:h-1/2 h-full mx-auto bg-slate-300" />
+                        </div>
+                    </div>
+                    <div class="w-full h-72 bg-slate-300 shadow">
+                        <SkeletonLoader class="w-full h-8 mx-auto bg-slate-300" />
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="min-h-screen p-12">
+            <div class="md:w-5/6 mx-auto grid grid-cols-1 md:grid-cols-4 gap-3 ">
+                <Card class="p-8 w-full bg-slate-100">
+                    <h3 class="mb-6 text-2xl font-bold">
+                        Help me choose
+                    </h3>
+                    <p>
+                        We can help you find your dream home by guiding you through a few simple steps and matching you with
+                        tailor-made property listings.
+                    </p>
+                </Card>
+                <Card class="p-8 w-full bg-slate-100">
+                    <h3 class="mb-6 text-2xl font-bold">
+                        Introducing wish list
+                    </h3>
+                    <p>
+                        What are the things you’re really looking for in your next property? Create a Wish List of features,
+                        from deal-breakers to nice-to-haves, then we’ll sort your property search results accordingly. It’s
+                        that simple.
+                    </p>
+                </Card>
+                <Card class="p-8 w-full bg-slate-100">
+                    <h3 class="mb-6 text-2xl font-bold">
+                        Travel Time Search
+                    </h3>
+                    <p>
+                        Need to find a property near your workplace, children’s school or train station? We’ll help you find
+                        your dream property in the right location.
+                    </p>
+                </Card>
+                <Card class="p-8 w-full bg-slate-100">
+                    <h3 class="mb-6 text-2xl font-bold">
+                        Instant Valuation
+                    </h3>
+                    <p>
+                        Our online valuation service gives you a free and instant estimate of your home’s current value in
+                        minutes.
+                    </p>
+                </Card>
+
             </div>
         </section>
     </AppLayout>
