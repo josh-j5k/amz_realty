@@ -2,31 +2,48 @@
 import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Card from '@/Components/Card.vue';
-import { Link, useForm } from '@inertiajs/vue3';
-import { onMounted } from 'vue';
-import axios from 'axios';
+import { Link, useForm, Head } from '@inertiajs/vue3';
+import { onMounted, ref } from 'vue';
+import { Loader } from "@googlemaps/js-api-loader"
 
 
+const input = ref('input')
 const form = useForm({
     Status: 'any',
     location: '',
     property_type: ''
 })
 
+const options = {
+    componentRestrictions: { country: "cm" },
+    strictBounds: false,
+};
+const loader = new Loader({
+    apiKey: "AIzaSyAj3t8m1tT8R9LuME3pcNedY9IK6aUjsu4",
+    version: "weekly",
+    libraries: ['places'],
+});
+
+
 onMounted(() => {
+    loader.importLibrary('places').then(res => {
 
-    // async function getLocation() {
-    //     const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=yaounde&components=country:cm&key=AIzaSyAj3t8m1tT8R9LuME3pcNedY9IK6aUjsu4`)
-    //     // const response = axios.get("https://maps.googleapis.com/maps/api/place/autocomplete/json?input=Paris&types=geocode&key=AIzaSyAj3t8m1tT8R9LuME3pcNedY9IK6aUjsu4")
-    //     console.log(response)
-    // }
+        const autocomplete = new res.Autocomplete(input.value, options)
 
-    // getLocation()
+        autocomplete.addListener('place_changed', () => {
+            const place = autocomplete.getPlace()
+            form.location = place.formatted_address
+            console.log(place.formatted_address);
+        })
+    })
+
 })
 
 </script>
-form
+
 <template>
+    <Head>
+    </Head>
     <AppLayout>
         <section class="relative h-screen w-screen isolate flex flex-col items-center justify-center px-2">
             <div
@@ -65,8 +82,8 @@ form
                             Location
                         </label>
                         <div class="flex items-center gap-4 w-full relative">
-                            <input autocomplete="" required v-model="form.location" type="text"
-                                placeholder="Type your town, region" id="location"
+                            <input @change="console.log(form.location)" ref="input" required v-model="form.location"
+                                type="text" placeholder="Type your town, region" id="location"
                                 class="border-none bg-gray-100 focus:outline-none focus:ring-0 w-full">
                             <span class="absolute right-2"><i class="fas fa-map"></i></span>
                         </div>
