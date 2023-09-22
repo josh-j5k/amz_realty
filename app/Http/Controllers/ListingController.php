@@ -10,9 +10,24 @@ class ListingController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        return Inertia::render('Listings/index');
+        $location = $request->location;
+
+        $status = $request->status;
+        if (is_null($status)) {
+            $status = 'all';
+        }
+        $query = [
+            'location' => $location,
+            'status' => $status,
+        ];
+        return Inertia::render(
+            'Listings/index',
+            [
+                'query' =>  $query
+            ]
+        );
     }
 
     /**

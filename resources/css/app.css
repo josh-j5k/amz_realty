@@ -5,3 +5,9 @@
 body {
     overflow-x: hidden;
 }
+
+@layer components {
+    .checkbox {
+        @apply rounded border-gray-300 text-red-500 shadow-sm focus:ring-indigo-500;
+    }
+}
