@@ -27,8 +27,8 @@ const toggled = ref(false)
                     <Link class="font-bold" :href="route('Home')" :active="route().current('Home')">
                     Home
                     </Link>
-                    <Link :href="route('Home')" :active="route().current('Home')">
-                    Home
+                    <Link :href="route('listings.index')" :active="route().current('Home')">
+                    Listings
                     </Link>
                     <Link :href="route('Home')" :active="route().current('Home')">
                     Home
