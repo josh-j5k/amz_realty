@@ -1,4 +1,8 @@
 export type Query = {
     location: string | null,
-    status: string
+    status: string,
+    price: {
+        min: string,
+        max: string
+    }
 }

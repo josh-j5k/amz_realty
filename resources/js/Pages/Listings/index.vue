@@ -1,29 +1,45 @@
 <script setup lang="ts">
-import { useForm } from '@inertiajs/vue3';
+import { InertiaForm, useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import { Query } from '@/types/listings'
+
 const props = defineProps<{
     query: Query
 }>()
+
 const locationForm = useForm({
-    location: <string | null>props.query?.location
+    location: props.query?.location
 })
 const locationError = ref(false)
+const priceError = ref(false)
 const statusForm = useForm({
     status: props.query?.status
 })
 const formProperty = useForm({
-    propertyType: []
+    property_type: []
+})
+const price = ref(
+    {
+        min: props.query?.price.min,
+        max: props.query?.price.max,
+    }
+)
+const formPrice = useForm({
+    price: ''
 })
 const searchQuery = location.search
 const statusCheckbox = ref([statusForm.status])
-function updateCheckbox() {
-    statusCheckbox.value = [statusForm.status]
+function submit(form: any, formValue: string): void {
+    const key = Object.keys(form)[0]
     if (searchQuery.length > 0) {
-        statusForm.get('/listings'.concat(searchQuery) + '&status='.concat(statusForm.status))
+        form.get('/listings'.concat(searchQuery) + `&${key}=`.concat(formValue))
         return
     }
-    statusForm.get('/listings')
+    form.get('/listings')
+}
+function updateCheckbox() {
+    statusCheckbox.value = [statusForm.status]
+    submit(statusForm, statusForm.status)
 }
 function locationSubmit() {
     if (locationForm.location === null || locationForm.location.length === 0) {
@@ -31,14 +47,46 @@ function locationSubmit() {
         setTimeout(() => locationError.value = false, 4000)
         return
     }
-    if (searchQuery.length > 0) {
-        locationForm.get('/listings'.concat(searchQuery) + '&location='.concat(locationForm.location))
-        return
+    submit(locationForm, locationForm.location)
+}
+function setPriceError() {
+    priceError.value = true
+    setTimeout(() => priceError.value = false, 4000)
+    return
+}
+function priceValidate() {
+    const newPriceMin = parseInt(price.value.min)
+    const newPriceMax = parseInt(price.value.max)
+    if (price.value.min.length === 0 && price.value.max.length === 0) {
+        setPriceError()
+    } else if (price.value.min.length > 0 && isNaN(newPriceMin)) {
+        setPriceError()
+    } else if (price.value.max.length > 0 && isNaN(newPriceMax)) {
+        setPriceError()
+    } else if (newPriceMin > newPriceMax) {
+        setPriceError()
+    } else {
+        return true
     }
-    locationForm.get('/listings')
+
+}
+function priceSubmit() {
+    if (priceValidate()) {
+
+        if (price.value.min.length > 0 && price.value.max.length === 0) {
+            formPrice.price = formPrice.price + 'min_'.concat(price.value.min)
+        }
+        if (price.value.max.length > 0 && price.value.min.length === 0) {
+            formPrice.price = formPrice.price + 'max_'.concat(price.value.max)
+        }
+        if (price.value.max.length > 0 && price.value.min.length > 0) {
+            formPrice.price = formPrice.price + 'min_'.concat(price.value.min) + '|' + 'max_'.concat(price.value.max)
+        }
+        const encoded = encodeURI(formPrice.price)
+        submit(formPrice, encoded)
+    }
 }
 
-console.log(searchQuery);
 
 </script>
 
@@ -96,13 +144,17 @@ console.log(searchQuery);
                 <div>
                     <h2 class="capitalize font-bold text-2xl mb-4">Price</h2>
                     <div class="flex gap-3 items-center">
-                        <input placeholder="min" type="text" size="7" name="min" id="price-min">
+                        <input :class="priceError ? 'border-red-500' : ''" v-model="price.min" placeholder="min" type="text"
+                            size="7" name="min" id="price-min">
                         <label for="price-min" class="sr-only"> Minimum price</label>
                         <span>To</span>
-                        <input placeholder="max" size="7" type="text" name="max" id="price-max">
+                        <input :class="priceError ? 'border-red-500' : ''" v-model="price.max" placeholder="max" size="7"
+                            type="text" name="max" id="price-max">
                         <label for="price-max" class="sr-only"> Maximum price</label>
-                        <button title="submit price" type="button"><i class="fas fa-chevron-right fa-lg"></i></button>
+                        <button @click="priceSubmit" title="submit price" type="button"><i
+                                class="fas fa-chevron-right fa-lg"></i></button>
                     </div>
+                    <p v-if="priceError" class="text-red-500">Please enter a valid price range</p>
                 </div>
                 <hr class="w-4/5 bg-slate-300 my-8">
                 <div>
@@ -110,22 +162,22 @@ console.log(searchQuery);
                     <div class="grid grid-cols-2 gap-4">
                         <div class="flex gap-2 items-center">
                             <input type="checkbox" name="room" id="property-room" class="checkbox" value="room"
-                                v-model="formProperty.propertyType">
+                                v-model="formProperty.property_type">
                             <label for="property-room" class="capitalize">room</label>
                         </div>
                         <div class="flex gap-2 items-center">
                             <input type="checkbox" name="studio" id="property-studio" class="checkbox" value="studio"
-                                v-model="formProperty.propertyType">
+                                v-model="formProperty.property_type">
                             <label for="property-studio" class="capitalize">studio</label>
                         </div>
                         <div class="flex gap-2 items-center">
                             <input type="checkbox" name="appartment" id="property-appartment" class="checkbox"
-                                value="appartment" v-model="formProperty.propertyType">
+                                value="appartment" v-model="formProperty.property_type">
                             <label for="property-appartment" class="capitalize">appartment</label>
                         </div>
                         <div class="flex gap-2 items-center">
                             <input type="checkbox" name="duplex" id="property-duplex" class="checkbox" value="duplex"
-                                v-model="formProperty.propertyType">
+                                v-model="formProperty.property_type">
                             <label for="property-duplex" class="capitalize">duplex</label>
                         </div>
                     </div>
