@@ -4,9 +4,9 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Card from '@/Components/Card.vue';
 import { Link, useForm, Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
-import { Loader } from "@googlemaps/js-api-loader"
+import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 
-
+const { usePlaces } = useGoogleMaps()
 const input = ref('input')
 const form = useForm({
     Status: 'any',
@@ -14,29 +14,12 @@ const form = useForm({
     property_type: ''
 })
 
-const options = {
-    componentRestrictions: { country: "cm" },
-    strictBounds: false,
-};
-const loader = new Loader({
-    apiKey: "AIzaSyAj3t8m1tT8R9LuME3pcNedY9IK6aUjsu4",
-    version: "weekly",
-    libraries: ['places'],
-});
+
 
 
 onMounted(() => {
-    loader.importLibrary('places').then(res => {
-
-        const autocomplete = new res.Autocomplete(input.value, options)
-
-        autocomplete.addListener('place_changed', () => {
-            const place = autocomplete.getPlace()
-            form.location = place.formatted_address
-            console.log(place.formatted_address);
-        })
-    })
-
+    const locationInput = <HTMLInputElement>document.getElementById('location')
+    usePlaces(locationInput, form.location)
 })
 
 </script>

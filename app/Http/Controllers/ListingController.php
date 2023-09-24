@@ -24,6 +24,8 @@ class ListingController extends Controller
         ];
         if (is_null($request->property_type)) {
             $property_type = [];
+        } else {
+            $property_type = explode('|', $request->property_type);
         }
         if (is_null($request->price) === false) {
 

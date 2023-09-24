@@ -4,5 +4,6 @@ export type Query = {
     price: {
         min: string,
         max: string
-    }
+    },
+    property_type: string[]
 }

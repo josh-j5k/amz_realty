@@ -11,7 +11,7 @@ createServer((page) =>
     createInertiaApp({
         page,
         render: renderToString,
-        title: (title) => `${title} - ${appName}`,
+        title: (title) => `${title} | ${appName}`,
         resolve: (name) => resolvePageComponent(`./Pages/${name}.vue`, import.meta.glob<DefineComponent>('./Pages/**/*.vue')),
         setup({ App, props, plugin }) {
             document.getElementById('app')?.removeAttribute('data-page')

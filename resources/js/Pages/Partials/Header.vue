@@ -10,9 +10,9 @@ const toggled = ref(false)
 </script>
 
 <template>
-    <header class="h-24 w-screen flex flex-col justify-center md:px-16 px-8 overflow-x-hidden">
-        <div class=" md:grid grid-20-80 grid-cols-2 -md:flex -md:justify-between items-center"
-            :class="route().current('Home') ? 'bg-transparent z-50 text-white' : 'bg-white text-black'">
+    <header class="h-24 w-screen flex flex-col justify-center md:px-16 px-8 overflow-x-hidden"
+        :class="route().current('Home') ? 'absolute inset-0 bg-transparent z-50 text-white' : 'bg-white text-black relative z-50'">
+        <div class=" md:grid grid-20-80 grid-cols-2 -md:flex -md:justify-between items-center">
             <ApplicationLogo width="50" />
             <button id="nav-toggle" type="button" @click="toggled = !toggled" class="md:hidden z-[990] relative "
                 :class="toggled ? 'text-white' : 'text-black'" title="nav toggle" aria-controls="primary-nav"
