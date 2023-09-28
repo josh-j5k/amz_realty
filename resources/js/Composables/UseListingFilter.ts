@@ -1,34 +1,33 @@
 import { useForm } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
-
+const filteredBy = ref(<string[] | number[]>[])
+const locationForm = useForm({
+    location: ''
+})
+const locationError = ref(false)
+const priceError = ref(false)
+const statusForm = useForm({
+    status: 'all'
+})
+const propertyType = ref(<string[]>[])
+const formProperty = useForm({
+    property_type: ''
+})
+const price = ref(
+    {
+        min: '',
+        max: '',
+    }
+)
+const formPrice = useForm({
+    price: ''
+})
+const searchQuery = location.search
+const statusCheckbox = ref([statusForm.status])
 export function useListingFilter() {
-    const locationForm = useForm({
-        location: ''
-    })
 
 
-
-    const locationError = ref(false)
-    const priceError = ref(false)
-    const statusForm = useForm({
-        status: ''
-    })
-    const propertyType = ref(<string[]>[])
-    const formProperty = useForm({
-        property_type: ''
-    })
-    const price = ref(
-        {
-            min: '',
-            max: '',
-        }
-    )
-    const formPrice = useForm({
-        price: ''
-    })
-    const searchQuery = location.search
-    const statusCheckbox = ref([statusForm.status])
     function submit(form: any, formValue: string): void {
         const key = Object.keys(form)[0]
         if (searchQuery.length > 0) {
@@ -40,6 +39,7 @@ export function useListingFilter() {
     function updateCheckbox() {
         statusCheckbox.value = [statusForm.status]
         submit(statusForm, statusForm.status)
+        filteredBy.value = [...statusForm.status]
     }
     function locationSubmit() {
         if (locationForm.location === null || locationForm.location.length === 0) {
@@ -47,6 +47,7 @@ export function useListingFilter() {
             setTimeout(() => locationError.value = false, 4000)
             return
         }
+        filteredBy.value = [...locationForm.location]
         submit(locationForm, locationForm.location)
     }
     function setPriceError() {
@@ -75,18 +76,23 @@ export function useListingFilter() {
 
             if (price.value.min.length > 0 && price.value.max.length === 0) {
                 formPrice.price = formPrice.price + 'min_'.concat(price.value.min)
+                filteredBy.value = [...'over '.concat(price.value.min)]
             }
             if (price.value.max.length > 0 && price.value.min.length === 0) {
                 formPrice.price = formPrice.price + 'max_'.concat(price.value.max)
+                filteredBy.value = [...'under '.concat(price.value.max)]
             }
             if (price.value.max.length > 0 && price.value.min.length > 0) {
                 formPrice.price = formPrice.price + 'min_'.concat(price.value.min) + '|' + 'max_'.concat(price.value.max)
+                filteredBy.value = [...`${price.value.min} to ${price.value.min}`]
             }
+
             const encoded = encodeURI(formPrice.price)
             submit(formPrice, encoded)
         }
     }
     function propertySubmit() {
+
         propertyType.value.forEach((item, index) => {
             if (index === 0) {
                 formProperty.property_type = item
@@ -95,12 +101,13 @@ export function useListingFilter() {
             }
             const encoded = encodeURI(formProperty.property_type)
             submit(formProperty, encoded)
+            filteredBy.value = [...propertyType.value]
         })
     }
     return {
         locationForm,
         locationError,
         locationSubmit,
-        price, priceError, priceSubmit, statusCheckbox, statusForm, propertySubmit, propertyType, updateCheckbox,
+        price, priceError, priceSubmit, statusCheckbox, statusForm, propertySubmit, propertyType, updateCheckbox, filteredBy
     }
 }

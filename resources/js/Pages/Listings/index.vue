@@ -5,38 +5,60 @@ import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 import { Query } from '@/types/listings'
+import SkeletonLoader from '@/Components/SkeletonLoader.vue';
+import { computed } from 'vue'
+
+const props = defineProps(['modelValue'])
+const emit = defineEmits(['update:modelValue'])
+
+const value = computed({
+    get() {
+        return props.modelValue
+    },
+    set(value) {
+        emit('update:modelValue', value)
+    }
+})
 
 
+// const props = defineProps<{
+//     query: Query
+//     modelValue: any
+// }>()
 const { usePlaces } = useGoogleMaps()
-const { locationForm, locationError, locationSubmit, price, priceError, priceSubmit, statusCheckbox, statusForm, updateCheckbox, propertyType, propertySubmit } = useListingFilter()
-const props = defineProps<{
-    query: Query
-}>()
-if (props.query?.location !== null) {
-    locationForm.location = props.query?.location
-}
-statusForm.status = props.query?.status
-propertyType.value = props.query?.property_type
-price.value.min = props.query?.price.min
-price.value.max = props.query?.price.max
+const { locationForm, locationError, locationSubmit, price, priceError, priceSubmit, statusCheckbox, statusForm, updateCheckbox, propertyType, propertySubmit, filteredBy } = useListingFilter()
+
+const activeGrid = ref('grid')
+// if (props.query?.location !== null) {
+//     locationForm.location = props.query?.location
+// }
+// const local = ref('')
+// statusForm.status = props.query?.status
+// propertyType.value = props.query?.property_type
+// price.value.min = props.query?.price.min
+// price.value.max = props.query?.price.max
+
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
-    usePlaces(locationInput, locationForm.location)
+    usePlaces(locationInput, locationInput.value)
+
 })
+
+
 </script>
 
 <template>
     <Head title="Listings" />
     <AppLayout>
         <section class="min-h-screen w-screen overflow-x-hidden relative bg-gray-200">
-            <div class="grid grid-20-80">
-                <div class="fixed top-0 left-0 h-screen w-1/4 shadow-md bg-white px-8 pt-28 pb-8 overflow-y-auto">
+            <div class="grid md:grid-cols-[25%_75%] grid-cols-1 gap-4 pb-8">
+                <div class="fixed top-0 left-0 h-screen md:w-1/4 w-5/6 shadow-md bg-white px-8 pt-28 pb-8 overflow-y-auto">
                     <div class="">
                         <h2 class="capitalize font-bold text-2xl mb-4">location</h2>
                         <label for="location" class="sr-only">location</label>
                         <div class="flex gap-3">
-                            <input v-model="locationForm.location" :class="locationError ? 'border-red-500' : ''"
-                                type="text" name="" id="location" placeholder="Type your town, region">
+                            <input v-model="value" :class="locationError ? 'border-red-500' : ''" type="text" name=""
+                                id="location" placeholder="Type your town, region">
                             <button @click="locationSubmit" type="button" title="submit location"><i
                                     class="fas fa-chevron-right fa-lg"></i></button>
                         </div>
@@ -120,23 +142,61 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-                <div>
+                <div class="md:col-start-2 md:col-end-3">
+                    <div class="w-5/6 mx-auto bg-white mt-8 p-4">
+                        <div class="flex justify-between items-center">
+                            <h3 class="capitalize font-bold">
+                                applied filters
+                            </h3>
+                            <div class="flex gap-3 items-center">
+                                <div class="relative">
+                                    <button type="button" title="sort by"
+                                        class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
+                                        <span class="capitalize">sort by</span>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                </div>
 
+                                <button @click="activeGrid = 'grid'" type="button" title="Display each item in grid"
+                                    class="rounded w-7 h-7 group">
+                                    <span class="grid grid-cols-3 grid-rows-3 h-full w-full items-center justify-center">
+                                        <template v-for="item in 9">
+                                            <span class="w-1.5 aspect-square rounded-full group-hover:bg-blue-500"
+                                                :class="[activeGrid === 'grid' ? 'bg-blue-500' : 'bg-dark-blue']"></span>
+                                        </template>
+                                    </span>
+                                </button>
+                                <button @click="activeGrid = 'tiles'" type="button" title="Display each item in tiles"
+                                    class="rounded w-7 h-7 group">
+                                    <span
+                                        class="grid grid-cols-[25%_75%] grid-rows-3 h-full w-full items-center justify-center">
+                                        <template v-for="item in 6">
+                                            <span class="w-1 h-1 rounded-full even:w-5/6 even:h-0.5 group-hover:bg-blue-500"
+                                                :class="[activeGrid === 'tiles' ? 'bg-blue-500' : 'bg-dark-blue']"></span>
+                                        </template>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <div>
+                            <button></button>
+                        </div>
+                    </div>
+                    <p>{{ value }}</p>
 
+                    <div class="px-8 mt-8 grid transition-all w-[90%] mx-auto grid-cols-1  gap-3"
+                        :class="[activeGrid === 'grid' ? 'grid-cols-3' : 'grid-cols-2']">
+                        <template v-for="cards in 24">
+                            <div class="w-full h-80 bg-slate-300 shadow">
+                                <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
+                                <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
+                            </div>
+                        </template>
+                    </div>
                 </div>
             </div>
         </section>
     </AppLayout>
 </template>
 
-<style scoped>
-    .grid-20-80 {
-        grid-template-columns: 25% 75%;
-    }
-
-    @media (max-width: 769px) {
-        .grid-20-80 {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
+<style scoped></style>
