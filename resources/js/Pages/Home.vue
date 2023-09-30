@@ -4,16 +4,8 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import Card from '@/Components/Card.vue';
 import { Link, useForm, Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
+import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 import { Loader } from "@googlemaps/js-api-loader"
-
-
-const input = ref('input')
-const form = useForm({
-    Status: 'any',
-    location: '',
-    property_type: ''
-})
-
 const options = {
     componentRestrictions: { country: "cm" },
     strictBounds: false,
@@ -24,19 +16,28 @@ const loader = new Loader({
     libraries: ['places'],
 });
 
+const { usePlaces } = useGoogleMaps()
+const input = ref('input')
+const form = useForm({
+    Status: 'any',
+    location: '',
+    property_type: ''
+})
 
 onMounted(() => {
+    const locationInput = <HTMLInputElement>document.getElementById('location')
+    // usePlaces(locationInput, form.location)
     loader.importLibrary('places').then(res => {
 
-        const autocomplete = new res.Autocomplete(input.value, options)
+        const autocomplete = new res.Autocomplete(locationInput, options)
 
         autocomplete.addListener('place_changed', () => {
             const place = autocomplete.getPlace()
             form.location = place.formatted_address
-            console.log(place.formatted_address);
-        })
-    })
 
+        })
+
+    })
 })
 
 </script>
@@ -56,7 +57,7 @@ onMounted(() => {
             </h2>
 
             <form action="">
-
+                {{ form.location }}
                 <div class="text-white flex justify-center gap-4">
                     <label for="any-status" class="w-24 h-10 flex items-center justify-center rounded-tl-md rounded-tr-md "
                         :class="form.Status === 'any' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">

@@ -6,7 +6,7 @@ import Footer from '@/Pages/Partials/Footer.vue';
 </script>
 
 <template>
-    <Header :class="route().current('Home') ? 'absolute inset-0' : ''" />
+    <Header />
     <main>
         <slot />
     </main>

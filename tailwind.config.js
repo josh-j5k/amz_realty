@@ -32,6 +32,7 @@ export default {
                 "accent-hover": "#d84444",
                 secondary: "#412F3B",
                 "bg-black-opacity-50": "rgba(0, 0, 0, 0.5)",
+                "dark-blue": "#0c0c1f",
             },
         },
     },

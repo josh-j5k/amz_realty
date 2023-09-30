@@ -18,9 +18,31 @@ class ListingController extends Controller
         if (is_null($status)) {
             $status = 'all';
         }
+        $price = [
+            'min' => '',
+            'max' => ''
+        ];
+        if (is_null($request->property_type)) {
+            $property_type = [];
+        } else {
+            $property_type = explode('|', $request->property_type);
+        }
+        if (is_null($request->price) === false) {
+
+            $temPrice = explode('|', $request->price);
+            foreach ($temPrice as $item) {
+                if (str_starts_with($item, 'min')) {
+                    $price['min'] = substr($item, 4);
+                } else {
+                    $price['max'] = substr($item, 4);
+                }
+            }
+        }
         $query = [
             'location' => $location,
             'status' => $status,
+            'price' => $price,
+            'property_type' => $property_type
         ];
         return Inertia::render(
             'Listings/index',
