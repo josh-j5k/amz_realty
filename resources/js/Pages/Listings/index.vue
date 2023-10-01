@@ -1,42 +1,35 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 import { Query } from '@/types/listings'
 import SkeletonLoader from '@/Components/SkeletonLoader.vue';
-import { computed } from 'vue'
 
-const props = defineProps(['modelValue'])
-const emit = defineEmits(['update:modelValue'])
 
-const value = computed({
-    get() {
-        return props.modelValue
-    },
-    set(value) {
-        emit('update:modelValue', value)
-    }
+
+const props = defineProps<{
+    query: Query
+}>()
+const { usePlaces, inputValue } = useGoogleMaps()
+const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, filteredBy } = useListingFilter()
+
+const activeGrid = ref('grid')
+if (props.query?.location !== null) {
+    locations.value = props.query?.location
+}
+status.value = props.query?.status
+propertyType.value = props.query?.property_type
+price.value.min = props.query?.price.min
+price.value.max = props.query?.price.max
+
+watch(inputValue, (newVal) => {
+
+    locations.value = newVal
 })
 
 
-// const props = defineProps<{
-//     query: Query
-//     modelValue: any
-// }>()
-const { usePlaces } = useGoogleMaps()
-const { locationForm, locationError, locationSubmit, price, priceError, priceSubmit, statusCheckbox, statusForm, updateCheckbox, propertyType, propertySubmit, filteredBy } = useListingFilter()
-
-const activeGrid = ref('grid')
-// if (props.query?.location !== null) {
-//     locationForm.location = props.query?.location
-// }
-// const local = ref('')
-// statusForm.status = props.query?.status
-// propertyType.value = props.query?.property_type
-// price.value.min = props.query?.price.min
-// price.value.max = props.query?.price.max
 
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
@@ -57,7 +50,7 @@ onMounted(() => {
                         <h2 class="capitalize font-bold text-2xl mb-4">location</h2>
                         <label for="location" class="sr-only">location</label>
                         <div class="flex gap-3">
-                            <input v-model="value" :class="locationError ? 'border-red-500' : ''" type="text" name=""
+                            <input v-model="locations" :class="locationError ? 'border-red-500' : ''" type="text" name=""
                                 id="location" placeholder="Type your town, region">
                             <button @click="locationSubmit" type="button" title="submit location"><i
                                     class="fas fa-chevron-right fa-lg"></i></button>
@@ -70,8 +63,8 @@ onMounted(() => {
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex gap-3 items-center h-full">
                                 <div class="relative">
-                                    <input tabindex="-1" class="opacity-0" @change="updateCheckbox"
-                                        v-model="statusForm.status" value="all" type="radio" id="status-all">
+                                    <input tabindex="-1" class="opacity-0" @change="updateCheckbox" v-model="status"
+                                        value="all" type="radio" id="status-all">
                                     <input type="checkbox" value="all" v-model="statusCheckbox"
                                         class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox">
                                 </div>
@@ -79,8 +72,8 @@ onMounted(() => {
                             </div>
                             <div class="flex gap-3 items-center h-full">
                                 <div class="relative">
-                                    <input tabindex="-1" class="opacity-0" @change="updateCheckbox"
-                                        v-model="statusForm.status" value="rent" type="radio" id="status-rent">
+                                    <input tabindex="-1" class="opacity-0" @change="updateCheckbox" v-model="status"
+                                        value="rent" type="radio" id="status-rent">
                                     <input type="checkbox" value="rent" v-model="statusCheckbox"
                                         class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox">
                                 </div>
@@ -90,7 +83,7 @@ onMounted(() => {
                             <div class="flex gap-3 items-center h-full">
 
                                 <div class="relative">
-                                    <input @change="updateCheckbox" v-model="statusForm.status" value="sale" type="radio"
+                                    <input @change="updateCheckbox" v-model="status" value="sale" type="radio"
                                         id="status-sale" tabindex="-1" class="opacity-0">
                                     <input type="checkbox" value="sale" v-model="statusCheckbox"
                                         class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox">
@@ -110,7 +103,7 @@ onMounted(() => {
                             <input :class="priceError ? 'border-red-500' : ''" v-model="price.max" placeholder="max"
                                 size="7" type="text" name="max" id="price-max">
                             <label for="price-max" class="sr-only"> Maximum price</label>
-                            <button @click="priceSubmit" title="submit price" type="button"><i
+                            <button @click="" title="submit price" type="button"><i
                                     class="fas fa-chevron-right fa-lg"></i></button>
                         </div>
                         <p v-if="priceError" class="text-red-500">Please enter a valid price range</p>
@@ -120,23 +113,23 @@ onMounted(() => {
                         <h2 class="capitalize font-bold text-2xl mb-4">Property type</h2>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="room" id="property-room"
-                                    class="checkbox" value="room" v-model="propertyType">
+                                <input @change="" type="checkbox" name="room" id="property-room" class="checkbox"
+                                    value="room" v-model="propertyType">
                                 <label for="property-room" class="capitalize">room</label>
                             </div>
                             <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="studio" id="property-studio"
-                                    class="checkbox" value="studio" v-model="propertyType">
+                                <input @change="" type="checkbox" name="studio" id="property-studio" class="checkbox"
+                                    value="studio" v-model="propertyType">
                                 <label for="property-studio" class="capitalize">studio</label>
                             </div>
                             <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="appartment" id="property-appartment"
+                                <input @change="" type="checkbox" name="appartment" id="property-appartment"
                                     class="checkbox" value="appartment" v-model="propertyType">
                                 <label for="property-appartment" class="capitalize">appartment</label>
                             </div>
                             <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="duplex" id="property-duplex"
-                                    class="checkbox" value="duplex" v-model="propertyType">
+                                <input @change="" type="checkbox" name="duplex" id="property-duplex" class="checkbox"
+                                    value="duplex" v-model="propertyType">
                                 <label for="property-duplex" class="capitalize">duplex</label>
                             </div>
                         </div>
@@ -182,7 +175,6 @@ onMounted(() => {
                             <button></button>
                         </div>
                     </div>
-                    <p>{{ value }}</p>
 
                     <div class="px-8 mt-8 grid transition-all w-[90%] mx-auto grid-cols-1  gap-3"
                         :class="[activeGrid === 'grid' ? 'grid-cols-3' : 'grid-cols-2']">

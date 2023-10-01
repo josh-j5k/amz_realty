@@ -10,16 +10,17 @@ const loader = new Loader({
     libraries: ['places'],
 });
 export function useGoogleMaps() {
-    const val = ref('')
-    function usePlaces(input: HTMLInputElement, inputValue: string) {
+    const inputValue = ref('')
+    function usePlaces(input: HTMLInputElement, value: string) {
 
         loader.importLibrary('places').then(res => {
             const autocomplete = new res.Autocomplete(input, options)
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace()
-                val.value = place.formatted_address
+                value = place.formatted_address
+                inputValue.value = value
             })
-        }).finally(() => inputValue = val.value)
+        })
     }
-    return { usePlaces }
+    return { usePlaces, inputValue }
 }

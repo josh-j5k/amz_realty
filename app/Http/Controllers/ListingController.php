@@ -12,6 +12,7 @@ class ListingController extends Controller
      */
     public function index(Request $request)
     {
+        // dd($request);
         $location = $request->location;
 
         $status = $request->status;
