@@ -62,43 +62,44 @@ export function useListingFilter() {
         }
 
     }
-    // function priceSubmit() {
-    //     if (priceValidate()) {
 
-    //         if (price.value.min.length > 0 && price.value.max.length === 0) {
-    //             form[price] = form.price.price + 'min_'.concat(price.value.min)
-    //             filteredBy.value = [...'over '.concat(price.value.min)]
-    //         }
-    //         if (price.value.max.length > 0 && price.value.min.length === 0) {
-    //             formPrice.price = formPrice.price + 'max_'.concat(price.value.max)
-    //             filteredBy.value = [...'under '.concat(price.value.max)]
-    //         }
-    //         if (price.value.max.length > 0 && price.value.min.length > 0) {
-    //             formPrice.price = formPrice.price + 'min_'.concat(price.value.min) + '|' + 'max_'.concat(price.value.max)
-    //             filteredBy.value = [...`${price.value.min} to ${price.value.min}`]
-    //         }
 
-    //         const encoded = encodeURI(formPrice.price)
-    //         submit(formPrice, encoded)
-    //     }
-    // }
-    // function propertySubmit() {
+    function priceSubmit() {
+        if (priceValidate()) {
 
-    //     propertyType.value.forEach((item, index) => {
-    //         if (index === 0) {
-    //             formProperty.property_type = item
-    //         } else {
-    //             formProperty.property_type += '|'.concat(item)
-    //         }
-    //         const encoded = encodeURI(formProperty.property_type)
-    //         submit(formProperty, encoded)
-    //         filteredBy.value = [...propertyType.value]
-    //     })
-    // }
+            if (price.value.min.length > 0 && price.value.max.length === 0) {
+                submit(form, 'price', 'over'.concat(price.value.min))
+                // filteredBy.value = [...'over '.concat(price.value.min)]
+            }
+            if (price.value.max.length > 0 && price.value.min.length === 0) {
+                submit(form, 'price', 'under'.concat(price.value.max))
+            }
+            if (price.value.max.length > 0 && price.value.min.length > 0) {
+                submit(form, 'price', 'over'.concat(price.value.min) + '|' + 'under'.concat(price.value.max))
+            }
+
+        }
+    }
+    function propertySubmit() {
+
+        let property = ''
+        propertyType.value.forEach((item, index) => {
+            if (index === 0) {
+                property = item
+                submit(form, 'property_type', property)
+            } else {
+                property += '|'.concat(item)
+                submit(form, 'property_type', property)
+            }
+
+        })
+    }
+    console.log(Object.values(form));
+
     return {
         locations,
         locationError,
         locationSubmit,
-        price, priceError, statusCheckbox, status, propertyType, updateCheckbox, filteredBy
+        price, priceError, statusCheckbox, status, propertyType, updateCheckbox, form, priceSubmit, propertySubmit
     }
 }
