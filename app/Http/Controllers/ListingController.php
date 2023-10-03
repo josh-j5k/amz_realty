@@ -32,10 +32,10 @@ class ListingController extends Controller
 
             $temPrice = explode('|', $request->price);
             foreach ($temPrice as $item) {
-                if (str_starts_with($item, 'min')) {
+                if (str_starts_with($item, 'over')) {
                     $price['min'] = substr($item, 4);
                 } else {
-                    $price['max'] = substr($item, 4);
+                    $price['max'] = substr($item, 5);
                 }
             }
         }

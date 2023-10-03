@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
@@ -13,13 +13,38 @@ const props = defineProps<{
     query: Query
 }>()
 const { usePlaces, inputValue } = useGoogleMaps()
-const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, filteredBy } = useListingFilter()
+const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form } = useListingFilter()
 
 const activeGrid = ref('grid')
 if (props.query?.location !== null) {
     locations.value = props.query?.location
+    form.location = props.query.location
 }
+if (props.query.status !== 'all') {
+    form.status = props.query.status
+}
+if (props.query.price.min.length > 0 && props.query.price.max.length === 0) {
+    form.price = 'over'.concat(props.query.price.min)
+} else if (props.query.price.min.length === 0 && props.query.price.max.length > 0) {
+    form.price = 'under'.concat(props.query.price.max)
+} else {
+    form.price = 'over'.concat(props.query.price.min) + '|' + 'under'.concat(props.query.price.max)
+}
+if (props.query.property_type.length > 0) {
+    props.query.property_type.forEach((item, index) => {
+        if (index === 0) {
+            form.property_type = item
+
+        } else {
+            form.property_type += '|'.concat(item)
+
+        }
+
+    })
+}
+
 status.value = props.query?.status
+statusCheckbox.value = [props.query?.status]
 propertyType.value = props.query?.property_type
 price.value.min = props.query?.price.min
 price.value.max = props.query?.price.max
@@ -29,8 +54,30 @@ watch(inputValue, (newVal) => {
     locations.value = newVal
 })
 
+const filter = computed(() => {
+    let filArr = Object.values(form)
+    const empArr = <string[]>[]
+    filArr.forEach((item: any | string) => {
+        if (item.includes('|')) {
+            const ele = item.split('|')
+            ele.forEach((element: any) => {
+                empArr.push(element)
+            })
+        } else {
+            empArr.push(item)
+        }
+    })
+    return empArr
+})
 
+function removeFilter(e: any) {
+    const item = e.currentTarget.textContent;
+    Object.values(form).forEach(ele => {
+        if (ele === item) {
 
+        }
+    })
+}
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     usePlaces(locationInput, locationInput.value)
@@ -103,7 +150,7 @@ onMounted(() => {
                             <input :class="priceError ? 'border-red-500' : ''" v-model="price.max" placeholder="max"
                                 size="7" type="text" name="max" id="price-max">
                             <label for="price-max" class="sr-only"> Maximum price</label>
-                            <button @click="" title="submit price" type="button"><i
+                            <button @click="priceSubmit" title="submit price" type="button"><i
                                     class="fas fa-chevron-right fa-lg"></i></button>
                         </div>
                         <p v-if="priceError" class="text-red-500">Please enter a valid price range</p>
@@ -113,23 +160,23 @@ onMounted(() => {
                         <h2 class="capitalize font-bold text-2xl mb-4">Property type</h2>
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex gap-2 items-center">
-                                <input @change="" type="checkbox" name="room" id="property-room" class="checkbox"
-                                    value="room" v-model="propertyType">
+                                <input @change="propertySubmit" type="checkbox" name="room" id="property-room"
+                                    class="checkbox" value="room" v-model="propertyType">
                                 <label for="property-room" class="capitalize">room</label>
                             </div>
                             <div class="flex gap-2 items-center">
-                                <input @change="" type="checkbox" name="studio" id="property-studio" class="checkbox"
-                                    value="studio" v-model="propertyType">
+                                <input @change="propertySubmit" type="checkbox" name="studio" id="property-studio"
+                                    class="checkbox" value="studio" v-model="propertyType">
                                 <label for="property-studio" class="capitalize">studio</label>
                             </div>
                             <div class="flex gap-2 items-center">
-                                <input @change="" type="checkbox" name="appartment" id="property-appartment"
+                                <input @change="propertySubmit" type="checkbox" name="appartment" id="property-appartment"
                                     class="checkbox" value="appartment" v-model="propertyType">
                                 <label for="property-appartment" class="capitalize">appartment</label>
                             </div>
                             <div class="flex gap-2 items-center">
-                                <input @change="" type="checkbox" name="duplex" id="property-duplex" class="checkbox"
-                                    value="duplex" v-model="propertyType">
+                                <input @change="propertySubmit" type="checkbox" name="duplex" id="property-duplex"
+                                    class="checkbox" value="duplex" v-model="propertyType">
                                 <label for="property-duplex" class="capitalize">duplex</label>
                             </div>
                         </div>
@@ -171,8 +218,19 @@ onMounted(() => {
                                 </button>
                             </div>
                         </div>
-                        <div>
-                            <button></button>
+                        <div class="flex gap-3 mt-3">
+                            <template v-for="item in filter">
+                                <button type="button" title="cancel filter" @click="removeFilter"
+                                    class="flex items-center text-sm gap-2 rounded-xl bg-blue-500 text-white h-8 px-4">
+                                    <span class="">
+                                        {{ item }}
+                                    </span>
+                                    <span
+                                        class="h-1/2 aspect-square rounded-full bg-white text-blue-500 flex justify-center items-center">
+                                        <i class=" fas fa-xmark fa-sm"></i>
+                                    </span>
+                                </button>
+                            </template>
                         </div>
                     </div>
 
