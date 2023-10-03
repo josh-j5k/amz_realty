@@ -19,11 +19,24 @@ const loader = new Loader({
 const { usePlaces } = useGoogleMaps()
 const input = ref('input')
 const form = useForm({
-    Status: 'any',
+    status: 'any',
     location: '',
     property_type: ''
 })
-
+const formError = ref(false)
+function validate(): boolean {
+    if (form.location.length === 0 || form.property_type.length === 0) {
+        formError.value = true
+        return false
+    } else {
+        return true
+    }
+}
+function submit() {
+    if (validate()) {
+        form.get('/listings')
+    }
+}
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     // usePlaces(locationInput, form.location)
@@ -56,24 +69,24 @@ onMounted(() => {
                 perfect for you
             </h2>
 
-            <form action="">
-                {{ form.location }}
+            <form @submit.prevent="submit">
+
                 <div class="text-white flex justify-center gap-4">
                     <label for="any-status" class="w-24 h-10 flex items-center justify-center rounded-tl-md rounded-tr-md "
-                        :class="form.Status === 'any' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
+                        :class="form.status === 'any' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
                         Any Status
                     </label>
-                    <input class="hidden" type="radio" value="any" v-model="form.Status" name="any-status" id="any-status">
+                    <input class="hidden" type="radio" value="any" v-model="form.status" name="any-status" id="any-status">
                     <label for="rent" class="w-24 h-10 flex items-center justify-center rounded-tl-md rounded-tr-md"
-                        :class="form.Status === 'rent' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
+                        :class="form.status === 'rent' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
                         Rent
                     </label>
-                    <input class="hidden" type="radio" value="rent" v-model="form.Status" name="rent" id="rent">
+                    <input class="hidden" type="radio" value="rent" v-model="form.status" name="rent" id="rent">
                     <label for="sale" class="w-24 h-10 flex items-center justify-center rounded-tl-md rounded-tr-md "
-                        :class="form.Status === 'sale' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
+                        :class="form.status === 'sale' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
                         Sale
                     </label>
-                    <input class="hidden" type="radio" value="sale" v-model="form.Status" name="sale" id="sale">
+                    <input class="hidden" type="radio" value="sale" v-model="form.status" name="sale" id="sale">
                 </div>
                 <!-- Form Inputs -->
                 <div
@@ -83,8 +96,8 @@ onMounted(() => {
                             Location
                         </label>
                         <div class="flex items-center gap-4 w-full relative">
-                            <input @change="console.log(form.location)" ref="input" required v-model="form.location"
-                                type="text" placeholder="Type your town, region" id="location"
+                            <input ref="input" required v-model="form.location" type="text"
+                                placeholder="Type your town, region" id="location"
                                 class="border-none bg-gray-100 focus:outline-none focus:ring-0 w-full">
                             <span class="absolute right-2"><i class="fas fa-map"></i></span>
                         </div>

@@ -17,7 +17,7 @@ class ListingController extends Controller
 
         $status = $request->status;
         if (is_null($status)) {
-            $status = 'all';
+            $status = 'any';
         }
         $price = [
             'min' => '',

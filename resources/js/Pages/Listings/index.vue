@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { ref, onMounted, watch, computed } from 'vue';
-import { Head } from '@inertiajs/vue3';
+import { ref, onMounted, watch, computed, onUnmounted, } from 'vue';
+import { Head, router } from '@inertiajs/vue3';
 import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
@@ -13,42 +13,14 @@ const props = defineProps<{
     query: Query
 }>()
 const { usePlaces, inputValue } = useGoogleMaps()
-const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form } = useListingFilter()
+const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
 
+const appliedFilter = ref(false)
 const activeGrid = ref('grid')
-if (props.query?.location !== null) {
-    locations.value = props.query?.location
-    form.location = props.query.location
+
+if (Object.keys(form).length > 0) {
+    appliedFilter.value = true
 }
-if (props.query.status !== 'all') {
-    form.status = props.query.status
-}
-if (props.query.price.min.length > 0 && props.query.price.max.length === 0) {
-    form.price = 'over'.concat(props.query.price.min)
-} else if (props.query.price.min.length === 0 && props.query.price.max.length > 0) {
-    form.price = 'under'.concat(props.query.price.max)
-} else {
-    form.price = 'over'.concat(props.query.price.min) + '|' + 'under'.concat(props.query.price.max)
-}
-if (props.query.property_type.length > 0) {
-    props.query.property_type.forEach((item, index) => {
-        if (index === 0) {
-            form.property_type = item
-
-        } else {
-            form.property_type += '|'.concat(item)
-
-        }
-
-    })
-}
-
-status.value = props.query?.status
-statusCheckbox.value = [props.query?.status]
-propertyType.value = props.query?.property_type
-price.value.min = props.query?.price.min
-price.value.max = props.query?.price.max
-
 watch(inputValue, (newVal) => {
 
     locations.value = newVal
@@ -71,19 +43,54 @@ const filter = computed(() => {
 })
 
 function removeFilter(e: any) {
-    const item = e.currentTarget.textContent;
-    Object.values(form).forEach(ele => {
-        if (ele === item) {
+
+    const item = e.currentTarget.textContent as string;
+    for (const [key, value] of Object.entries(form)) {
+        const newKey = key as keyof typeof form
+        if (key === 'location') {
+            inputValue.value = ''
+            locations.value = ''
+        }
+        if (item === value) {
+            delete form[newKey]
+            router.get('/listings', form)
+        } else if (value.includes(item)) {
+            const val = form[newKey] as string
+            const indexofStr = val.indexOf(item)
+            if (indexofStr === 0) {
+                const str = item + "|"
+                const newValue = val.replace(str, '')
+                form[newKey] = newValue
+                router.get('/listings', form)
+
+            } else {
+                const str = "|" + item
+                const newValue = val.replace(str, '')
+                form[newKey] = newValue
+                router.get('/listings', form)
+            }
 
         }
-    })
+    }
+
+
 }
+
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
-    usePlaces(locationInput, locationInput.value)
+    usePlaces(locationInput, locations.value)
+    setInputsValues(props.query?.location, props.query?.status, props.query.price.min, props.query.price.max, props.query.property_type)
 
 })
-
+onUnmounted(() => {
+    locations.value = ''
+    for (const [key, value] of Object.entries(form)) {
+        const newKey = key as keyof typeof form
+        if (key) {
+            delete form[newKey]
+        }
+    }
+})
 
 </script>
 
@@ -92,7 +99,8 @@ onMounted(() => {
     <AppLayout>
         <section class="min-h-screen w-screen overflow-x-hidden relative bg-gray-200">
             <div class="grid md:grid-cols-[25%_75%] grid-cols-1 gap-4 pb-8">
-                <div class="fixed top-0 left-0 h-screen md:w-1/4 w-5/6 shadow-md bg-white px-8 pt-28 pb-8 overflow-y-auto">
+                <div
+                    class="fixed z-40 top-0 left-0 h-screen md:w-1/4 w-5/6 shadow-md bg-white px-8 pt-28 pb-8 overflow-y-auto transition-transform -md:-translate-x-full">
                     <div class="">
                         <h2 class="capitalize font-bold text-2xl mb-4">location</h2>
                         <label for="location" class="sr-only">location</label>
@@ -111,11 +119,11 @@ onMounted(() => {
                             <div class="flex gap-3 items-center h-full">
                                 <div class="relative">
                                     <input tabindex="-1" class="opacity-0" @change="updateCheckbox" v-model="status"
-                                        value="all" type="radio" id="status-all">
-                                    <input type="checkbox" value="all" v-model="statusCheckbox"
+                                        value="any" type="radio" id="status-all">
+                                    <input type="checkbox" value="any" v-model="statusCheckbox"
                                         class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox">
                                 </div>
-                                <label for="status-all" class="capitalize"> all</label>
+                                <label for="status-all" class="capitalize"> any</label>
                             </div>
                             <div class="flex gap-3 items-center h-full">
                                 <div class="relative">
@@ -184,8 +192,8 @@ onMounted(() => {
                 </div>
                 <div class="md:col-start-2 md:col-end-3">
                     <div class="w-5/6 mx-auto bg-white mt-8 p-4">
-                        <div class="flex justify-between items-center">
-                            <h3 class="capitalize font-bold">
+                        <div class="flex  items-center" :class="[appliedFilter ? 'justify-between' : 'justify-end']">
+                            <h3 v-if="appliedFilter" class="capitalize font-bold">
                                 applied filters
                             </h3>
                             <div class="flex gap-3 items-center">
@@ -235,7 +243,7 @@ onMounted(() => {
                     </div>
 
                     <div class="px-8 mt-8 grid transition-all w-[90%] mx-auto grid-cols-1  gap-3"
-                        :class="[activeGrid === 'grid' ? 'grid-cols-3' : 'grid-cols-2']">
+                        :class="[activeGrid === 'grid' ? 'grid-cols-3 -md:grid-cols-1' : 'grid-cols-2 -md:grid-cols-1']">
                         <template v-for="cards in 24">
                             <div class="w-full h-80 bg-slate-300 shadow">
                                 <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
