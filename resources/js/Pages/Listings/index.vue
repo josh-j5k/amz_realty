@@ -18,8 +18,33 @@ const { locations, locationError, locationSubmit, price, priceError, statusCheck
 const activeGrid = ref('grid')
 if (props.query?.location !== null) {
     locations.value = props.query?.location
+    form.location = props.query.location
 }
+if (props.query.status !== 'all') {
+    form.status = props.query.status
+}
+if (props.query.price.min.length > 0 && props.query.price.max.length === 0) {
+    form.price = 'over'.concat(props.query.price.min)
+} else if (props.query.price.min.length === 0 && props.query.price.max.length > 0) {
+    form.price = 'under'.concat(props.query.price.max)
+} else {
+    form.price = 'over'.concat(props.query.price.min) + '|' + 'under'.concat(props.query.price.max)
+}
+if (props.query.property_type.length > 0) {
+    props.query.property_type.forEach((item, index) => {
+        if (index === 0) {
+            form.property_type = item
+
+        } else {
+            form.property_type += '|'.concat(item)
+
+        }
+
+    })
+}
+
 status.value = props.query?.status
+statusCheckbox.value = [props.query?.status]
 propertyType.value = props.query?.property_type
 price.value.min = props.query?.price.min
 price.value.max = props.query?.price.max
@@ -46,8 +71,12 @@ const filter = computed(() => {
 })
 
 function removeFilter(e: any) {
-    console.log(e.currentTarget.textContent);
+    const item = e.currentTarget.textContent;
+    Object.values(form).forEach(ele => {
+        if (ele === item) {
 
+        }
+    })
 }
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
@@ -191,12 +220,14 @@ onMounted(() => {
                         </div>
                         <div class="flex gap-3 mt-3">
                             <template v-for="item in filter">
-                                <button @click="removeFilter" class="flex items-center">
-                                    <span class="bg-blue-100 text-slate-700 px-3 py-1 rounded-tl-lg rounded-bl-lg">
+                                <button type="button" title="cancel filter" @click="removeFilter"
+                                    class="flex items-center text-sm gap-2 rounded-xl bg-blue-500 text-white h-8 px-4">
+                                    <span class="">
                                         {{ item }}
                                     </span>
-                                    <span class="bg-blue-50 text-slate-700 px-2 py-1 rounded-tr-lg rounded-br-lg">
-                                        <i class="fas fa-xmark"></i>
+                                    <span
+                                        class="h-1/2 aspect-square rounded-full bg-white text-blue-500 flex justify-center items-center">
+                                        <i class=" fas fa-xmark fa-sm"></i>
                                     </span>
                                 </button>
                             </template>

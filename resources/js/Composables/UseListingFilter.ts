@@ -1,10 +1,15 @@
 import { router, useForm } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
-
-const form = reactive({
+type form = {
+    location?: string,
+    status?: string,
+    price?: string,
+    property_type: string,
+}
+const form = reactive(<form>{
 
 })
-const filteredBy = ref(<string[] | number[]>[])
+
 const locations = ref('')
 const locationError = ref(false)
 const priceError = ref(false)
@@ -30,7 +35,6 @@ export function useListingFilter() {
     function updateCheckbox() {
         statusCheckbox.value = [status.value]
         submit(form, 'status', status.value)
-        // filteredBy.value = [...statusForm.status]
     }
     function locationSubmit() {
         if (locations === null || locations.value.length === 0) {
@@ -38,7 +42,6 @@ export function useListingFilter() {
             setTimeout(() => locationError.value = false, 4000)
             return
         }
-        // filteredBy.value = [...locations]
         submit(form, 'location', locations.value)
     }
     function setPriceError() {
@@ -69,7 +72,6 @@ export function useListingFilter() {
 
             if (price.value.min.length > 0 && price.value.max.length === 0) {
                 submit(form, 'price', 'over'.concat(price.value.min))
-                // filteredBy.value = [...'over '.concat(price.value.min)]
             }
             if (price.value.max.length > 0 && price.value.min.length === 0) {
                 submit(form, 'price', 'under'.concat(price.value.max))
