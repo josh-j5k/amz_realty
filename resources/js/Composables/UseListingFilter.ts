@@ -1,11 +1,8 @@
-import { router, useForm } from '@inertiajs/vue3';
+import { router } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
-type form = {
-    location?: string,
-    status?: string,
-    price?: string,
-    property_type: string,
-}
+import { form } from '@/types/listings';
+
+
 const form = reactive(<form>{
 
 })
@@ -13,7 +10,7 @@ const form = reactive(<form>{
 const locations = ref('')
 const locationError = ref(false)
 const priceError = ref(false)
-const status = ref('all')
+const status = ref('any')
 const propertyType = ref(<string[]>[])
 
 const price = ref(
@@ -27,7 +24,42 @@ const price = ref(
 const statusCheckbox = ref([status.value])
 export function useListingFilter() {
 
+    function setInputsValues(location: string | null, Status: string, priceMin: string, priceMax: string, property: string[]) {
+        if (location !== null) {
+            locations.value = location
+            form.location = location
+        }
+        if (Status !== 'any') {
+            form.status = Status
+        }
+        if (priceMin.length > 0 && priceMax.length === 0) {
+            form.price = 'over'.concat(priceMin)
+        } else if (priceMin.length === 0 && priceMax.length > 0) {
+            form.price = 'under'.concat(priceMax)
+        } else if (priceMin.length > 0 && priceMax.length > 0) {
+            form.price = 'over'.concat(priceMin) + '|' + 'under'.concat(priceMax)
+        } else {
 
+        }
+        if (property.length > 0) {
+            property.forEach((item, index) => {
+                if (index === 0) {
+                    form.property_type = item
+
+                } else {
+                    form.property_type += '|'.concat(item)
+
+                }
+
+            })
+        }
+
+        status.value = Status
+        statusCheckbox.value = [Status]
+        propertyType.value = property
+        price.value.min = priceMin
+        price.value.max = priceMax
+    }
     function submit(input: any, key: string, value: string): void {
         input[key] = value
         router.get('/listings', input)
@@ -96,12 +128,12 @@ export function useListingFilter() {
 
         })
     }
-    console.log(Object.values(form));
 
     return {
         locations,
         locationError,
         locationSubmit,
-        price, priceError, statusCheckbox, status, propertyType, updateCheckbox, form, priceSubmit, propertySubmit
+        price, priceError, statusCheckbox, status, propertyType, updateCheckbox, form, priceSubmit, propertySubmit,
+        setInputsValues
     }
 }
