@@ -1,11 +1,11 @@
 <script setup lang="ts">
-
+import { router } from '@inertiajs/vue3';
 </script>
 
 <template>
     <section class="md:h-screen min-h-screen w-screen overflow-x-hidden">
-        <button type="button" title="close"
-            class="absolute top-10 left-10 w-14 aspect-square bg-black-opacity-80 rounded-full z-20">
+        <button @click="router.get(route('listings.index'))" type="button" title="close"
+            class="absolute top-6 left-4 w-8 aspect-square text-white bg-slate-700 rounded-full z-20">
             <span>
                 <i class="fas fa-xmark"></i>
             </span>

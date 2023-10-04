@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { usePage } from '@inertiajs/vue3';
 const page = usePage()
@@ -41,7 +41,8 @@ const toggled = ref(false)
                     </Link>
                 </nav>
                 <div v-if="!user" class="flex gap-4">
-                    <button type="button" title="login/register" @click="" class="flex gap-2 px-4 py-2">
+                    <button type="button" title="login/register" @click="router.get(route('login'))"
+                        class="flex gap-2 px-4 py-2">
                         <span>
                             <i class="fas fa-user"></i>
                         </span>
@@ -49,7 +50,7 @@ const toggled = ref(false)
                             Register/Login
                         </span>
                     </button>
-                    <button type="button" title="New listing" @click=" route('listings.show')"
+                    <button type="button" title="New listing" @click=" router.get(route('listings.show'))"
                         class="text-white hover:bg-accent-hover bg-accent flex gap-2 px-3 py-2 rounded-md">
                         <span>
                             <i class="fas fa-circle-plus"></i>
