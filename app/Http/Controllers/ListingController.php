@@ -74,7 +74,7 @@ class ListingController extends Controller
      */
     public function show(string $id)
     {
-        //
+        return Inertia::render('Listings/show');
     }
 
     /**

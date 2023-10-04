@@ -8,13 +8,13 @@ import { Query } from '@/types/listings'
 import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 
 
-
 const props = defineProps<{
     query: Query
 }>()
 const { usePlaces, inputValue } = useGoogleMaps()
 const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
 
+const sidebarToggled = ref(false)
 const appliedFilter = ref(false)
 const activeGrid = ref('grid')
 
@@ -27,19 +27,19 @@ watch(inputValue, (newVal) => {
 })
 
 const filter = computed(() => {
-    let filArr = Object.values(form)
-    const empArr = <string[]>[]
+    const filArr = Object.values(form)
+    const arr = <string[]>[]
     filArr.forEach((item: any | string) => {
         if (item.includes('|')) {
             const ele = item.split('|')
             ele.forEach((element: any) => {
-                empArr.push(element)
+                arr.push(element)
             })
         } else {
-            empArr.push(item)
+            arr.push(item)
         }
     })
-    return empArr
+    return arr
 })
 
 function removeFilter(e: any) {
@@ -75,7 +75,6 @@ function removeFilter(e: any) {
 
 
 }
-
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     usePlaces(locationInput, locations.value)
@@ -97,10 +96,11 @@ onUnmounted(() => {
 <template>
     <Head title="Listings" />
     <AppLayout>
-        <section class="min-h-screen w-screen overflow-x-hidden relative bg-gray-200">
-            <div class="grid md:grid-cols-[25%_75%] grid-cols-1 gap-4 pb-8">
-                <div
-                    class="fixed z-40 top-0 left-0 h-screen md:w-1/4 w-5/6 shadow-md bg-white px-8 pt-28 pb-8 overflow-y-auto transition-transform -md:-translate-x-full">
+        <section class="min-h-screen w-screen overflow-x-hidden relative bg-gray-200"
+            :class="[sidebarToggled ? 'sidebar' : '']">
+            <div class="grid lg:grid-cols-[25%_75%] grid-cols-1 gap-4 pb-8">
+                <div class="fixed z-40 top-0 left-0 h-screen lg:w-1/4 w-5/6 shadow-md bg-white px-8 pt-28 pb-8 overflow-y-auto transition-transform "
+                    :class="[sidebarToggled ? '-lg:translate-x-0' : '-lg:-translate-x-full']">
                     <div class="">
                         <h2 class="capitalize font-bold text-2xl mb-4">location</h2>
                         <label for="location" class="sr-only">location</label>
@@ -189,13 +189,29 @@ onUnmounted(() => {
                             </div>
                         </div>
                     </div>
+
                 </div>
-                <div class="md:col-start-2 md:col-end-3">
-                    <div class="w-5/6 mx-auto bg-white mt-8 p-4">
-                        <div class="flex  items-center" :class="[appliedFilter ? 'justify-between' : 'justify-end']">
-                            <h3 v-if="appliedFilter" class="capitalize font-bold">
+
+                <div class="lg:col-start-2 lg:col-end-3">
+                    <div class="w-full md:w-5/6 mx-auto bg-white mt-8 p-4">
+                        <div class="flex relative -md:justify-end items-center"
+                            :class="[appliedFilter ? 'justify-between' : 'justify-end']">
+                            <h3 v-if="appliedFilter" class="capitalize font-bold -md:hidden">
                                 applied filters
                             </h3>
+                            <button @click="sidebarToggled = !sidebarToggled"
+                                class=" bg-blue-500 text-white w-12 h-8 rounded-3xl lg:hidden absolute left-0 z-50 transition-transform"
+                                :class="[sidebarToggled ? 'translate-x-[80vw]' : 'translate-x-0']">
+                                <span class="relative h-full w-full flex justify-center items-center">
+                                    <span class="absolute" :class="[sidebarToggled ? 'opacity-0' : 'opacity-100']">
+                                        <i class="fa-solid fa-bars-staggered "></i>
+                                    </span>
+                                    <span class="absolute" :class="[sidebarToggled ? 'opacity-100' : 'opacity-0']">
+                                        <i class="fa-solid fa-xmark "></i>
+                                    </span>
+
+                                </span>
+                            </button>
                             <div class="flex gap-3 items-center">
                                 <div class="relative">
                                     <button type="button" title="sort by"
@@ -257,4 +273,15 @@ onUnmounted(() => {
     </AppLayout>
 </template>
 
-<style scoped></style>
+<style scoped>
+    .sidebar::before {
+        position: absolute;
+        content: '';
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 30;
+
+    }
+</style>
