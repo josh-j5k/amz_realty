@@ -4,6 +4,8 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import LoginWithSocials from '@/Components/LoginWithSocials.vue'
+
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -74,31 +76,6 @@ const submit = () => {
                 </PrimaryButton>
             </div>
         </form>
-        <div class="grid grid-cols-3 items-center my-4">
-            <hr class="w-full bg-slate-200">
-            <p class="flex justify-center capitalize">Or</p>
-            <hr class="w-full bg-slate-200">
-        </div>
-        <div class="pb-12">
-            <button type="button"
-                class="bg-[#EA4335] mx-auto mb-4 w-56 h-8 text-white flex gap-3 justify-center capitalize rounded items-center">
-                <span>
-                    <i class="fa-brands fa-google"></i>
-                </span>
-                <span>
-                    continue with google
-                </span>
-            </button>
-            <button type="button"
-                class="bg-[#4267B2] mx-auto w-56 h-8 text-white flex gap-3 justify-center capitalize rounded items-center">
-                <span>
-                    <i class="fa-brands fa-facebook"></i>
-                </span>
-                <span>
-                    continue with facebook
-                </span>
-            </button>
-        </div>
-
+        <LoginWithSocials />
     </GuestLayout>
 </template>
