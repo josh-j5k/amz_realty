@@ -12,15 +12,19 @@ const loader = new Loader({
 export function useGoogleMaps() {
     const inputValue = ref('')
     function usePlaces(input: HTMLInputElement, value: string) {
+        async function load() {
+            const result = await loader.importLibrary('places')
+            console.log(result);
 
-        loader.importLibrary('places').then(res => {
-            const autocomplete = new res.Autocomplete(input, options)
+            const autocomplete = new result.Autocomplete(input, options)
+
             autocomplete.addListener('place_changed', () => {
                 const place = autocomplete.getPlace()
                 value = place.formatted_address
                 inputValue.value = value
             })
-        })
+        }
+        load()
     }
     return { usePlaces, inputValue }
 }

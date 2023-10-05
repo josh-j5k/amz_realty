@@ -132,6 +132,7 @@ onMounted(() => {
                         <span><i class="fas fa-search fa-xl"></i></span>
                     </button>
                 </div>
+                <p v-if="formError" class="text-red-500 capitalize text-center font-bold">please fill all fields</p>
             </form>
         </section>
         <section class="py-8 w-screen min-h-screen grid">
