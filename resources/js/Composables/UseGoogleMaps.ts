@@ -14,7 +14,6 @@ export function useGoogleMaps() {
     function usePlaces(input: HTMLInputElement, value: string) {
         async function load() {
             const result = await loader.importLibrary('places')
-            console.log(result);
 
             const autocomplete = new result.Autocomplete(input, options)
 
