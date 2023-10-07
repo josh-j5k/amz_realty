@@ -16,8 +16,7 @@ export function useFileUpload() {
             filesArr.value.forEach(file => newDt.items.add(file))
             fileInput.files = newDt.files
             total.value = fileInput.files.length
-            console.log(filesArr)
-            handleFiles(newDt.files)
+            handleFiles(filesArr.value)
         })
     }
 
@@ -45,8 +44,7 @@ export function useFileUpload() {
         filesArr.value.forEach(file => newDt.items.add(file))
         fileInput.files = newDt.files
         total.value = fileInput.files.length
-        console.log(filesArr)
-        handleFiles(newDt.files);
+        handleFiles(filesArr.value);
     }
 
     function deleteFile(fileInput: HTMLInputElement, btnIndex: number) {
@@ -58,7 +56,7 @@ export function useFileUpload() {
         total.value = fileInput.files.length
 
     }
-    function handleFiles(files: FileList) {
+    function handleFiles(files: File[]) {
         for (let index = 0; index < files.length; index++) {
             const file = files[index];
             const src = ref('')

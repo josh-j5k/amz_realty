@@ -4,7 +4,7 @@ import { Link } from '@inertiajs/vue3';
 </script>
 
 <template>
-    <footer class="p-12 bg-gray-100">
+    <footer class="p-12 bg-black text-white">
         <div class="w-5/6 mx-auto grid grid-cols-1 md:grid-cols-4 gap-4">
             <div>
                 <ApplicationLogo width="50" />
