@@ -1,5 +1,4 @@
 <script setup>
-    import { onMounted } from 'vue';
 
     const props = defineProps({
         file_type: {
@@ -10,6 +9,9 @@
         },
         height: {
             type: String
+        },
+        fileError: {
+            type: Boolean
         }
 
     })
@@ -22,7 +24,8 @@
 </script>
 
 <template>
-    <div class="shadow rounded-md mx-auto p-4 overflow-hidden" :style="{ width: width, height: height }">
+    <div class="shadow rounded-md mx-auto p-4 overflow-hidden" :class="[fileError ? 'border border-red-500' : '']"
+        :style="{ width: width, height: height }">
         <div @click="fileUpload" id="dropbox"
             class="w-full h-full border py-4 border-dashed rounded-md flex flex-col justify-center items-center cursor-pointer bg-gray-100">
             <div class="mb-4">
