@@ -7,9 +7,8 @@ import { useGoogleMaps } from '@/Composables/UseGoogleMaps';
 import { useToast } from '@/Composables/UseToast'
 
 const { toast } = useToast()
-const { drop, dragenter, dragover, assignFiles, total, imgSrc } = useFileUpload()
+const { drop, dragenter, dragover, assignFiles, total, imgSrc, deleteFile, filesArr } = useFileUpload()
 const fileError = ref(false)
-const userError = ref(false)
 const { usePlaces, inputValue } = useGoogleMaps()
 const form = useForm({
     title: '',
@@ -31,9 +30,15 @@ function fileUpload(e: MouseEvent) {
     input.click()
 
 }
+function removePhoto(ev: MouseEvent) {
+    const fileInput = document.querySelector('#file_upload') as HTMLInputElement
+    const btn = ev.currentTarget as HTMLButtonElement
+    const btnIndex = parseInt(btn.value)
+    deleteFile(fileInput, btnIndex)
+}
 function submit() {
 
-    if (userError.value === true) {
+    if (user.value === null) {
         return toast('Error', 'You need to be logged in to perform this action')
 
     } else if (total.value === 0) {
@@ -43,28 +48,21 @@ function submit() {
         form.post(route('listing.index'))
     }
 }
-function checkAuthenticatedUser() {
-    if (user.value === null) {
-        userError.value = true
-    } else {
-        userError.value = false
-    }
-}
-checkAuthenticatedUser()
+
 onMounted(() => {
     const locationInput = document.getElementById('property_location') as HTMLInputElement
-    const changeFiles = <any[]>[]
+
     const dropbox = document.getElementById('dropbox') as HTMLDivElement
     const file_upload = document.getElementById('file_upload') as HTMLInputElement
 
-    assignFiles(file_upload, changeFiles)
+    assignFiles(file_upload,)
     dropbox.addEventListener("dragenter", dragenter, false);
     dropbox.addEventListener("dragover", dragover, false);
     dropbox.addEventListener("drop", function (ev: any) {
-        drop(ev, changeFiles, file_upload)
+        drop(ev, file_upload)
     }, false);
+
     usePlaces(locationInput, locationInput.value)
-    console.log(userError.value);
 
 })
 
@@ -87,7 +85,22 @@ onMounted(() => {
                                 You can add up to 50 photos
                             </span>
                         </p>
-                        <FileUpload @file-upload="fileUpload" file_type="image" :file-error="fileError" />
+                        <div class="max-h-[190px]"
+                            :class="[total > 0 ? 'grid grid-cols-2 gap-2 overflow-x-hidden overflow-y-auto' : '']">
+                            <template v-for="(item, index) in imgSrc">
+                                <div
+                                    class="overflow-hidden relative before:content-emptystring before:absolute before:w-full before:h-full before:inset-0 before:bg-[rgba(255,_255,_255,_0.1)] before:z-10">
+                                    <img :src="item" alt="" class="w-32 aspect-square object-cover rounded">
+                                    <button @click="removePhoto" :value="index" type="button"
+                                        class="w-6 aspect-square bg-white rounded-full absolute top-2 right-8 z-20">
+                                        <span>
+                                            <i class="fas fa-xmark"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </template>
+                            <FileUpload @file-upload="fileUpload" file_type="image" :file-error="fileError" width="100%" />
+                        </div>
                     </div>
                     <p v-if="fileError" class="text-red-500"> Please upload at least one photo.</p>
                     <div class="flex flex-col">
@@ -165,7 +178,7 @@ onMounted(() => {
                             </span>
                         </button>
                         <div
-                            class="absolute flex gap-2 overflow-x-auto overflow-y-hidden py-1 mx-auto bottom-2 z-10 bg-[rgba(255,_255,_255,_0.7)] justify-center w-full h-16">
+                            class="absolute flex gap-2 overflow-x-auto overflow-y-hidden py-1 mx-auto bottom-2 z-10 bg-[rgba(255,_255,_255,_0.1)] justify-center w-full h-16">
                             <template v-for="(item, index) in imgSrc">
                                 <img v-if="index > 0" :src="item" alt="" class="w-20 aspect-square object-cover">
                             </template>
@@ -196,7 +209,7 @@ onMounted(() => {
             </div>
 
         </div>
-        <h2 v-if="userError" class="text-red-500 text center absolute top-2 left-1/2 -translate-x-1/2">
+        <h2 v-if="user === null" class="text-red-500 text center absolute top-2 left-1/2 -translate-x-1/2">
             You need to be an authenticated user to
             publish a
             listing!</h2>

@@ -6,7 +6,7 @@ export function useToast() {
         const div = document.createElement("div");
         const progressBar = document.createElement("div");
         const p = document.createElement("p");
-        div.className = "toast shadow-lg bg-gray-100 text-slate-700";
+        div.className = "toast py-2 px-4 shadow-lg bg-gray-100 text-slate-700";
         p.textContent = message;
         div.append(p, progressBar);
         document.getElementById("app")?.appendChild(div);
@@ -26,7 +26,7 @@ export function useToast() {
             }
         );
         progressBar.animate([{ width: "100%" }, { width: 0 }], {
-            duration: timeout,
+            duration: timeout + 1,
             iterations: 1,
         });
         setTimeout(() => div.remove(), timeout);

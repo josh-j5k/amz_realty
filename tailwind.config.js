@@ -35,6 +35,12 @@ export default {
                 "bg-black-opacity-80": "rgba(0, 0, 0, 0.8)",
                 "dark-blue": "#0c0c1f",
             },
+            zIndex: {
+                max: 9999,
+            },
+            content: {
+                emptystring: "''",
+            },
         },
     },
 
