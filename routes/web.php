@@ -27,7 +27,12 @@ Route::get('/welcome', function () {
         'phpVersion' => PHP_VERSION,
     ]);
 });
-Route::get('/', [HomeController::class, 'index'])->name('Home');
+Route::get('/', function () {
+    return Inertia::render('Home');
+})->name('Home');
+Route::get('/contact', function () {
+    return Inertia::render('Contact');
+})->name('Contact');
 
 Route::prefix('listings')->group(function () {
     Route::name('listings.')->group(function () {

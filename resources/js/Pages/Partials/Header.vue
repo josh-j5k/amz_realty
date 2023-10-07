@@ -50,7 +50,7 @@ const toggled = ref(false)
                             Register/Login
                         </span>
                     </button>
-                    <button type="button" title="New listing" @click=" router.get(route('listings.show'))"
+                    <button type="button" title="New listing" @click=" router.get('listings/create')"
                         class="text-white hover:bg-accent-hover bg-accent flex gap-2 px-3 py-2 rounded-md">
                         <span>
                             <i class="fas fa-circle-plus"></i>
