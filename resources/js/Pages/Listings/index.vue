@@ -9,7 +9,8 @@ import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 
 
 const props = defineProps<{
-    query: Query
+    query: Query,
+    listings: object
 }>()
 const { usePlaces, inputValue } = useGoogleMaps()
 const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
@@ -75,6 +76,8 @@ function removeFilter(e: any) {
 
 
 }
+console.log(props.listings);
+
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     usePlaces(locationInput, locations.value)

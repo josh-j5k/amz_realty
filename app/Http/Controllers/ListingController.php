@@ -15,7 +15,7 @@ class ListingController extends Controller
      */
     public function index(Request $request)
     {
-        // dd($request);
+
         $location = $request->location;
 
         $status = $request->status;
@@ -48,10 +48,16 @@ class ListingController extends Controller
             'price' => $price,
             'property_type' => $property_type
         ];
+
+        // $user_data = User::find($request->user()->id)->with('listing');
+        $listings = Listing::latest()->filter($query)->get();
+
         return Inertia::render(
             'Listings/index',
             [
-                'query' =>  $query
+                'query' =>  $query,
+                'listings' => $listings
+
             ]
         );
     }

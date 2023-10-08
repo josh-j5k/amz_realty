@@ -14,7 +14,8 @@ const formErrors = ref(
         titleError: false,
         priceError: false,
         locationError: false,
-        descriptionError: false
+        descriptionError: false,
+        propertyTypeError: false
     }
 )
 const formValid = ref(
@@ -23,7 +24,8 @@ const formValid = ref(
         file: false,
         price: false,
         location: false,
-        description: false
+        description: false,
+        property_type: false
     }
 )
 const { usePlaces, inputValue } = useGoogleMaps()
@@ -33,6 +35,7 @@ const form = useForm({
     price: '',
     location: '',
     description: '',
+    property_type: '',
     inputFiles: <File[]>[]
 
 })
@@ -80,6 +83,11 @@ function validation() {
     } else {
         formValid.value.description = true
     }
+    if (form.property_type === '') {
+        formErrors.value.propertyTypeError = true
+    } else {
+        formValid.value.property_type = true
+    }
     if (form.location === '') {
         formErrors.value.locationError = true
     } else {
@@ -109,6 +117,7 @@ function valid(): boolean {
             formErrors.value.locationError = false
             formErrors.value.priceError = false
             formErrors.value.titleError = false
+            formErrors.value.propertyTypeError = false
         }, 5000)
         return false
     }
@@ -126,6 +135,10 @@ function submit() {
                 form.reset()
                 filesArr.value = <File[]>[]
                 imgSrc.value = <string[]>[]
+                const input = document.getElementById('file_upload') as HTMLInputElement
+
+                input.files = <FileList>{}
+                console.log(input.files);
             }
         })
     }
@@ -234,6 +247,21 @@ onMounted(() => {
                     </div>
                     <p v-if="formErrors.locationError" class="text-red-500">
                         Please enter a valid location.
+                    </p>
+                    <div class="flex flex-col">
+                        <label for="property_type" class="capitalize font-bold text-lg mb-3">property
+                            type</label>
+                        <select v-model="form.property_type" name="property type" id="proptery-type" class="rounded-md"
+                            :class="[formErrors.propertyTypeError ? 'border-red-500' : '']">
+                            <option disabled> Choose property type</option>
+                            <option value="rent">Room</option>
+                            <option value="sale">Studio</option>
+                            <option value="sale">Appartment</option>
+                            <option value="sale">Duplex</option>
+                        </select>
+                    </div>
+                    <p v-if="formErrors.propertyTypeError" class="text-red-500">
+                        Please chose a property type
                     </p>
                     <div class="flex flex-col">
                         <label for="property_description" class="capitalize font-bold text-lg mb-3">property
