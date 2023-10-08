@@ -8,18 +8,37 @@ import { useToast } from '@/Composables/UseToast'
 import Header from '../Partials/Header.vue';
 const { toast } = useToast()
 const { drop, dragenter, dragover, assignFiles, total, imgSrc, deleteFile, filesArr } = useFileUpload()
-const fileError = ref(false)
+const formErrors = ref(
+    {
+        fileError: false,
+        titleError: false,
+        priceError: false,
+        locationError: false,
+        descriptionError: false
+    }
+)
+const formValid = ref(
+    {
+        title: false,
+        file: false,
+        price: false,
+        location: false,
+        description: false
+    }
+)
 const { usePlaces, inputValue } = useGoogleMaps()
 const form = useForm({
     title: '',
     property_status: 'rent',
     price: '',
     location: '',
-    description: ''
+    description: '',
+    inputFiles: <File[]>[]
 
 })
 const page = usePage()
 const user = computed(() => page.props.auth.user)
+const currentIndex = ref(0)
 watch(inputValue, newVal => {
     form.location = newVal
 })
@@ -36,16 +55,79 @@ function removePhoto(ev: MouseEvent) {
     const btnIndex = parseInt(btn.value)
     deleteFile(fileInput, btnIndex)
 }
-function submit() {
+function prevPic() {
+    currentIndex.value--
+    if (currentIndex.value < 0) {
+        currentIndex.value = imgSrc.value.length - 1
 
+    }
+}
+function nextPic() {
+    currentIndex.value++
+    if (currentIndex.value > imgSrc.value.length - 1) {
+        currentIndex.value = 0
+    }
+}
+function validation() {
+    const intPrice = parseInt(form.price)
+    if (form.title === '') {
+        formErrors.value.titleError = true
+    } else {
+        formValid.value.title = true
+    }
+    if (form.description === '') {
+        formErrors.value.descriptionError = true
+    } else {
+        formValid.value.description = true
+    }
+    if (form.location === '') {
+        formErrors.value.locationError = true
+    } else {
+        formValid.value.location = true
+    }
+    if (form.price === '' || isNaN(intPrice)) {
+        formErrors.value.priceError = true
+    } else {
+        formValid.value.price = true
+    }
+    if (total.value === 0) {
+        formErrors.value.fileError = true
+    } else {
+        formValid.value.file = true
+    }
+
+}
+
+function valid(): boolean {
+    validation()
+    if (formValid.value.description === true && formValid.value.file === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true) {
+        return true
+    } else {
+        setTimeout(() => {
+            formErrors.value.descriptionError = false
+            formErrors.value.fileError = false
+            formErrors.value.locationError = false
+            formErrors.value.priceError = false
+            formErrors.value.titleError = false
+        }, 5000)
+        return false
+    }
+
+}
+function submit() {
+    form.inputFiles = filesArr.value
     if (user.value === null) {
         return toast('Error', 'You need to be logged in to perform this action')
-
-    } else if (total.value === 0) {
-        fileError.value = true
-        return setTimeout(() => fileError.value = false, 5000)
-    } else {
-        form.post(route('listing.index'))
+    } else if (valid()) {
+        form.post(route('listings.index'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast('Success', 'Listing added successfully')
+                form.reset()
+                filesArr.value = <File[]>[]
+                imgSrc.value = <string[]>[]
+            }
+        })
     }
 }
 
@@ -106,16 +188,18 @@ onMounted(() => {
                                     </button>
                                 </div>
                             </template>
-                            <FileUpload @file-upload="fileUpload" file_type="image" :file-error="fileError" width="100%" />
+                            <FileUpload @file-upload="fileUpload" file_type="image" :file-error="formErrors.fileError"
+                                width="100%" />
                         </div>
                     </div>
-                    <p v-if="fileError" class="text-red-500"> Please upload at least one photo.</p>
+                    <p v-if="formErrors.fileError" class="text-red-500"> Please upload at least one photo.</p>
                     <div class="flex flex-col">
                         <label for="listing_title" class="capitalize font-bold text-lg mb-3">listing title</label>
                         <input v-model="form.title" type="text" name="listing title" id="listing_title"
-                            placeholder="Enter listing title" class="rounded-md">
+                            placeholder="Enter listing title" class="rounded-md"
+                            :class="[formErrors.titleError ? 'border-red-500' : '']">
                     </div>
-                    <p v-if="form.errors.title" class="text-red-500">
+                    <p v-if="formErrors.titleError" class="text-red-500">
                         Please fill the title field.
                     </p>
                     <div class="flex flex-col">
@@ -128,18 +212,16 @@ onMounted(() => {
                             <option value="sale">For Sale</option>
                         </select>
                     </div>
-                    <p v-if="form.errors.property_status" class="text-red-500">
-                        Please select a proprety status.
-                    </p>
                     <div class="flex flex-col">
                         <label for="price_per_month" class="capitalize font-bold text-lg mb-3">price per
                             month</label>
                         <div class="relative">
                             <input v-model="form.price" type="text" name="listing price" id="price_per_month"
-                                placeholder="Enter the price per month" class="px-14 w-full rounded-md">
+                                placeholder="Enter the price per month" class="px-14 w-full rounded-md"
+                                :class="[formErrors.priceError ? 'border-red-500' : '']">
                             <span class="font-bold absolute left-2 top-1/2 text-secondary -translate-y-1/2">FCFA</span>
                         </div>
-                        <p v-if="form.errors.title" class="text-red-500">
+                        <p v-if="formErrors.priceError" class="text-red-500">
                             Please enter a valid price.
                         </p>
                     </div>
@@ -147,18 +229,19 @@ onMounted(() => {
                         <label for="property_location" class="capitalize font-bold text-lg mb-3">property
                             location</label>
                         <input v-model="form.location" type="text" name="location location" id="property_location"
-                            placeholder="Enter the property location" class="rounded-md">
+                            placeholder="Enter the property location" class="rounded-md"
+                            :class="[formErrors.locationError ? 'border-red-500' : '']">
                     </div>
-                    <p v-if="form.errors.title" class="text-red-500">
+                    <p v-if="formErrors.locationError" class="text-red-500">
                         Please enter a valid location.
                     </p>
                     <div class="flex flex-col">
                         <label for="property_description" class="capitalize font-bold text-lg mb-3">property
                             description</label>
                         <textarea v-model="form.description" name="property_description" id="" cols="30" rows="10"
-                            class="rounded-md"></textarea>
+                            class="rounded-md" :class="[formErrors.descriptionError ? 'border-red-500' : '']"></textarea>
                     </div>
-                    <p v-if="form.errors.title" class="text-red-500">
+                    <p v-if="formErrors.descriptionError" class="text-red-500">
                         Please enter a description.
                     </p>
                     <button type="submit" class="bg-accent py-3 px-6 text-white" :class="{ 'opacity-25': form.processing }"
@@ -179,17 +262,20 @@ onMounted(() => {
                 </div>
                 <h2 class="font-bold py-2 text-lg">Preview</h2>
                 <div class="grid lg:grid-cols-[60%_40%] grid-cols-1 h-full w-full border rounded-md">
-                    <div class="relative w-full h-full overflow-hidden"
+                    <div class="relative w-full h-[90%] overflow-hidden"
                         :class="[imgSrc.length > 0 ? 'bg-black' : 'bg-gray-200']">
                         <div v-if="imgSrc.length > 0">
-                            <img :src="imgSrc[0]" alt="" class="max-w-sm h-5/6 object-cover mx-auto">
-                            <button type="button" title="click to get previous image"
+                            <template v-for="(item, index) in imgSrc">
+                                <img v-if="index === currentIndex" :src="item" alt=""
+                                    class="max-w-sm h-5/6 object-cover mx-auto">
+                            </template>
+                            <button @click="prevPic" type="button" title="click to get previous image"
                                 class="w-12 aspect-square rounded-full bg-white absolute left-4 top-1/2 -translate-y-1/2">
                                 <span>
                                     <i class="fas fa-chevron-left"></i>
                                 </span>
                             </button>
-                            <button type="button" title="click to get next image"
+                            <button @click="nextPic" type="button" title="click to get next image"
                                 class="w-12 aspect-square rounded-full bg-white absolute right-4 top-1/2 -translate-y-1/2">
                                 <span>
                                     <i class="fas fa-chevron-right"></i>
@@ -198,7 +284,9 @@ onMounted(() => {
                             <div
                                 class="absolute flex gap-2 overflow-x-auto overflow-y-hidden py-1 mx-auto bottom-2 z-10 bg-[rgba(255,_255,_255,_0.1)] justify-center w-full h-16">
                                 <template v-for="(item, index) in imgSrc">
-                                    <img v-if="index > 0" :src="item" alt="" class="w-20 aspect-square object-cover">
+                                    <img @click="currentIndex = index" :src="item" alt=""
+                                        class="w-20 aspect-square object-cover cursor-pointer"
+                                        :class="[index === currentIndex ? 'border-2 border-blue-500' : '']">
                                 </template>
                             </div>
                         </div>

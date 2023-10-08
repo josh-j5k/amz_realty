@@ -98,8 +98,8 @@ onUnmounted(() => {
     <AppLayout>
         <section class="min-h-screen w-screen overflow-x-hidden relative bg-gray-200"
             :class="[sidebarToggled ? 'sidebar' : '']">
-            <div class="grid lg:grid-cols-[25%_75%] grid-cols-1 gap-4 pb-8">
-                <div class="fixed z-40 top-0 left-0 h-screen lg:w-1/4 w-5/6 shadow-md bg-white px-8 pt-28 pb-8 overflow-y-auto transition-transform "
+            <div class="grid lg:grid-cols-[30%_70%] grid-cols-1 gap-4 pb-8">
+                <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen  w-5/6 shadow-md bg-white px-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
                     :class="[sidebarToggled ? '-lg:translate-x-0' : '-lg:-translate-x-full']">
                     <div class="">
                         <h2 class="capitalize font-bold text-2xl mb-4">location</h2>

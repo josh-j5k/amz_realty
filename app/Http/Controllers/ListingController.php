@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Models\Listing;
+use App\Models\ListingImage;
+use App\Models\User;
+use Illuminate\Http\Request;
 
 class ListingController extends Controller
 {
@@ -66,7 +69,52 @@ class ListingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $user = $request->user();
+        $form_fields = $request->all();
+        $form_fields['user_id'] = $user->id;
+        $listing = Listing::create($form_fields);
+        function compressImage($original_image, $quality)
+        {
+            $folder = date("Y");
+            $subFolders = date("m");
+            $dir = 'images/' . $folder  . '/' . $subFolders;
+            if (!is_dir($dir)) {
+                mkdir($dir, recursive: true);
+            }
+
+            $imageType = getimagesize($original_image)['mime'];
+            if ($imageType === 'image/png') {
+                $img = imagecreatefrompng($original_image);
+            } elseif ($imageType === 'image/jpeg') {
+                $img = imagecreatefromjpeg($original_image);
+            } elseif ($imageType === 'image/webp') {
+                $img = imagecreatefromwebp($original_image);
+            }
+
+            $img_name = $original_image->hashName();
+
+            $MAX_WIDTH = 1300;
+
+            imagepalettetotruecolor($img);
+            $scale_size = $MAX_WIDTH / getimagesize($original_image)[0];
+
+            $MAX_HEIGHT = getimagesize($original_image)[1] * $scale_size;
+            $resized_img = imagescale($img, $MAX_WIDTH, $MAX_HEIGHT);
+            imagewebp($resized_img, $dir . '/' . $img_name, $quality);
+            imagedestroy($img);
+            imagedestroy($resized_img);
+            return $img_name;
+        }
+        foreach ($request->inputFiles as $file_input) {
+            $folder = date("Y");
+            $subFolders = date("m");
+            $image_name = compressImage($file_input, 100);
+            $url = 'Images/' . $folder . '/' . $subFolders . '/' . $image_name;
+            ListingImage::create([
+                'listing_image' => '/' . $url,
+                'listing_id' => $listing->id
+            ]);
+        }
     }
 
     /**
@@ -74,6 +122,7 @@ class ListingController extends Controller
      */
     public function show(string $id)
     {
+
         return Inertia::render('Listings/show');
     }
 

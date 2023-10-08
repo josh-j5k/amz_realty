@@ -24,8 +24,6 @@ class AuthenticatedWithSocialsController extends Controller
         $socialiteUser = Socialite::driver($provider)->user();
 
 
-        // $finduser_by_id = ->first();
-        // $finduser_by_email = DB::table('users')->->first();
         if (User::where('provider_id', $socialiteUser->getId())->exists()) {
             $user_arr = User::where('provider_id', $socialiteUser->getId())->first();
             Auth::login($user_arr);

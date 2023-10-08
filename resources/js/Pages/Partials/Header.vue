@@ -40,8 +40,8 @@ const toggled = ref(false)
                     Home
                     </Link>
                 </nav>
-                <div v-if="!user" class="flex gap-4">
-                    <button type="button" title="login/register" @click="router.get(route('login'))"
+                <div class="flex gap-4">
+                    <button v-if="!user" type="button" title="login/register" @click="router.get(route('login'))"
                         class="flex gap-2 px-4 py-2">
                         <span>
                             <i class="fas fa-user"></i>

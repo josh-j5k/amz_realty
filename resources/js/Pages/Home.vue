@@ -62,7 +62,7 @@ onMounted(() => {
         <section class="relative h-screen w-screen isolate flex flex-col items-center justify-center px-2">
             <div
                 class="w-screen h-screen absolute inset-0 -z-10 before:content-[''] before:absolute before:inset-0 before:bg-bg-black-opacity-50 before:w-full before:h-full">
-                <img src="Images/house-with-balcony-sky-background.jpg" alt="background-img"
+                <img src="images/house-with-balcony-sky-background.jpg" alt="background-img"
                     class="w-screen h-screen object-cover">
             </div>
             <h2 class="md:text-5xl text-4xl text-white font-bold max-w-2xl text-center mb-12">Lets find a home that is
@@ -151,7 +151,7 @@ onMounted(() => {
                         valuation</button>
                 </div>
                 <div class="-md:row-start-1 -md:row-end-1 -md:pt-16">
-                    <img src="/Images/high-view-hands-stationery-items.jpg" alt="house valuation" class="">
+                    <img src="/images/high-view-hands-stationery-items.jpg" alt="house valuation" class="">
                 </div>
             </div>
         </section>

@@ -12,7 +12,14 @@ class Listing extends Model
 {
     use HasFactory;
     use HasUlids;
-
+    protected $fillable = [
+        'title',
+        'user_id',
+        'property_status',
+        'location',
+        'price',
+        'description'
+    ];
     public function listingImage(): HasMany
     {
         return $this->hasMany(ListingImage::class);

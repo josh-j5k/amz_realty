@@ -1,22 +1,26 @@
 import { ref } from "vue";
-const filesArr = ref(<File[]>[])
 export function useFileUpload() {
+    const filesArr = ref(<File[]>[])
     const imgSrc = ref(<string[]>[])
     const total = ref(0)
+    function updateFilesDisplayImages(fileInput: HTMLInputElement) {
+        const newDt = new DataTransfer()
+        filesArr.value.forEach(file => newDt.items.add(file))
+        fileInput.files = newDt.files
+        total.value = fileInput.files.length
+
+    }
     function assignFiles(fileInput: HTMLInputElement) {
         fileInput.addEventListener('change', (ev: Event) => {
             const inputTarget = ev.target as HTMLInputElement
             if (inputTarget.files !== null) {
                 for (let index = 0; index < inputTarget.files.length; index++) {
-                    const file = inputTarget.files[index];
+                    const file = inputTarget.files[index] as File
+                    handleFiles(file)
                     filesArr.value = [...filesArr.value, file]
                 }
             }
-            const newDt = new DataTransfer()
-            filesArr.value.forEach(file => newDt.items.add(file))
-            fileInput.files = newDt.files
-            total.value = fileInput.files.length
-            handleFiles(filesArr.value)
+            updateFilesDisplayImages(fileInput)
         })
     }
 
@@ -36,15 +40,11 @@ export function useFileUpload() {
         const dt = e.dataTransfer;
 
         for (let index = 0; index < dt.files.length; index++) {
-            const file = dt.files[index];
-
+            const file = dt.files[index] as File;
+            handleFiles(file)
             filesArr.value = [...filesArr.value, file];
         }
-        const newDt = new DataTransfer()
-        filesArr.value.forEach(file => newDt.items.add(file))
-        fileInput.files = newDt.files
-        total.value = fileInput.files.length
-        handleFiles(filesArr.value);
+        updateFilesDisplayImages(fileInput)
     }
 
     function deleteFile(fileInput: HTMLInputElement, btnIndex: number) {
@@ -56,27 +56,34 @@ export function useFileUpload() {
         total.value = fileInput.files.length
 
     }
-    function handleFiles(files: File[]) {
-        for (let index = 0; index < files.length; index++) {
-            const file = files[index];
-            const src = ref('')
-
-
-
-            if (!file.type.startsWith("image/")) {
-                continue;
-            }
-
-
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-
-            reader.onload = (e: any) => {
-                src.value = e.target.result;
-                imgSrc.value = [...imgSrc.value, src.value]
-
-            };
+    function handleFiles(file: File) {
+        const src = ref('')
+        if (!file.type.startsWith("image/")) {
+            return
         }
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+
+        reader.onload = (e: any) => {
+            src.value = e.target.result;
+            imgSrc.value = [...imgSrc.value, src.value]
+
+        };
+        // for (let index = 0; index < filesArr.value.length; index++) {
+        //     const file = filesArr.value[index];
+        //     const src = ref('')
+        //     if (!file.type.startsWith("image/")) {
+        //         continue;
+        //     }
+        //     const reader = new FileReader();
+        //     reader.readAsDataURL(file);
+
+        //     reader.onload = (e: any) => {
+        //         src.value = e.target.result;
+        //         imgSrc.value = [...imgSrc.value, src.value]
+
+        //     };
+        // }
     }
 
     return {
