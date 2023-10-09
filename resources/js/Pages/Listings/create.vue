@@ -1,25 +1,47 @@
 <script setup lang="ts">
 import FileUpload from '@/Components/FileUpload.vue';
 import { useFileUpload } from '@/Composables/UseFileUpload'
-import { useForm, usePage } from '@inertiajs/vue3';
+import { useForm, usePage, Head } from '@inertiajs/vue3';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps';
 import { useToast } from '@/Composables/UseToast'
-
+import Header from '../Partials/Header.vue';
 const { toast } = useToast()
 const { drop, dragenter, dragover, assignFiles, total, imgSrc, deleteFile, filesArr } = useFileUpload()
-const fileError = ref(false)
+const formErrors = ref(
+    {
+        fileError: false,
+        titleError: false,
+        priceError: false,
+        locationError: false,
+        descriptionError: false,
+        propertyTypeError: false
+    }
+)
+const formValid = ref(
+    {
+        title: false,
+        file: false,
+        price: false,
+        location: false,
+        description: false,
+        property_type: false
+    }
+)
 const { usePlaces, inputValue } = useGoogleMaps()
 const form = useForm({
     title: '',
     property_status: 'rent',
     price: '',
     location: '',
-    description: ''
+    description: '',
+    property_type: '',
+    inputFiles: <File[]>[]
 
 })
 const page = usePage()
 const user = computed(() => page.props.auth.user)
+const currentIndex = ref(0)
 watch(inputValue, newVal => {
     form.location = newVal
 })
@@ -36,16 +58,89 @@ function removePhoto(ev: MouseEvent) {
     const btnIndex = parseInt(btn.value)
     deleteFile(fileInput, btnIndex)
 }
-function submit() {
+function prevPic() {
+    currentIndex.value--
+    if (currentIndex.value < 0) {
+        currentIndex.value = imgSrc.value.length - 1
 
+    }
+}
+function nextPic() {
+    currentIndex.value++
+    if (currentIndex.value > imgSrc.value.length - 1) {
+        currentIndex.value = 0
+    }
+}
+function validation() {
+    const intPrice = parseInt(form.price)
+    if (form.title === '') {
+        formErrors.value.titleError = true
+    } else {
+        formValid.value.title = true
+    }
+    if (form.description === '') {
+        formErrors.value.descriptionError = true
+    } else {
+        formValid.value.description = true
+    }
+    if (form.property_type === '') {
+        formErrors.value.propertyTypeError = true
+    } else {
+        formValid.value.property_type = true
+    }
+    if (form.location === '') {
+        formErrors.value.locationError = true
+    } else {
+        formValid.value.location = true
+    }
+    if (form.price === '' || isNaN(intPrice)) {
+        formErrors.value.priceError = true
+    } else {
+        formValid.value.price = true
+    }
+    if (total.value === 0) {
+        formErrors.value.fileError = true
+    } else {
+        formValid.value.file = true
+    }
+
+}
+
+function valid(): boolean {
+    validation()
+    if (formValid.value.description === true && formValid.value.file === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true) {
+        return true
+    } else {
+        setTimeout(() => {
+            formErrors.value.descriptionError = false
+            formErrors.value.fileError = false
+            formErrors.value.locationError = false
+            formErrors.value.priceError = false
+            formErrors.value.titleError = false
+            formErrors.value.propertyTypeError = false
+        }, 5000)
+        return false
+    }
+
+}
+function submit() {
+    form.inputFiles = filesArr.value
     if (user.value === null) {
         return toast('Error', 'You need to be logged in to perform this action')
+    } else if (valid()) {
+        form.post(route('listings.index'), {
+            preserveScroll: true,
+            onSuccess: () => {
+                toast('Success', 'Listing added successfully')
+                form.reset()
+                filesArr.value = <File[]>[]
+                imgSrc.value = <string[]>[]
+                const input = document.getElementById('file_upload') as HTMLInputElement
 
-    } else if (total.value === 0) {
-        fileError.value = true
-        return setTimeout(() => fileError.value = false, 5000)
-    } else {
-        form.post(route('listing.index'))
+                input.files = <FileList>{}
+                console.log(input.files);
+            }
+        })
     }
 }
 
@@ -70,10 +165,17 @@ onMounted(() => {
 
 
 <template>
+    <Head>
+        <title>Post a listing</title>
+    </Head>
+    <Header />
     <section
-        class="w-screen min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 gap-4">
+        class="w-screen min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 pt-0 gap-4">
+
+
+
         <div
-            class="lg:w-[30%] -lg:min-h-screen h-screen overflow-y-auto lg:fixed lg:left-0 mx-auto bg-white shadow px-8 py-12">
+            class="lg:w-[30vw] -lg:h-full h-screen lg:overflow-y-auto lg:fixed lg:left-0 top-0 bg-white shadow px-8 py-12 lg:pt-28">
             <form @submit.prevent="submit" enctype="multipart/form-data">
                 <div class="flex flex-col gap-4">
                     <div>
@@ -99,55 +201,75 @@ onMounted(() => {
                                     </button>
                                 </div>
                             </template>
-                            <FileUpload @file-upload="fileUpload" file_type="image" :file-error="fileError" width="100%" />
+                            <FileUpload @file-upload="fileUpload" file_type="image" :file-error="formErrors.fileError"
+                                width="100%" />
                         </div>
                     </div>
-                    <p v-if="fileError" class="text-red-500"> Please upload at least one photo.</p>
+                    <p v-if="formErrors.fileError" class="text-red-500"> Please upload at least one photo.</p>
                     <div class="flex flex-col">
                         <label for="listing_title" class="capitalize font-bold text-lg mb-3">listing title</label>
                         <input v-model="form.title" type="text" name="listing title" id="listing_title"
-                            placeholder="Enter listing title">
+                            placeholder="Enter listing title" class="rounded-md"
+                            :class="[formErrors.titleError ? 'border-red-500' : '']">
                     </div>
-                    <p v-if="form.errors.title" class="text-red-500">
+                    <p v-if="formErrors.titleError" class="text-red-500">
                         Please fill the title field.
                     </p>
                     <div class="flex flex-col">
-                        <label for="property_status" class="capitalize font-bold text-lg mb-3">property status</label>
-                        <select v-model="form.property_status" name="property status" id="proptery-status">
+                        <label for="property_status" class="capitalize font-bold text-lg mb-3">property
+                            status</label>
+                        <select v-model="form.property_status" name="property status" id="proptery-status"
+                            class="rounded-md">
                             <option disabled> Choose property status</option>
                             <option value="rent">For Rent</option>
                             <option value="sale">For Sale</option>
                         </select>
                     </div>
-                    <p v-if="form.errors.property_status" class="text-red-500">
-                        Please select a proprety status.
-                    </p>
                     <div class="flex flex-col">
-                        <label for="price_per_month" class="capitalize font-bold text-lg mb-3">price per month</label>
+                        <label for="price_per_month" class="capitalize font-bold text-lg mb-3">price per
+                            month</label>
                         <div class="relative">
                             <input v-model="form.price" type="text" name="listing price" id="price_per_month"
-                                placeholder="Enter the price per month" class="px-14 w-full">
+                                placeholder="Enter the price per month" class="px-14 w-full rounded-md"
+                                :class="[formErrors.priceError ? 'border-red-500' : '']">
                             <span class="font-bold absolute left-2 top-1/2 text-secondary -translate-y-1/2">FCFA</span>
                         </div>
-                        <p v-if="form.errors.title" class="text-red-500">
+                        <p v-if="formErrors.priceError" class="text-red-500">
                             Please enter a valid price.
                         </p>
                     </div>
                     <div class="flex flex-col">
-                        <label for="property_location" class="capitalize font-bold text-lg mb-3">property location</label>
+                        <label for="property_location" class="capitalize font-bold text-lg mb-3">property
+                            location</label>
                         <input v-model="form.location" type="text" name="location location" id="property_location"
-                            placeholder="Enter the property location">
+                            placeholder="Enter the property location" class="rounded-md"
+                            :class="[formErrors.locationError ? 'border-red-500' : '']">
                     </div>
-                    <p v-if="form.errors.title" class="text-red-500">
+                    <p v-if="formErrors.locationError" class="text-red-500">
                         Please enter a valid location.
+                    </p>
+                    <div class="flex flex-col">
+                        <label for="property_type" class="capitalize font-bold text-lg mb-3">property
+                            type</label>
+                        <select v-model="form.property_type" name="property type" id="proptery-type" class="rounded-md"
+                            :class="[formErrors.propertyTypeError ? 'border-red-500' : '']">
+                            <option disabled> Choose property type</option>
+                            <option value="rent">Room</option>
+                            <option value="sale">Studio</option>
+                            <option value="sale">Appartment</option>
+                            <option value="sale">Duplex</option>
+                        </select>
+                    </div>
+                    <p v-if="formErrors.propertyTypeError" class="text-red-500">
+                        Please chose a property type
                     </p>
                     <div class="flex flex-col">
                         <label for="property_description" class="capitalize font-bold text-lg mb-3">property
                             description</label>
-                        <textarea v-model="form.description" name="property_description" id="" cols="30"
-                            rows="10"></textarea>
+                        <textarea v-model="form.description" name="property_description" id="" cols="30" rows="10"
+                            class="rounded-md" :class="[formErrors.descriptionError ? 'border-red-500' : '']"></textarea>
                     </div>
-                    <p v-if="form.errors.title" class="text-red-500">
+                    <p v-if="formErrors.descriptionError" class="text-red-500">
                         Please enter a description.
                     </p>
                     <button type="submit" class="bg-accent py-3 px-6 text-white" :class="{ 'opacity-25': form.processing }"
@@ -157,61 +279,87 @@ onMounted(() => {
                 </div>
             </form>
         </div>
-        <div class="w-full h-[90vh] m-auto overflow-hidden bg-white shadow col-start-2 col-end-3 p-4 pb-11">
-
-            <h2 class="font-bold">Preview</h2>
-            <div class="lg:grid lg:grid-cols-[60%_40%] h-full w-full border rounded-md">
-                <div class="relative w-full h-full overflow-hidden"
-                    :class="[imgSrc.length > 0 ? 'bg-black' : 'bg-gray-200']">
-                    <div v-if="imgSrc.length > 0">
-                        <img :src="imgSrc[0]" alt="" class="max-w-sm h-5/6 object-cover mx-auto">
-                        <button type="button" title="click to get previous image"
-                            class="w-12 aspect-square rounded-full bg-white absolute left-4 top-1/2 -translate-y-1/2">
-                            <span>
-                                <i class="fas fa-chevron-left"></i>
-                            </span>
-                        </button>
-                        <button type="button" title="click to get next image"
-                            class="w-12 aspect-square rounded-full bg-white absolute right-4 top-1/2 -translate-y-1/2">
-                            <span>
-                                <i class="fas fa-chevron-right"></i>
-                            </span>
-                        </button>
-                        <div
-                            class="absolute flex gap-2 overflow-x-auto overflow-y-hidden py-1 mx-auto bottom-2 z-10 bg-[rgba(255,_255,_255,_0.1)] justify-center w-full h-16">
+        <div class="lg:col-start-2 lg:col-end-3">
+            <div class="w-full lg:h-[90vh] m-auto overflow-hidden bg-white shadow rounded-md  p-4 pb-11">
+                <div v-if="user === null" class=" text-red-500 text center bg-white p-4">
+                    <p class="text-center">
+                        You need to be an authenticated user to
+                        publish a
+                        listing!
+                    </p>
+                </div>
+                <h2 class="font-bold py-2 text-lg">Preview</h2>
+                <div class="grid lg:grid-cols-[60%_40%] grid-cols-1 h-full w-full border rounded-md">
+                    <div class="relative w-full h-[90%] overflow-hidden"
+                        :class="[imgSrc.length > 0 ? 'bg-black' : 'bg-gray-200']">
+                        <div v-if="imgSrc.length > 0">
                             <template v-for="(item, index) in imgSrc">
-                                <img v-if="index > 0" :src="item" alt="" class="w-20 aspect-square object-cover">
+                                <img v-if="index === currentIndex" :src="item" alt=""
+                                    class="max-w-sm h-5/6 object-cover mx-auto">
                             </template>
+                            <button @click="prevPic" type="button" title="click to get previous image"
+                                class="w-12 aspect-square rounded-full bg-white absolute left-4 top-1/2 -translate-y-1/2">
+                                <span>
+                                    <i class="fas fa-chevron-left"></i>
+                                </span>
+                            </button>
+                            <button @click="nextPic" type="button" title="click to get next image"
+                                class="w-12 aspect-square rounded-full bg-white absolute right-4 top-1/2 -translate-y-1/2">
+                                <span>
+                                    <i class="fas fa-chevron-right"></i>
+                                </span>
+                            </button>
+                            <div
+                                class="absolute flex gap-2 overflow-x-auto overflow-y-hidden py-1 mx-auto bottom-2 z-10 bg-[rgba(255,_255,_255,_0.1)] justify-center w-full h-16">
+                                <template v-for="(item, index) in imgSrc">
+                                    <img @click="currentIndex = index" :src="item" alt=""
+                                        class="w-20 aspect-square object-cover cursor-pointer"
+                                        :class="[index === currentIndex ? 'border-2 border-blue-500' : '']">
+                                </template>
+                            </div>
+                        </div>
+                        <div v-else class="flex flex-col text-gray-500 py-8 justify-center h-full items-center ">
+                            <h2 class="font-bold text-xl capitalize mb-2">
+                                your listing preview
+                            </h2>
+                            <p class="w-4/6 mx-auto text-center">
+                                As you create your listing, you can preview it how it is going to appear.
+                            </p>
                         </div>
                     </div>
-                    <div v-else class="flex flex-col text-gray-500 justify-center h-full items-center ">
-                        <h2 class="font-bold text-xl capitalize mb-2">
-                            your listing preview
+                    <div class="p-8 overflow-y-auto">
+                        <div>
+                            <h2 v-if="form.title.length > 0" class="font-bold text-2xl mb-1">
+                                {{ form.title }}
+                            </h2>
+                            <h2 v-else class="font-bold text-2xl mb-1">
+                                Title
+                            </h2>
+                        </div>
+                        <div>
+                            <p v-if="form.price.length > 0" class="text-sm">
+                                <span class="font-bold mr-2">FCFA</span>
+                                <span>{{ form.price }}</span>
+                                <span>/month</span>
+                            </p>
+                            <p v-else class="font-bold mb-3">price/month</p>
+                        </div>
+
+                        <hr class="w-full h-0.5 bg-slate-300 my-4">
+                        <div class="pb-16">
+                            <p class="font-bold text-lg mb-1">Property location</p>
+                            <p class="text-sm">{{ form.location }}</p>
+                        </div>
+                        <hr class="w-full h-0.5 bg-slate-300 my-4">
+                        <h2 class="font-bold text-lg mb-4">
+                            Property Description
                         </h2>
-                        <p class="w-4/6 mx-auto text-center">
-                            As you create your listing, you can preview it how it is going to appear.
-                        </p>
+                        <p>{{ form.description }}</p>
                     </div>
                 </div>
-                <div class="p-8 overflow-y-auto">
-                    <h2 class="font-bold text-xl mb-3">
-                        Title
-                    </h2>
-                    <p class="font-bold">price/month</p>
-                    <hr class="w-full h-0.5 bg-slate-300 my-4">
-                    <p class="font-bold pb-16">Property location</p>
-                    <hr class="w-full h-0.5 bg-slate-300 my-4">
-                    <h2 class="font-bold text-lg">
-                        Property Description
-                    </h2>
 
-                </div>
             </div>
-
         </div>
-        <h2 v-if="user === null" class="text-red-500 text center absolute top-2 left-1/2 -translate-x-1/2">
-            You need to be an authenticated user to
-            publish a
-            listing!</h2>
+
     </section>
 </template>
