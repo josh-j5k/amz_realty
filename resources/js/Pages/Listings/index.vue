@@ -101,7 +101,7 @@ onUnmounted(() => {
     <AppLayout>
         <section class="min-h-screen w-screen overflow-x-hidden relative bg-gray-200"
             :class="[sidebarToggled ? 'sidebar' : '']">
-            <div class="grid lg:grid-cols-[30%_70%] grid-cols-1 gap-4 pb-8">
+            <div class="grid lg:grid-cols-[30%_70%] grid-cols-1 gap-4">
                 <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen  w-5/6 shadow-md bg-white px-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
                     :class="[sidebarToggled ? '-lg:translate-x-0' : '-lg:-translate-x-full']">
                     <div class="">
@@ -195,7 +195,7 @@ onUnmounted(() => {
 
                 </div>
 
-                <div class="lg:col-start-2 lg:col-end-3">
+                <div class="lg:col-start-2 lg:col-end-3 -md:pb-8 pb-52">
                     <div class="w-full md:w-5/6 mx-auto bg-white mt-8 p-4">
                         <div class="flex relative -md:justify-end items-center"
                             :class="[appliedFilter ? 'justify-between' : 'justify-end']">

@@ -3,10 +3,24 @@ import { ref, computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { usePage } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 const page = usePage()
 const user = computed(() => page.props.auth.user)
+const userName = ref('')
 const toggled = ref(false)
+const dropdownToggled = ref(false)
+if (user.value) {
+    userName.value = user.value.name.slice(0, 10)
+}
+onMounted(() => {
+    document.documentElement.addEventListener('click', (ev: MouseEvent) => {
+        const element = ev.target as HTMLElement
+        if (dropdownToggled.value === true && !element.closest('#dashboard_dropdown-toggle')) {
+            dropdownToggled.value = false
 
+        }
+    })
+})
 </script>
 
 <template>
@@ -17,41 +31,36 @@ const toggled = ref(false)
             <button id="nav-toggle" type="button" @click="toggled = !toggled" class="md:hidden z-[990] relative "
                 :class="toggled ? 'text-white' : 'text-black'" title="nav toggle" aria-controls="primary-nav"
                 :aria-expanded="toggled" aria-haspopup="true">
-                <span :class="toggled ? 'opacity-0' : 'opacity-100'"><i
-                        class="fas fa-bars fa-2xl text-secondary"></i></span>
+                <span :class="toggled ? 'opacity-0' : 'opacity-100'"><i class="fas fa-bars fa-2xl"
+                        :class="[route().current('Home') ? 'text-accent' : 'text-secondary']"></i></span>
                 <span :class="toggled ? 'opacity-100' : 'opacity-0'"><i class="fas fa-xmark fa-xl"></i></span>
             </button>
             <div
                 class="md:items-center -md:fixed inset-y-0 right-6 left-0 -md:bg-black flex md:justify-between -md:text-white transition-transform duration-500 -md:flex-col -md:p-4 -md:-translate-x-full">
-                <nav id="primary-nav" class="flex gap-4 h-full -md:flex-col -md:justify-center -md:items-center">
+                <nav id="primary-nav" class="flex gap-4 h-full -md:flex-col -md:justify-center -md:items-center text-sm">
                     <Link class="font-bold" :href="route('Home')" :active="route().current('Home')">
                     Home
                     </Link>
                     <Link :href="route('listings.index')" :active="route().current('Home')">
                     Listings
                     </Link>
-                    <Link :href="route('Home')" :active="route().current('Home')">
-                    Home
+                    <a href="#">
+                        New Homes
+                    </a>
+                    <a href="#">
+                        Commercial
+                    </a>
+                    <Link :href="route('Contact')" :active="route().current('Contact')">
+                    Contact Us
                     </Link>
-                    <Link :href="route('Home')" :active="route().current('Home')">
-                    Home
-                    </Link>
-                    <Link :href="route('Home')" :active="route().current('Home')">
-                    Home
+                    <Link :href="route('About')" :active="route().current('About')">
+                    About Us
                     </Link>
                 </nav>
-                <div class="flex gap-4">
-                    <button v-if="!user" type="button" title="login/register" @click="router.get(route('login'))"
-                        class="flex gap-2 px-4 py-2">
-                        <span>
-                            <i class="fas fa-user"></i>
-                        </span>
-                        <span>
-                            Register/Login
-                        </span>
-                    </button>
+                <div class="flex gap-6">
+
                     <button type="button" title="New listing" @click=" router.get('listings/create')"
-                        class="text-white hover:bg-accent-hover bg-accent flex gap-2 px-3 py-2 rounded-md">
+                        class="text-white hover:bg-accent-hover bg-accent flex items-center gap-2 px-3 py-1.5 rounded-md text-sm">
                         <span>
                             <i class="fas fa-circle-plus"></i>
                         </span>
@@ -59,11 +68,53 @@ const toggled = ref(false)
                             new listing
                         </span>
                     </button>
+                    <div class="flex items-center">
+                        <button v-if="!user" type="button" title="login/register" @click="router.get(route('login'))"
+                            class="flex gap-2 px-4 py-2 text-sm">
+                            <span>
+                                <i class="fa-regular fa-user"></i>
+                            </span>
+                            <span>
+                                Register/Login
+                            </span>
+                        </button>
+
+                        <button @click="dropdownToggled = !dropdownToggled" id="dashboard_dropdown-toggle" v-else
+                            type="button" class="flex gap-2.5 items-center dashboard_dropdown-toggle">
+                            <span v-if="user.avatar" id="avatar">
+                                <img :src="user.avatar" alt="user avatar" class="w-8 aspect-square rounded-full">
+                            </span>
+                            <span id="avatar" v-else
+                                class="w-8 aspect-square flex justify-center items-center bg-slate-900 rounded-full text-white border border-accent">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span id="user_name">
+                                {{ userName }}
+                            </span>
+                            <span id="dropdown-icon" class="text-sm">
+                                <i class="fas fa-caret-down"></i>
+                            </span>
+                        </button>
+
+                    </div>
                 </div>
             </div>
         </div>
-
+        <hr class="w-[80%] h-[1px] mx-auto bg-white opacity-20 mt-4 -lg:hidden"
+            :class="[route().current('Home') ? '' : 'hidden']">
     </header>
+    <div class="absolute bg-white shadow py-4 px-8 z-50 top-20 right-4  flex-col items-start gap-2 transition-opacity duration-500 ease-in-out"
+        id="dashboard_dropdown " :class="[dropdownToggled ? 'flex opacity-100' : 'hidden opacity-0']">
+        <Link :href="route('dashboard')" class="capitalize">
+        dashboard
+        </Link>
+        <Link :href="route('profile.edit')" class="capitalize">
+        profile
+        </Link>
+        <Link method="post" as="button" :href="route('logout')" class="capitalize">
+        logout
+        </Link>
+    </div>
 </template>
 
 <style scoped>

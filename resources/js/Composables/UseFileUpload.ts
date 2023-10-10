@@ -69,21 +69,6 @@ export function useFileUpload() {
             imgSrc.value = [...imgSrc.value, src.value]
 
         };
-        // for (let index = 0; index < filesArr.value.length; index++) {
-        //     const file = filesArr.value[index];
-        //     const src = ref('')
-        //     if (!file.type.startsWith("image/")) {
-        //         continue;
-        //     }
-        //     const reader = new FileReader();
-        //     reader.readAsDataURL(file);
-
-        //     reader.onload = (e: any) => {
-        //         src.value = e.target.result;
-        //         imgSrc.value = [...imgSrc.value, src.value]
-
-        //     };
-        // }
     }
 
     return {

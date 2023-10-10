@@ -33,6 +33,9 @@ Route::get('/', function () {
 Route::get('/contact', function () {
     return Inertia::render('Contact');
 })->name('Contact');
+Route::get('/about-us', function () {
+    return Inertia::render('About');
+})->name('About');
 
 Route::prefix('listings')->group(function () {
     Route::name('listings.')->group(function () {
