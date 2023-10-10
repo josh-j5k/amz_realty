@@ -108,7 +108,7 @@ function validation() {
 
 function valid(): boolean {
     validation()
-    if (formValid.value.description === true && formValid.value.file === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true) {
+    if (formValid.value.description === true && formValid.value.file === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true && formValid.value.property_type === true) {
         return true
     } else {
         setTimeout(() => {
@@ -135,10 +135,7 @@ function submit() {
                 form.reset()
                 filesArr.value = <File[]>[]
                 imgSrc.value = <string[]>[]
-                const input = document.getElementById('file_upload') as HTMLInputElement
 
-                input.files = <FileList>{}
-                console.log(input.files);
             }
         })
     }
@@ -254,10 +251,10 @@ onMounted(() => {
                         <select v-model="form.property_type" name="property type" id="proptery-type" class="rounded-md"
                             :class="[formErrors.propertyTypeError ? 'border-red-500' : '']">
                             <option disabled> Choose property type</option>
-                            <option value="rent">Room</option>
-                            <option value="sale">Studio</option>
-                            <option value="sale">Appartment</option>
-                            <option value="sale">Duplex</option>
+                            <option value="room">Room</option>
+                            <option value="studio">Studio</option>
+                            <option value="appartment">Appartment</option>
+                            <option value="duplex">Duplex</option>
                         </select>
                     </div>
                     <p v-if="formErrors.propertyTypeError" class="text-red-500">

@@ -40,6 +40,7 @@ class AuthenticatedWithSocialsController extends Controller
 
                 'name' => $socialiteUser->getName(),
                 'email' => $socialiteUser->getEmail(),
+                'avatar' => $socialiteUser->getAvatar(),
                 'provider_id' => $socialiteUser->getId(),
                 'provider' => $provider
 

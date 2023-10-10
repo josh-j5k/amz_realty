@@ -22,9 +22,8 @@ class Listing extends Model
         'description'
     ];
 
-    public function scopeFilter($query, array $filters)
+    public function scopeFilter($query, $filters)
     {
-
         if (is_null($filters['location']) === false) {
             $query->where('location', 'like', '%' . $filters['location'] . '%');
         }
@@ -36,12 +35,12 @@ class Listing extends Model
                 $query->where('property_type', 'like', '%' . $value . '%');
             }
         }
-        if ($filters['price']['min'] !== '' && $filters['price']['min'] === '') {
+        if ($filters['price']['min'] !== ''  && $filters['price']['max'] === '') {
             $query->where('price', '>=',  $filters['price']['min']);
-        } elseif ($filters['price']['min'] !== '' && $filters['price']['min'] === '') {
-            $query->where('price', '<=',  $filters['price']['min']);
-        } else {
-            $query->where('price', 'between', [$filters['price']['min'], $filters['price']['min']]);
+        } elseif ($filters['price']['min'] === '' && $filters['price']['max'] !== '') {
+            $query->where('price', '<=',  $filters['price']['max']);
+        } elseif ($filters['price']['min'] !== ''  && $filters['price']['max'] !== '') {
+            $query->whereBetween('price', [$filters['price']['min'], $filters['price']['max']]);
         }
     }
     public function listingImage(): HasMany

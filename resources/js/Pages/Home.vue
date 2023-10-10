@@ -222,9 +222,9 @@ onMounted(() => {
                 </div>
             </div>
         </section>
-        <section class="min-h-screen p-12">
-            <div class="md:w-5/6 mx-auto grid grid-cols-1 md:grid-cols-4 gap-3 ">
-                <Card class="p-8 w-full bg-slate-100">
+        <section class="min-h-screen p-12 bg-slate-100">
+            <div class="md:w-5/6 mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 ">
+                <Card class="p-8 w-full bg-white">
                     <h3 class="mb-6 text-2xl font-bold">
                         Help me choose
                     </h3>
@@ -233,7 +233,7 @@ onMounted(() => {
                         tailor-made property listings.
                     </p>
                 </Card>
-                <Card class="p-8 w-full bg-slate-100">
+                <Card class="p-8 w-full bg-blue-900 text-white">
                     <h3 class="mb-6 text-2xl font-bold">
                         Introducing wish list
                     </h3>
@@ -243,7 +243,7 @@ onMounted(() => {
                         that simple.
                     </p>
                 </Card>
-                <Card class="p-8 w-full bg-slate-100">
+                <Card class="p-8 w-full bg-secondary text-white">
                     <h3 class="mb-6 text-2xl font-bold">
                         Travel Time Search
                     </h3>
@@ -252,7 +252,7 @@ onMounted(() => {
                         your dream property in the right location.
                     </p>
                 </Card>
-                <Card class="p-8 w-full bg-slate-100">
+                <Card class="p-8 w-full bg-slate-900 text-white">
                     <h3 class="mb-6 text-2xl font-bold">
                         Instant Valuation
                     </h3>
