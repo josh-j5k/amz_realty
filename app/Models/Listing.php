@@ -10,8 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Listing extends Model
 {
-    use HasFactory;
-    use HasUlids;
+    use HasFactory, HasUlids;
     protected $fillable = [
         'title',
         'user_id',
