@@ -105,15 +105,20 @@ onMounted(() => {
     </header>
     <div class="absolute bg-white shadow py-4 px-8 z-50 top-20 right-4  flex-col items-start gap-2 transition-opacity duration-500 ease-in-out"
         id="dashboard_dropdown " :class="[dropdownToggled ? 'flex opacity-100' : 'hidden opacity-0']">
-        <Link v-if="$page.props.auth.user" :href="route('dashboard', $page.props.auth.user.id)" class="capitalize">
-        dashboard
-        </Link>
-        <Link v-else :href="route('login')" class="capitalize">
-        dashboard
-        </Link>
-        <Link :href="route('profile.edit')" class="capitalize">
-        profile
-        </Link>
+        <span v-if="$page.props.auth.user">
+            <Link :href="route('dashboard', $page.props.auth.user.id)" class="capitalize">
+            dashboard
+            </Link>
+            <Link :href="route('user.profile.edit', $page.props.auth.user.id)" class="capitalize">
+            profile
+            </Link>
+        </span>
+        <!-- <span v-else>
+            <Link :href="route('login')" class="capitalize">
+            dashboard
+            </Link>
+        </span> -->
+
         <Link method="post" as="button" :href="route('logout')" class="capitalize">
         logout
         </Link>

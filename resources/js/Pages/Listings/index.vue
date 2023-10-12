@@ -4,13 +4,14 @@ import { Head, router } from '@inertiajs/vue3';
 import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
-import { Query } from '@/types/listings'
+import { Query, Listing } from '@/types/listings'
+import Card from '@/Components/Card.vue';
 import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 
 
 const props = defineProps<{
     query: Query,
-    listings: object
+    listings: Listing
 }>()
 const { usePlaces, inputValue } = useGoogleMaps()
 const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
@@ -76,6 +77,7 @@ function removeFilter(e: any) {
 
 
 }
+
 console.log(props.listings);
 
 onMounted(() => {
@@ -263,12 +265,30 @@ onUnmounted(() => {
 
                     <div class="px-8 mt-8 grid transition-all w-[90%] mx-auto grid-cols-1  gap-3"
                         :class="[activeGrid === 'grid' ? 'grid-cols-3 -md:grid-cols-1' : 'grid-cols-2 -md:grid-cols-1']">
-                        <template v-for="cards in 24">
+                        <template v-for="(listing, index) in props.listings">
+                            <Card class="bg-white">
+                                <div>
+                                    <img v-if="listing.listing_image?.listing_id" :src="listing.listing_image.listing_image"
+                                        alt="">
+                                    <img v-else src="/images/no_image_placeholder.jpg" alt="">
+                                </div>
+                                <div class="p-4">
+                                    <p class="font-bold text-lg">
+                                        {{ listing.price }}
+                                    </p>
+                                    <p>
+                                        {{ listing.description.slice(0, 20) }}
+                                    </p>
+                                    <p>{{ listing.location }}</p>
+                                </div>
+                            </Card>
+                        </template>
+                        <!-- <template v-for="cards in 24">
                             <div class="w-full h-80 bg-slate-300 shadow">
                                 <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
                                 <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
                             </div>
-                        </template>
+                        </template> -->
                     </div>
                 </div>
             </div>

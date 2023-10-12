@@ -1,20 +1,12 @@
 <script setup lang="ts">
-import { router } from '@inertiajs/vue3';
-const props = defineProps({
-    testUser: Object
-})
-console.log(props.testUser);
+import CloseButton from '@/Components/CloseButton.vue';
+
 
 </script>
 
 <template>
     <section class="md:h-screen min-h-screen w-screen overflow-x-hidden">
-        <button @click="router.get(route('listings.index'))" type="button" title="close"
-            class="absolute top-6 left-4 w-8 aspect-square text-white bg-slate-700 rounded-full z-20">
-            <span>
-                <i class="fas fa-xmark"></i>
-            </span>
-        </button>
+        <CloseButton route-name="listings.index" position="top-8 left-8" />
         <div class="grid lg:grid-cols-[75%_25%] grid-cols-1">
             <div class="min-h-screen relative flex justify-center items-center bg-slate-500">
                 <img src="" alt="">
