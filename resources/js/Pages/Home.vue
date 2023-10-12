@@ -59,11 +59,11 @@ onMounted(() => {
     <Head>
     </Head>
     <AppLayout>
-        <section class="relative h-screen w-screen isolate flex flex-col items-center justify-center px-2">
+        <section class="relative h-screen w-full isolate flex flex-col items-center justify-center px-2">
             <div
-                class="w-screen h-screen absolute inset-0 -z-10 before:content-[''] before:absolute before:inset-0 before:bg-bg-black-opacity-50 before:w-full before:h-full">
+                class="w-full h-screen absolute inset-0 -z-10 before:content-[''] before:absolute before:inset-0 before:bg-bg-black-opacity-50 before:w-full before:h-full">
                 <img src="images/house-with-balcony-sky-background.jpg" alt="background-img"
-                    class="w-screen h-screen object-cover">
+                    class="w-full h-screen object-cover">
             </div>
             <h2 class="md:text-5xl text-4xl text-white font-bold max-w-2xl text-center mb-12">Lets find a home that is
                 perfect for you
@@ -135,7 +135,7 @@ onMounted(() => {
                 <p v-if="formError" class="text-red-500 capitalize text-center font-bold">please fill all fields</p>
             </form>
         </section>
-        <section class="py-8 w-screen min-h-screen grid">
+        <section class="py-8 w-full min-h-screen grid">
             <div class="grid md:grid-cols-2 grid-cols w-5/6 gap-4 mx-auto items-center">
                 <div>
                     <h2 class="font-bold text-3xl mb-6">When are you looking to market your property?</h2>

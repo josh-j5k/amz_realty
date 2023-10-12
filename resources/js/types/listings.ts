@@ -8,7 +8,7 @@ export type Query = {
     property_type: string[]
 }
 
-type ListingData = {
+export type ListingData = {
     description: string,
     id: string,
     location: string,

@@ -127,10 +127,12 @@ class ListingController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Listing $listing)
     {
-
-        return Inertia::render('Listings/show');
+        $full_listing = Listing::with('listingImage')->find($listing->id);
+        return Inertia::render('Listings/show', [
+            'listing' => $full_listing
+        ]);
     }
 
     /**

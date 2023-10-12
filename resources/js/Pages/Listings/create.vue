@@ -167,7 +167,7 @@ onMounted(() => {
     </Head>
     <Header />
     <section
-        class="w-screen min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 pt-0 gap-4">
+        class="w-full min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 pt-0 gap-4">
 
 
 
@@ -337,7 +337,7 @@ onMounted(() => {
                             <p v-if="form.price.length > 0" class="text-sm">
                                 <span class="font-bold mr-2">FCFA</span>
                                 <span>{{ form.price }}</span>
-                                <span>/month</span>
+                                <span v-if="form.property_status === 'rent'">/month</span>
                             </p>
                             <p v-else class="font-bold mb-3">price/month</p>
                         </div>

@@ -24,7 +24,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <header class="h-24 w-screen flex flex-col justify-center md:px-16 px-8 overflow-x-hidden"
+    <header class="h-24 w-full flex flex-col justify-center md:px-16 px-8 overflow-x-hidden"
         :class="route().current('Home') ? 'absolute inset-0 bg-transparent z-50 text-white' : 'bg-white text-black relative z-50'">
         <div class=" md:grid grid-20-80 grid-cols-2 -md:flex -md:justify-between items-center">
             <ApplicationLogo width="50" />
