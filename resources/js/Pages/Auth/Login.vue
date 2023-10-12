@@ -6,12 +6,13 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import LoginWithSocials from '@/Components/LoginWithSocials.vue'
 import { Head, router, useForm, Link } from '@inertiajs/vue3';
+import CloseButton from '@/Components/CloseButton.vue';
+import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 
 defineProps<{
     canResetPassword?: boolean;
     status?: string;
 }>();
-
 const form = useForm({
     email: '',
     password: '',
@@ -29,7 +30,9 @@ const submit = () => {
 
 <template>
     <Head title="Log in" />
-    <div class="min-h-screen flex flex-col sm:justify-center items-center py-8 sm:pt-0 bg-gray-100">
+    <CloseButton route-name="Home" position="top-8 -md:top-8 -md:right-8 right-20" />
+    <!-- <ApplicationLogo class="w-16 absolute top-8 left-8" /> -->
+    <div class="min-h-screen flex flex-col sm:justify-center items-center py-8 sm:pt-0 bg-gray-100 -sm:pt-24">
         <div>
             <Link href="/">
             <ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />

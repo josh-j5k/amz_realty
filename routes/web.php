@@ -1,11 +1,14 @@
 <?php
 
-use App\Http\Controllers\HomeController;
+
+use Inertia\Inertia;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Foundation\Application;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
-use Illuminate\Foundation\Application;
-use Illuminate\Support\Facades\Route;
-use Inertia\Inertia;
+use App\Http\Controllers\DashboardController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -37,23 +40,31 @@ Route::get('/about-us', function () {
     return Inertia::render('About');
 })->name('About');
 
-Route::prefix('listings')->group(function () {
-    Route::name('listings.')->group(function () {
-        Route::get('/', [ListingController::class, 'index'])->name('index');
-        Route::get('/create', [ListingController::class, 'create'])->name('create');
-        Route::post('/', [ListingController::class, 'store'])->name('store');
-        Route::get('/{listing}', [ListingController::class, 'show'])->name('show');
+Route::prefix('listings')
+    ->controller(ListingController::class)->name('listings.')
+    ->group(function () {
+        Route::get('/',  'index')->name('index');
+        Route::get('/create', 'create')->name('create');
+        Route::post('/', 'store')->name('store');
+        Route::get('/{listing}', 'show')->name('show');
     });
-});
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+
+
+
+// Route::middleware('auth')->group(function () {
+//     Route::get('/au/{user_id}', [DashboardController::class, 'index'])->name('dashboard');
+//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+// });
+Route::middleware('auth')->prefix('au/{user_id}')->name('user.')
+    ->group(function () {
+        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    });
 
 require __DIR__ . '/auth.php';
