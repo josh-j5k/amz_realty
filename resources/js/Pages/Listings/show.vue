@@ -1,45 +1,72 @@
 <script setup lang="ts">
 import { ListingData } from '@/types/listings'
 import CloseButton from '@/Components/CloseButton.vue';
+import { Head } from '@inertiajs/vue3';
+import { ref } from 'vue';
+
 
 const props = defineProps<{
     listing: ListingData
 }>()
 
+const currentIndex = ref(0)
+function prevPic() {
+    currentIndex.value--
+    if (currentIndex.value < 0) {
+        currentIndex.value = props.listing.listing_image?.length - 1
+
+    }
+}
+function nextPic() {
+    currentIndex.value++
+    if (currentIndex.value > props.listing.listing_image?.length - 1) {
+        currentIndex.value = 0
+    }
+}
 console.log(props.listing);
 
 
 </script>
 
 <template>
+    <Head :title="listing.title" />
+
     <section class="md:h-screen min-h-screen w-full overflow-x-hidden">
         <CloseButton route-name="listings.index" position="top-8 left-8" />
         <div class="grid lg:grid-cols-[75%_25%] grid-cols-1">
             <div
                 class="min-h-screen isolate relative before:content-emptystring before:absolute before:w-full before:h-full before:inset-0 before:bg-[rgba(0,_0,_0,_0.2)] overflow-clip before:-z-10 flex justify-center items-center bg-slate-500">
                 <div class="w-full h-full absolute">
-                    <img v-if="listing.listing_image?.listing_id" :src="listing.listing_image.listing_image" alt="">
+                    <img v-if="listing.listing_image?.length !== 0"
+                        :src="listing?.listing_image[currentIndex].listing_image" alt=""
+                        class="w-full h-full object-cover absolute inset-0 blur-lg -z-20">
                     <img v-else src="/images/no_image_placeholder.jpg" alt=""
                         class="w-full h-full object-cover absolute inset-0 blur-lg -z-20">
                 </div>
                 <div>
-                    <img v-if="listing.listing_image?.listing_id" :src="listing.listing_image.listing_image" alt="">
+                    <img v-if="listing.listing_image?.length !== 0" :src="listing.listing_image[currentIndex].listing_image"
+                        alt="" class="max-w-lg">
                     <img v-else src="/images/no_image_placeholder.jpg" alt="" class="max-w-lg">
                 </div>
-                <button type="button" title="click to get previous image"
+                <button @click="prevPic" type="button" title="click to get previous image"
                     class="w-12 aspect-square rounded-full bg-white absolute left-4 top-1/2 -translate-y-1/2">
                     <span>
                         <i class="fas fa-chevron-left"></i>
                     </span>
                 </button>
-                <button type="button" title="click to get next image"
+                <button @click="nextPic" type="button" title="click to get next image"
                     class="w-12 aspect-square rounded-full bg-white absolute right-4 top-1/2 -translate-y-1/2">
                     <span>
                         <i class="fas fa-chevron-right"></i>
                     </span>
                 </button>
-                <div class="absolute bottom-0 ">
-
+                <div v-if="listing.listing_image.length > 0"
+                    class="absolute flex gap-2 overflow-x-auto overflow-y-hidden py-1 mx-auto bottom-2 z-10 bg-[rgba(255,_255,_255,_0.1)] justify-center w-full h-16">
+                    <template v-for="(item, index) in listing.listing_image">
+                        <img @click="currentIndex = index" :src="item.listing_image" alt=""
+                            class="w-20 aspect-square object-cover cursor-pointer"
+                            :class="[index === currentIndex ? 'border-2 border-blue-500' : '']">
+                    </template>
                 </div>
             </div>
             <div class="bg-white py-12 px-8 shadow md:h-screen overflow-y-auto">

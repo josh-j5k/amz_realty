@@ -106,6 +106,7 @@ onUnmounted(() => {
         }
     }
 })
+console.log(props.listings);
 
 </script>
 
@@ -275,13 +276,13 @@ onUnmounted(() => {
                     </div>
 
                     <div class="mt-8 grid transition-all w-full  grid-cols-1 gap-3"
-                        :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-1' : 'grid-cols-2 -md:grid-cols-1']">
+                        :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2' : '']">
                         <template v-for="(listing, index) in listings">
                             <Link :href="(route('listings.show', listing.id))">
                             <Card class="bg-white relative">
                                 <div>
-                                    <img v-if="listing.listing_image?.listing_id" :src="listing.listing_image.listing_image"
-                                        alt="">
+                                    <img v-if="listing.listing_image?.length !== 0"
+                                        :src="listing.listing_image[0].listing_image" alt="">
                                     <img v-else src="/images/no_image_placeholder.jpg" alt="">
                                 </div>
                                 <div class="p-4">

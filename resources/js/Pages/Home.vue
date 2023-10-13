@@ -61,7 +61,7 @@ onMounted(() => {
     <AppLayout>
         <section class="relative h-screen w-full isolate flex flex-col items-center justify-center px-2">
             <div
-                class="w-full h-screen absolute inset-0 -z-10 before:content-[''] before:absolute before:inset-0 before:bg-bg-black-opacity-50 before:w-full before:h-full">
+                class="w-full h-screen absolute inset-0 -z-10 before:content-emptystring before:absolute before:inset-0 before:bg-black-opacity-50 before:w-full before:h-full">
                 <img src="images/house-with-balcony-sky-background.jpg" alt="background-img"
                     class="w-full h-screen object-cover">
             </div>
