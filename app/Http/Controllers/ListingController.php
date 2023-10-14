@@ -51,8 +51,7 @@ class ListingController extends Controller
 
         // $user_data = User::find($request->user()->id)->with('listing');
 
-        $listings = Listing::with('listingImage')->latest()->filter($query)->get()->toArray();
-
+        $listings = Listing::with('listingImage')->latest()->filter($query)->get();
         return Inertia::render(
             'Listings/index',
             [

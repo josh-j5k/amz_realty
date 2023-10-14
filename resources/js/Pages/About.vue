@@ -1,3 +1,14 @@
+<script setup lang="ts">
+
+</script>
+
 <template>
-    <h1>hi</h1>
+    <section class="flex flex-col items-center justify-center w-screen h-screen">
+        <h1 class="capitalize font-bold">
+            Hello
+        </h1>
+
+    </section>
 </template>
+
+<style scoped></style>

@@ -106,7 +106,7 @@ onUnmounted(() => {
         }
     }
 })
-console.log(props.listings);
+
 
 </script>
 
@@ -275,15 +275,17 @@ console.log(props.listings);
                         </div>
                     </div>
 
-                    <div class="mt-8 grid transition-all w-full  grid-cols-1 gap-3"
-                        :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2' : '']">
+                    <div class="mt-8 grid transition-all -md:w-full  gap-3"
+                        :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 w-full' : 'grid-cols-1 ']">
                         <template v-for="(listing, index) in listings">
                             <Link :href="(route('listings.show', listing.id))">
-                            <Card class="bg-white relative">
+                            <Card class="bg-white relative" :class="[activeGrid === 'tiles' ? 'flex gap-4' : '']">
                                 <div>
                                     <img v-if="listing.listing_image?.length !== 0"
-                                        :src="listing.listing_image[0].listing_image" alt="">
-                                    <img v-else src="/images/no_image_placeholder.jpg" alt="">
+                                        :src="listing.listing_image[0].listing_image" alt=""
+                                        :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px] md:aspect-square -md:h-full object-cover' : '']">
+                                    <img v-else src="/images/no_image_placeholder.jpg" alt=""
+                                        :class="[activeGrid === 'tiles' ? 'max-w-[200px] md:aspect-square -md:h-full object-cover -md:max-w-[150px]' : '']">
                                 </div>
                                 <div class="p-4">
                                     <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
@@ -302,18 +304,35 @@ console.log(props.listings);
                                             </span>
                                         </span>
                                     </p>
-                                    <p class="font-bold mb-1">
-                                        {{ listing.title.slice(0, 35) }}
-                                    </p>
+                                    <div>
+                                        <p v-if="activeGrid === 'grid'" class="font-bold mb-1">
+                                            {{ listing.title.slice(0, 35) }}
+                                        </p>
+                                        <div v-else>
+                                            <p class="font-bold mb-1 -md:hidden">
+                                                {{ listing.title }}
+                                            </p>
+                                            <p class="font-bold mb-1 md:hidden">
+                                                {{ listing.title.slice(0, 35) }}
+                                            </p>
+                                        </div>
+                                    </div>
                                     <p class="text-sm opacity-75 mb-3 capitalize">
                                         {{ listing.property_type }}
                                     </p>
                                     <hr class="w-full h-[1px] bg-slate-100 mb-3">
-                                    <div class="flex gap-2 text-sm">
+                                    <div v-if="activeGrid === 'grid'" class="flex gap-2 text-sm">
                                         <span>
                                             <i class="fas fa-location-dot text-accent"></i>
                                         </span>
                                         <p>{{ listing.location.slice(0, 30) }}</p>
+                                    </div>
+                                    <div v-else class="flex gap-2 text-sm">
+                                        <span>
+                                            <i class="fas fa-location-dot text-accent"></i>
+                                        </span>
+                                        <p class="-md:hidden">{{ listing.location }}</p>
+                                        <p class="md:hidden">{{ listing.location.slice(0, 30) }}</p>
                                     </div>
                                 </div>
                                 <span

@@ -3,19 +3,38 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
+import { ref } from 'vue';
 import { Link, useForm, usePage } from '@inertiajs/vue3';
+import { useFileUpload } from '@/Composables/UseFileUpload'
+import Modal from '@/Components/Modal.vue';
+
 
 defineProps<{
     mustVerifyEmail?: Boolean;
     status?: String;
 }>();
-
+const show = ref(false)
+const closeable = ref(false)
 const user = usePage().props.auth.user;
-
+const { assignFiles, imgSrc, filesArr, fileTypeImage } = useFileUpload()
 const form = useForm({
     name: user.name,
     email: user.email,
+    avatar: user.avatar
 });
+function changeAvatar() {
+    document.getElementById('avatar').click()
+}
+function closeModal() {
+    show.value = false
+}
+function updateAvatar() {
+    show.value = true
+}
+onMounted(() => {
+    const input = <HTMLInputElement>document.getElementById('avatar')
+    assignFiles(input)
+})
 </script>
 
 <template>
@@ -46,6 +65,21 @@ const form = useForm({
 
                 <InputError class="mt-2" :message="form.errors.email" />
             </div>
+            <div>
+                <InputLabel for="avatar" value="Update Avatar" />
+                <div class="mt-3">
+                    <input hidden type="file" name="avatar" id="avatar">
+                    <div aria-labelledby="button" @click="updateAvatar"
+                        class="w-20 h-20 rounded-full bg-gray-200 cursor-pointer">
+                        <img v-if="user.avatar" :src="user.avatar" alt="avatar" class="w-20 h-20 rounded-full">
+                        <span v-else class="w-20 h-20 flex justify-center items-center">
+                            <i class="fas fa-user text-2xl"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <InputError class="mt-2" :message="form.errors.avatar" />
+            </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
                 <p class="text-sm mt-2 text-gray-800">
@@ -70,5 +104,43 @@ const form = useForm({
                 </Transition>
             </div>
         </form>
+        <Modal @close="closeModal" :show="show" max-width="lg" :closeable="closeable">
+            <div class="py-4">
+                <div class="flex px-8 justify-between">
+                    <h2>Avatar</h2>
+                    <button type="button" title="close modal" @click="closeModal"
+                        class="w-8 aspect-square bg-gray-200 rounded-full">
+                        <i class="fas fa-xmark"></i>
+                    </button>
+                </div>
+                <div class="flex justify-center mb-8">
+                    <img v-if="user.avatar" :src="user.avatar" alt="avatar" class="w-40 h-40 rounded-full">
+                    <span v-else class="w-40 h-40 rounded-full bg-slate-100 flex justify-center items-center">
+                        <i class="fas fa-user text-6xl"></i>
+                    </span>
+
+                </div>
+                <hr class="w-full h-[1px] bg-slate-300">
+                <div class="px-8 flex justify-between pt-4">
+                    <button @click="changeAvatar" type="button" title="change avatar"
+                        class="capitalize flex items-center flex-col">
+                        <span>
+                            <i class="fas fa-pencil"></i>
+                        </span>
+                        <span>
+                            change avatar
+                        </span>
+                    </button>
+                    <button type="button" title="remove avatars" class="capitalize items-center flex flex-col">
+                        <span>
+                            <i class="fas fa-trash-can"></i>
+                        </span>
+                        <span>
+                            delete
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </Modal>
     </section>
 </template>

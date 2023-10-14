@@ -151,27 +151,29 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-    #nav-toggle {
-        transition: transform 100ms ease-in;
-    }
+    @media (max-width: 1023px) {
+        #nav-toggle {
+            transition: transform 100ms ease-in;
+        }
 
-    #nav-toggle[aria-expanded="false"] {
-        transform: translateX(0);
-    }
+        #nav-toggle[aria-expanded="false"] {
+            transform: translateX(0);
+        }
 
-    #nav-toggle[aria-expanded="true"] {
-        transform: translateX(-20px);
-    }
+        #nav-toggle[aria-expanded="true"] {
+            transform: translateX(-20px);
+        }
 
-    #nav-toggle~div {
-        transition: transform 300ms ease-in;
-    }
+        #nav-toggle~div {
+            transition: transform 300ms ease-in;
+        }
 
-    #nav-toggle[aria-expanded="false"]~div {
-        transform: translateX(100%);
-    }
+        #nav-toggle[aria-expanded="false"]~div {
+            transform: translateX(100%);
+        }
 
-    #nav-toggle[aria-expanded="true"]~div {
-        transform: translateX(0);
+        #nav-toggle[aria-expanded="true"]~div {
+            transform: translateX(0);
+        }
     }
 </style>
