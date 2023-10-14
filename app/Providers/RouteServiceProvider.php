@@ -11,6 +11,16 @@ use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvi
 
 class RouteServiceProvider extends ServiceProvider
 {
+
+    protected $user_id;
+    /**
+     * Set user id for the default auth route
+     */
+
+    public static function setUserId($id): void
+    {
+        self::$user_id = $id;
+    }
     /**
      * The path to your application's "home" route.
      *
@@ -18,9 +28,9 @@ class RouteServiceProvider extends ServiceProvider
      *
      * @var string
      */
+    public const HOME = 'au/{user_id}';
 
 
-    public const HOME = '/au/{user_id}';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.

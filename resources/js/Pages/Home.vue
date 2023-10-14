@@ -57,13 +57,14 @@ onMounted(() => {
 
 <template>
     <Head>
+        <title>House, properties to rent and for sale</title>
     </Head>
     <AppLayout>
-        <section class="relative h-screen w-screen isolate flex flex-col items-center justify-center px-2">
+        <section class="relative h-screen w-full isolate flex flex-col items-center justify-center px-2">
             <div
-                class="w-screen h-screen absolute inset-0 -z-10 before:content-[''] before:absolute before:inset-0 before:bg-bg-black-opacity-50 before:w-full before:h-full">
+                class="w-full h-screen absolute inset-0 -z-10 before:content-emptystring before:absolute before:inset-0 before:bg-black-opacity-50 before:w-full before:h-full">
                 <img src="images/house-with-balcony-sky-background.jpg" alt="background-img"
-                    class="w-screen h-screen object-cover">
+                    class="w-full h-screen object-cover">
             </div>
             <h2 class="md:text-5xl text-4xl text-white font-bold max-w-2xl text-center mb-12">Lets find a home that is
                 perfect for you
@@ -135,8 +136,8 @@ onMounted(() => {
                 <p v-if="formError" class="text-red-500 capitalize text-center font-bold">please fill all fields</p>
             </form>
         </section>
-        <section class="py-8 w-screen min-h-screen grid">
-            <div class="grid md:grid-cols-2 grid-cols w-5/6 gap-4 mx-auto items-center">
+        <section class="py-8 w-full lg:min-h-screen grid">
+            <div class="grid lg:grid-cols-2 grid-cols w-5/6 gap-4 mx-auto items-center">
                 <div>
                     <h2 class="font-bold text-3xl mb-6">When are you looking to market your property?</h2>
                     <p>
@@ -150,12 +151,12 @@ onMounted(() => {
                         instant
                         valuation</button>
                 </div>
-                <div class="-md:row-start-1 -md:row-end-1 -md:pt-16">
+                <div class="-lg:row-start-1 -lg:row-end-1 -lg:pt-16">
                     <img src="/images/high-view-hands-stationery-items.jpg" alt="house valuation" class="">
                 </div>
             </div>
         </section>
-        <section class="min-h-32 bg-secondary py-12 px-8 grid items-center text-white">
+        <section class="min-h-32 bg-secondary py-12 mb-8 px-8 grid items-center text-white">
             <div class="flex md:justify-between -md:flex-col -md:gap-6 w-5/6 mx-auto">
                 <h2 class="md:text-3xl text-2xl font-bold text-center">
                     Your property search just got easier
@@ -163,7 +164,7 @@ onMounted(() => {
                 <button type="button" class="border border-white capitalize p-2"> find a house</button>
             </div>
         </section>
-        <section class="p-8">
+        <section class="p-8 pt-12">
             <div class="md:w-5/6 w-full mx-auto md:bg-blue-100 rounded-lg">
                 <div class="flex md:justify-between -md:flex-col  md:px-16 py-8">
                     <h3 class="md:text-2xl text-xl font-bold text-center">
@@ -188,10 +189,10 @@ onMounted(() => {
                 </div>
             </div>
         </section>
-        <section class="min-h-screen p-12 mt-16">
-            <div class="grid md:grid-cols-2 grid-cols-1 items-center justify-center md:w-5/6 mx-auto gap-12">
+        <section class="lg:h-[90vh] p-12 mt-16">
+            <div class="grid lg:grid-cols-[40%_60%] grid-cols-1 items-center justify-center lg:w-5/6 mx-auto gap-8">
                 <div>
-                    <h2 class="md:text-3xl text-2xl font-bold mb-6">
+                    <h2 class="lg:text-3xl text-2xl font-bold mb-6">
                         Your property search just got easier
                     </h2>
                     <p class="mb-4">
@@ -207,22 +208,35 @@ onMounted(() => {
                     </span>
                     </Link>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 md:grid-rows-2 gap-2">
-                    <div class="w-full h-72 shadow">
-                        <SkeletonLoader class="w-full h-full mx-auto bg-slate-300" />
+                <div class="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 lg:gap-2 gap-6">
+                    <div class="w-full relative">
+                        <img src="/images/355280246_2871413009661347_7662648592867538430_n.jpg" alt="house interior"
+                            class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
+                        <span class="bg-secondary text-white py-1 px-2.5 rounded absolute top-12 -left-8">
+                            04:70:00
+                        </span>
                     </div>
-                    <div class=" w-full -md:h-72 md:row-start-1 md:row-end-3 md:col-start-2 md:col-end-3">
-                        <div class="grid items-end h-full w-full">
-                            <SkeletonLoader class="w-full md:h-1/2 h-full mx-auto bg-slate-300" />
+                    <div class=" w-full lg:row-start-1 lg:row-end-3 lg:col-start-2 lg:col-end-3">
+                        <div class="grid items-end h-full w-full relative">
+                            <img src="/images/385808252_849018929958297_1588544965478260459_n.jpg" alt="house exterior"
+                                class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
+                            <span
+                                class="bg-secondary text-white py-1 px-2.5 rounded absolute lg:bottom-1/3 -lgtop-12 -left-8">
+                                15:30:90
+                            </span>
                         </div>
                     </div>
-                    <div class="w-full h-72 bg-slate-300 shadow">
-                        <SkeletonLoader class="w-full h-8 mx-auto bg-slate-300" />
+                    <div class="w-full relative">
+                        <img src="/images/385909430_1003122750912505_3112270827831116516_n.jpg" alt="house interior"
+                            class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
+                        <span class="bg-secondary text-white py-1 px-2.5 rounded absolute top-12 -left-8">
+                            22:10:20
+                        </span>
                     </div>
                 </div>
             </div>
         </section>
-        <section class="min-h-screen p-12 bg-slate-100">
+        <section class="lg:min-h-screen p-12 bg-slate-100">
             <div class="md:w-5/6 mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 ">
                 <Card class="p-8 w-full bg-white">
                     <h3 class="mb-6 text-2xl font-bold">

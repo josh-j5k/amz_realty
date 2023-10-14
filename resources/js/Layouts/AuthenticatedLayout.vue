@@ -20,15 +20,15 @@ const showingNavigationDropdown = ref(false);
                         <div class="flex">
                             <!-- Logo -->
                             <div class="shrink-0 flex items-center">
-                                <Link :href="route('dashboard', $page.props.auth.user.id)">
+                                <Link :href="route('user.dashboard', $page.props.auth.user.id)">
                                 <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
                                 </Link>
                             </div>
 
                             <!-- Navigation Links -->
                             <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('dashboard', $page.props.auth.user.id)"
-                                    :active="route().current('dashboard')">
+                                <NavLink :href="route('user.dashboard', $page.props.auth.user.id)"
+                                    :active="route().current('user.dashboard')">
                                     Dashboard
                                 </NavLink>
                             </div>
@@ -94,8 +94,8 @@ const showingNavigationDropdown = ref(false);
                 <!-- Responsive Navigation Menu -->
                 <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
                     <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('dashboard', $page.props.auth.user.id)"
-                            :active="route().current('dashboard')">
+                        <ResponsiveNavLink :href="route('user.dashboard', $page.props.auth.user.id)"
+                            :active="route().current('user.dashboard')">
                             Dashboard
                         </ResponsiveNavLink>
                     </div>
@@ -110,7 +110,8 @@ const showingNavigationDropdown = ref(false);
                         </div>
 
                         <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('user.profile.edit')"> Profile </ResponsiveNavLink>
+                            <ResponsiveNavLink :href="route('user.profile.edit', $page.props.auth.user.id)"> Profile
+                            </ResponsiveNavLink>
                             <ResponsiveNavLink :href="route('logout')" method="post" as="button">
                                 Log Out
                             </ResponsiveNavLink>

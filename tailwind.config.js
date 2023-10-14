@@ -28,11 +28,11 @@ export default {
                 // => @media (max-width: 639px) { ... }
             },
             colors: {
-                accent: "#D93232",
-                "accent-hover": "#d84444",
-                secondary: "#412F3B",
-                "bg-black-opacity-50": "rgba(0, 0, 0, 0.5)",
-                "bg-black-opacity-80": "rgba(0, 0, 0, 0.8)",
+                accent: "#175fef",
+                "accent-hover": "#4072d6",
+                secondary: "#5f17ef",
+                "black-opacity-50": "rgba(0, 0, 0, 0.5)",
+                "black-opacity-80": "rgba(0, 0, 0, 0.8)",
                 "dark-blue": "#0c0c1f",
             },
             zIndex: {

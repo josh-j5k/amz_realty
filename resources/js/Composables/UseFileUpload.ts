@@ -3,6 +3,7 @@ export function useFileUpload() {
     const filesArr = ref(<File[]>[])
     const imgSrc = ref(<string[]>[])
     const total = ref(0)
+    const fileTypeImage = ref<boolean | null>(null)
     function updateFilesDisplayImages(fileInput: HTMLInputElement) {
         const newDt = new DataTransfer()
         filesArr.value.forEach(file => newDt.items.add(file))
@@ -16,6 +17,12 @@ export function useFileUpload() {
             if (inputTarget.files !== null) {
                 for (let index = 0; index < inputTarget.files.length; index++) {
                     const file = inputTarget.files[index] as File
+                    if (!file.type.startsWith("image/")) {
+                        fileTypeImage.value = false
+                        inputTarget.files = null
+                        return
+                    }
+                    fileTypeImage.value = true
                     handleFiles(file)
                     filesArr.value = [...filesArr.value, file]
                 }
@@ -41,6 +48,12 @@ export function useFileUpload() {
 
         for (let index = 0; index < dt.files.length; index++) {
             const file = dt.files[index] as File;
+            if (!file.type.startsWith("image/")) {
+                fileTypeImage.value = false
+                fileInput.files = null
+                return
+            }
+            fileTypeImage.value = true
             handleFiles(file)
             filesArr.value = [...filesArr.value, file];
         }
@@ -58,9 +71,6 @@ export function useFileUpload() {
     }
     function handleFiles(file: File) {
         const src = ref('')
-        if (!file.type.startsWith("image/")) {
-            return
-        }
         const reader = new FileReader();
         reader.readAsDataURL(file);
 
@@ -72,7 +82,7 @@ export function useFileUpload() {
     }
 
     return {
-        drop, dragenter, dragover, deleteFile, assignFiles, total, imgSrc, filesArr
+        drop, dragenter, dragover, deleteFile, assignFiles, total, imgSrc, filesArr, fileTypeImage
     }
 
 

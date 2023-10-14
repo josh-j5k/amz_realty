@@ -6,6 +6,7 @@ import { ref, onMounted, watch, computed } from 'vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps';
 import { useToast } from '@/Composables/UseToast'
 import Header from '../Partials/Header.vue';
+import { onUnmounted } from 'vue';
 const { toast } = useToast()
 const { drop, dragenter, dragover, assignFiles, total, imgSrc, deleteFile, filesArr } = useFileUpload()
 const formErrors = ref(
@@ -143,21 +144,25 @@ function submit() {
 
 onMounted(() => {
     const locationInput = document.getElementById('property_location') as HTMLInputElement
-
+    function dropEnter(ev: any) {
+        drop(ev, file_upload)
+    }
     const dropbox = document.getElementById('dropbox') as HTMLDivElement
     const file_upload = document.getElementById('file_upload') as HTMLInputElement
 
     assignFiles(file_upload,)
     dropbox.addEventListener("dragenter", dragenter, false);
     dropbox.addEventListener("dragover", dragover, false);
-    dropbox.addEventListener("drop", function (ev: any) {
-        drop(ev, file_upload)
-    }, false);
+    dropbox.addEventListener("drop", dropEnter, false);
 
     usePlaces(locationInput, locationInput.value)
 
 })
+onUnmounted(() => {
+    document.removeEventListener('dragenter', dragenter)
+    document.removeEventListener('dragover', dragover)
 
+})
 </script>
 
 
@@ -167,7 +172,7 @@ onMounted(() => {
     </Head>
     <Header />
     <section
-        class="w-screen min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 pt-0 gap-4">
+        class="w-full min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 pt-0 gap-4">
 
 
 
@@ -290,10 +295,7 @@ onMounted(() => {
                     <div class="relative w-full h-[90%] overflow-hidden"
                         :class="[imgSrc.length > 0 ? 'bg-black' : 'bg-gray-200']">
                         <div v-if="imgSrc.length > 0">
-                            <template v-for="(item, index) in imgSrc">
-                                <img v-if="index === currentIndex" :src="item" alt=""
-                                    class="max-w-sm h-5/6 object-cover mx-auto">
-                            </template>
+                            <img :src="imgSrc[currentIndex]" alt="" class="max-w-sm h-5/6 object-cover mx-auto">
                             <button @click="prevPic" type="button" title="click to get previous image"
                                 class="w-12 aspect-square rounded-full bg-white absolute left-4 top-1/2 -translate-y-1/2">
                                 <span>
@@ -337,7 +339,7 @@ onMounted(() => {
                             <p v-if="form.price.length > 0" class="text-sm">
                                 <span class="font-bold mr-2">FCFA</span>
                                 <span>{{ form.price }}</span>
-                                <span>/month</span>
+                                <span v-if="form.property_status === 'rent'">/month</span>
                             </p>
                             <p v-else class="font-bold mb-3">price/month</p>
                         </div>

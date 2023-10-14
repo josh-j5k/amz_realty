@@ -7,10 +7,10 @@ const year = new Date().getFullYear()
 </script>
 
 <template>
-    <footer class="md:px-12 md:pt-32 bg-slate-950 text-white relative">
+    <footer class="lg:px-12 lg:pt-32 bg-slate-950 text-white relative">
         <div
-            class="md:w-[80%] w-full mx-auto md:absolute z-50 left-1/2 md:-translate-x-1/2 -top-1/3 grid md:grid-cols-2 grid-cols-1 gap-4 md:gap-16 items-center md:px-16 p-8 md:py-2 md:translate-y-20 bg-accent-hover md:rounded-lg">
-            <div class="-md:text-center">
+            class="lg:w-[80%] w-full mx-auto lg:absolute z-50 left-1/2 lg:-translate-x-1/2 -top-1/3 grid lg:grid-cols-2 grid-cols-1 gap-4 lg:gap-16 items-center lg:px-16 p-8 lg:py-2 lg:translate-y-20 bg-accent-hover lg:rounded-lg">
+            <div class="-lg:text-center">
                 <p class="text-2xl mb-4">
                     Start listing or buying a property with AMZ REALTY
                 </p>
@@ -22,7 +22,7 @@ const year = new Date().getFullYear()
                 <House class="w-52" />
             </div>
         </div>
-        <div class="w-[90%] mx-auto grid py-20 grid-cols-1 md:grid-cols-[30%_20%_20%_30%] gap-8">
+        <div class="w-[90%] mx-auto grid py-20 grid-cols-1 lg:grid-cols-[30%_20%_20%_30%] gap-8">
             <div>
                 <ApplicationLogo width="50" />
                 <p class="text-sm mt-4">

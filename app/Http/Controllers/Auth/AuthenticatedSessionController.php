@@ -34,7 +34,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
         $user_id = Auth::id();
         $url = 'au/' . $user_id;
-        return redirect()->route('dashboard', $user_id);
+        return redirect()->route('user.dashboard', $user_id);
     }
 
     /**

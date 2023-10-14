@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, onUnmounted, } from 'vue';
-import { Head, router } from '@inertiajs/vue3';
+import { Head, router, Link } from '@inertiajs/vue3';
 import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
@@ -78,7 +78,18 @@ function removeFilter(e: any) {
 
 }
 
-console.log(props.listings);
+function submitPrice(ev: KeyboardEvent) {
+
+    if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
+        priceSubmit()
+    }
+}
+function submitLocation(ev: KeyboardEvent) {
+
+    if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
+        locationSubmit()
+    }
+}
 
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
@@ -96,22 +107,24 @@ onUnmounted(() => {
     }
 })
 
+
 </script>
 
 <template>
     <Head title="Listings" />
     <AppLayout>
-        <section class="min-h-screen w-screen overflow-x-hidden relative bg-gray-200"
+        <section class="min-h-screen w-full overflow-x-hidden relative bg-gray-200"
             :class="[sidebarToggled ? 'sidebar' : '']">
-            <div class="grid lg:grid-cols-[30%_70%] grid-cols-1 gap-4">
-                <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen  w-5/6 shadow-md bg-white px-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
+            <div class="grid lg:grid-cols-[25%_75%] grid-cols-1 gap-4">
+                <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen -lg:w-5/6 shadow-md bg-white px-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
                     :class="[sidebarToggled ? '-lg:translate-x-0' : '-lg:-translate-x-full']">
                     <div class="">
                         <h2 class="capitalize font-bold text-2xl mb-4">location</h2>
                         <label for="location" class="sr-only">location</label>
                         <div class="flex gap-3">
-                            <input v-model="locations" :class="locationError ? 'border-red-500' : ''" type="text" name=""
-                                id="location" placeholder="Type your town, region">
+                            <input @keydown="submitLocation" v-model="locations"
+                                :class="locationError ? 'border-red-500' : ''" type="text" name="" id="location"
+                                placeholder="Type your town, region">
                             <button @click="locationSubmit" type="button" title="submit location"><i
                                     class="fas fa-chevron-right fa-lg"></i></button>
                         </div>
@@ -126,7 +139,7 @@ onUnmounted(() => {
                                     <input tabindex="-1" class="opacity-0" @change="updateCheckbox" v-model="status"
                                         value="any" type="radio" id="status-all">
                                     <input type="checkbox" value="any" v-model="statusCheckbox"
-                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox">
+                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox checked:bg-accent">
                                 </div>
                                 <label for="status-all" class="capitalize"> any</label>
                             </div>
@@ -135,7 +148,7 @@ onUnmounted(() => {
                                     <input tabindex="-1" class="opacity-0" @change="updateCheckbox" v-model="status"
                                         value="rent" type="radio" id="status-rent">
                                     <input type="checkbox" value="rent" v-model="statusCheckbox"
-                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox">
+                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox checked:bg-accent">
                                 </div>
 
                                 <label for="status-rent" class="capitalize"> rent</label>
@@ -146,7 +159,7 @@ onUnmounted(() => {
                                     <input @change="updateCheckbox" v-model="status" value="sale" type="radio"
                                         id="status-sale" tabindex="-1" class="opacity-0">
                                     <input type="checkbox" value="sale" v-model="statusCheckbox"
-                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox">
+                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox checked:bg-accent">
                                 </div>
                                 <label for="status-sale" class="capitalize"> sale</label>
                             </div>
@@ -156,12 +169,12 @@ onUnmounted(() => {
                     <div>
                         <h2 class="capitalize font-bold text-2xl mb-4">Price</h2>
                         <div class="flex gap-3 items-center">
-                            <input :class="priceError ? 'border-red-500' : ''" v-model="price.min" placeholder="min"
-                                type="text" size="7" name="min" id="price-min">
+                            <input @keydown="submitPrice" :class="priceError ? 'border-red-500' : ''" v-model="price.min"
+                                placeholder="min" type="text" size="7" name="min" id="price-min">
                             <label for="price-min" class="sr-only"> Minimum price</label>
                             <span>To</span>
-                            <input :class="priceError ? 'border-red-500' : ''" v-model="price.max" placeholder="max"
-                                size="7" type="text" name="max" id="price-max">
+                            <input @keydown="submitPrice" :class="priceError ? 'border-red-500' : ''" v-model="price.max"
+                                placeholder="max" size="7" type="text" name="max" id="price-max">
                             <label for="price-max" class="sr-only"> Maximum price</label>
                             <button @click="priceSubmit" title="submit price" type="button"><i
                                     class="fas fa-chevron-right fa-lg"></i></button>
@@ -174,22 +187,22 @@ onUnmounted(() => {
                         <div class="grid grid-cols-2 gap-4">
                             <div class="flex gap-2 items-center">
                                 <input @change="propertySubmit" type="checkbox" name="room" id="property-room"
-                                    class="checkbox" value="room" v-model="propertyType">
+                                    class="checkbox checked:bg-accent" value="room" v-model="propertyType">
                                 <label for="property-room" class="capitalize">room</label>
                             </div>
                             <div class="flex gap-2 items-center">
                                 <input @change="propertySubmit" type="checkbox" name="studio" id="property-studio"
-                                    class="checkbox" value="studio" v-model="propertyType">
+                                    class="checkbox checked:bg-accent" value="studio" v-model="propertyType">
                                 <label for="property-studio" class="capitalize">studio</label>
                             </div>
                             <div class="flex gap-2 items-center">
                                 <input @change="propertySubmit" type="checkbox" name="appartment" id="property-appartment"
-                                    class="checkbox" value="appartment" v-model="propertyType">
+                                    class="checkbox checked:bg-accent" value="appartment" v-model="propertyType">
                                 <label for="property-appartment" class="capitalize">appartment</label>
                             </div>
                             <div class="flex gap-2 items-center">
                                 <input @change="propertySubmit" type="checkbox" name="duplex" id="property-duplex"
-                                    class="checkbox" value="duplex" v-model="propertyType">
+                                    class="checkbox checked:bg-accent" value="duplex" v-model="propertyType">
                                 <label for="property-duplex" class="capitalize">duplex</label>
                             </div>
                         </div>
@@ -197,15 +210,14 @@ onUnmounted(() => {
 
                 </div>
 
-                <div class="lg:col-start-2 lg:col-end-3 -md:pb-8 pb-52">
-                    <div class="w-full md:w-5/6 mx-auto bg-white mt-8 p-4">
-                        <div class="flex relative -md:justify-end items-center"
-                            :class="[appliedFilter ? 'justify-between' : 'justify-end']">
-                            <h3 v-if="appliedFilter" class="capitalize font-bold -md:hidden">
+                <div class="w-[90%] mx-auto -md:pb-8 pb-52">
+                    <div class=" w-full bg-white mt-8 p-4">
+                        <div class="flex relative -md:justify-end justify-between items-center">
+                            <h3 class="capitalize font-bold -md:hidden">
                                 applied filters
                             </h3>
                             <button @click="sidebarToggled = !sidebarToggled"
-                                class=" bg-blue-500 text-white w-12 h-8 rounded-3xl lg:hidden absolute left-0 z-50 transition-transform"
+                                class=" bg-accent text-white w-12 h-8 rounded-3xl lg:hidden absolute left-0 z-50 transition-transform"
                                 :class="[sidebarToggled ? 'translate-x-[80vw]' : 'translate-x-0']">
                                 <span class="relative h-full w-full flex justify-center items-center">
                                     <span class="absolute" :class="[sidebarToggled ? 'opacity-0' : 'opacity-100']">
@@ -231,7 +243,7 @@ onUnmounted(() => {
                                     <span class="grid grid-cols-3 grid-rows-3 h-full w-full items-center justify-center">
                                         <template v-for="item in 9">
                                             <span class="w-1.5 aspect-square rounded-full group-hover:bg-blue-500"
-                                                :class="[activeGrid === 'grid' ? 'bg-blue-500' : 'bg-dark-blue']"></span>
+                                                :class="[activeGrid === 'grid' ? 'bg-accent' : 'bg-dark-blue']"></span>
                                         </template>
                                     </span>
                                 </button>
@@ -263,26 +275,75 @@ onUnmounted(() => {
                         </div>
                     </div>
 
-                    <div class="px-8 mt-8 grid transition-all w-[90%] mx-auto grid-cols-1  gap-3"
-                        :class="[activeGrid === 'grid' ? 'grid-cols-3 -md:grid-cols-1' : 'grid-cols-2 -md:grid-cols-1']">
-                        <template v-for="(listing, index) in props.listings">
-                            <Card class="bg-white">
+                    <div class="mt-8 grid transition-all -md:w-full  gap-3"
+                        :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 w-full' : 'grid-cols-1 ']">
+                        <template v-for="(listing, index) in listings">
+                            <Link :href="(route('listings.show', listing.id))">
+                            <Card class="bg-white relative" :class="[activeGrid === 'tiles' ? 'flex gap-4' : '']">
                                 <div>
-                                    <img v-if="listing.listing_image?.listing_id" :src="listing.listing_image.listing_image"
-                                        alt="">
-                                    <img v-else src="/images/no_image_placeholder.jpg" alt="">
+                                    <img v-if="listing.listing_image?.length !== 0"
+                                        :src="listing.listing_image[0].listing_image" alt=""
+                                        :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px] md:aspect-square -md:h-full object-cover' : '']">
+                                    <img v-else src="/images/no_image_placeholder.jpg" alt=""
+                                        :class="[activeGrid === 'tiles' ? 'max-w-[200px] md:aspect-square -md:h-full object-cover -md:max-w-[150px]' : '']">
                                 </div>
                                 <div class="p-4">
-                                    <p class="font-bold text-lg">
-                                        {{ listing.price }}
+                                    <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
+                                        <span>
+                                            FCFA
+                                        </span>
+                                        <span>
+
+                                            <span v-if="listing.property_status === 'rent'">
+                                                <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                    ",").concat('.00') }}</span>/Month
+                                            </span>
+                                            <span v-else>
+                                                {{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                    ",").concat('.00') }}
+                                            </span>
+                                        </span>
                                     </p>
-                                    <p>
-                                        {{ listing.description.slice(0, 20) }}
+                                    <div>
+                                        <p v-if="activeGrid === 'grid'" class="font-bold mb-1">
+                                            {{ listing.title.slice(0, 35) }}
+                                        </p>
+                                        <div v-else>
+                                            <p class="font-bold mb-1 -md:hidden">
+                                                {{ listing.title }}
+                                            </p>
+                                            <p class="font-bold mb-1 md:hidden">
+                                                {{ listing.title.slice(0, 35) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm opacity-75 mb-3 capitalize">
+                                        {{ listing.property_type }}
                                     </p>
-                                    <p>{{ listing.location }}</p>
+                                    <hr class="w-full h-[1px] bg-slate-100 mb-3">
+                                    <div v-if="activeGrid === 'grid'" class="flex gap-2 text-sm">
+                                        <span>
+                                            <i class="fas fa-location-dot text-accent"></i>
+                                        </span>
+                                        <p>{{ listing.location.slice(0, 30) }}</p>
+                                    </div>
+                                    <div v-else class="flex gap-2 text-sm">
+                                        <span>
+                                            <i class="fas fa-location-dot text-accent"></i>
+                                        </span>
+                                        <p class="-md:hidden">{{ listing.location }}</p>
+                                        <p class="md:hidden">{{ listing.location.slice(0, 30) }}</p>
+                                    </div>
                                 </div>
+                                <span
+                                    class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
+                                    :class="[listing.property_status === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                    for {{ listing.property_status }}
+                                </span>
                             </Card>
+                            </Link>
                         </template>
+
                         <!-- <template v-for="cards in 24">
                             <div class="w-full h-80 bg-slate-300 shadow">
                                 <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
@@ -290,6 +351,12 @@ onUnmounted(() => {
                             </div>
                         </template> -->
                     </div>
+                    <div class="flex justify-center mt-8">
+                        <button class="capitalize bg-accent text-white rounded py-1 px-3">
+                            load more
+                        </button>
+                    </div>
+
                 </div>
             </div>
         </section>

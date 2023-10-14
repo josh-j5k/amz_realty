@@ -28,12 +28,12 @@ class AuthenticatedWithSocialsController extends Controller
             $user_arr = User::where('provider_id', $socialiteUser->getId())->first();
             Auth::login($user_arr);
             Session::regenerate();
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->route('user.dashboard',  $socialiteUser->getId());
         } else if (User::where('email', $socialiteUser->getEmail())->exists()) {
             $user_arr = User::where('email', $socialiteUser->getEmail())->first();
             Auth::login($user_arr);
             Session::regenerate();
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->route('user.dashboard',  $socialiteUser->getId());
         } else {
 
             $user = User::updateOrCreate([
@@ -48,7 +48,7 @@ class AuthenticatedWithSocialsController extends Controller
             $user->markEmailAsVerified();
             Auth::login($user);
 
-            return redirect()->intended(RouteServiceProvider::HOME);
+            return redirect()->intended('user.dashboard',  $socialiteUser->getId());
         }
     }
 }
