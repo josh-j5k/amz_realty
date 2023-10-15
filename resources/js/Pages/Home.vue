@@ -221,7 +221,7 @@ onMounted(() => {
                             <img src="/images/385808252_849018929958297_1588544965478260459_n.jpg" alt="house exterior"
                                 class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
                             <span
-                                class="bg-secondary text-white py-1 px-2.5 rounded absolute lg:bottom-1/3 -lgtop-12 -left-8">
+                                class="bg-secondary text-white py-1 px-2.5 rounded absolute lg:bottom-1/3 -lg:top-12 -left-8">
                                 15:30:90
                             </span>
                         </div>

@@ -50,20 +50,14 @@ Route::prefix('listings')
     });
 
 
-
-
-
-// Route::middleware('auth')->group(function () {
-//     Route::get('/au/{user_id}', [DashboardController::class, 'index'])->name('dashboard');
-//     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-//     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-//     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-// });
 Route::middleware('auth')->prefix('au/{user_id}')->name('user.')
     ->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+        Route::get('/messages', [DashboardController::class, 'messages'])->name('dashboard.messages');
+        Route::get('/saved', [DashboardController::class, 'saved'])->name('dashboard.saved');
         Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+        Route::post('/profile', [ProfileController::class, 'updateAvatar'])->name('profile.update.avatar');
         Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     });
 
