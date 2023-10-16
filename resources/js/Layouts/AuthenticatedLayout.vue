@@ -31,7 +31,7 @@ onUnmounted(() => {
     <section class="lg:h-screen lg:w-screen">
         <div class="lg:grid lg:grid-cols-[15%_85%]">
             <div
-                class="lg:border-l lg:h-screen -lg:w-full -lg:fixed bottom-0 shadow lg:p-8 flex lg:flex-col bg-white -lg:bg-gray-50 lg:gap-4 -lg:justify-evenly">
+                class="lg:border-l lg:min-h-screen -lg:w-full -lg:fixed z-10 bottom-0 shadow lg:p-8 flex lg:flex-col bg-white -lg:bg-gray-50 lg:gap-4 -lg:justify-evenly">
                 <ApplicationLogo class="w-16 aspect-square lg:mb-20 -lg:hidden" />
                 <Link :href="route('user.dashboard', user.id)" class=" py-2 px-3 flex -lg:flex-col lg:gap-3 rounded"
                     :class="[route().current('user.dashboard') ? 'bg-secondary text-white' : 'text-gray-600']">
@@ -79,7 +79,7 @@ onUnmounted(() => {
                 </Link>
             </div>
             <div>
-                <div class="border-b w-full flex justify-between px-8 py-4">
+                <div class="border-b w-full flex justify-between items-center px-8 py-4">
                     <div>
                         <div class="flex items-center gap-1 font-bold -lg:hidden">
                             <span>
