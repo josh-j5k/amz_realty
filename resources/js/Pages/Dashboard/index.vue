@@ -1,15 +1,21 @@
 <script setup lang="ts">
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import { Listings } from '@/types/listings';
-import Card from '@/Components/Card.vue';
 import Modal from '@/Components/Modal.vue';
+import Card from '@/Components/Card.vue';
+import { Head, Link, useForm, router } from '@inertiajs/vue3';
+import { ref, onMounted, watch } from 'vue';
+import { Listings } from '@/types/listings';
+import { useGoogleMaps } from '@/Composables/UseGoogleMaps';
+import { useListingFormValidator } from '@/Composables/UseListingFormValidator';
+import { useToast } from '@/Composables/UseToast';
 
 const props = defineProps<{
     listings: Listings
 }>()
 const currentIndex = ref(0)
+const { toast } = useToast()
+const { usePlaces, inputValue } = useGoogleMaps()
+const { valid, formErrors } = useListingFormValidator()
 const form = useForm({
     title: props.listings[currentIndex.value].title,
     description: props.listings[currentIndex.value].description,
@@ -19,26 +25,8 @@ const form = useForm({
     property_type: props.listings[currentIndex.value].property_type,
 })
 form.price = props.listings[currentIndex.value].price
-const formErrors = ref(
-    {
-        fileError: false,
-        titleError: false,
-        priceError: false,
-        locationError: false,
-        descriptionError: false,
-        propertyTypeError: false
-    }
-)
-const formValid = ref(
-    {
-        title: false,
-        file: false,
-        price: false,
-        location: false,
-        description: false,
-        property_type: false
-    }
-)
+
+
 const mainImage = ref(0)
 
 const show = ref(false)
@@ -59,62 +47,25 @@ function closeEditModal() {
     show.value = false
     show_edit_modal.value = false
 }
-function validation() {
 
-    if (form.title === '') {
-        formErrors.value.titleError = true
-    } else {
-        formValid.value.title = true
-    }
-    if (form.description === '') {
-        formErrors.value.descriptionError = true
-    } else {
-        formValid.value.description = true
-    }
-    if (form.property_type === '') {
-        formErrors.value.propertyTypeError = true
-    } else {
-        formValid.value.property_type = true
-    }
-    if (form.location === '') {
-        formErrors.value.locationError = true
-    } else {
-        formValid.value.location = true
-    }
-    if (form.price === '') {
-        const intPrice = parseInt(form.price)
-        if (isNaN(intPrice)) {
-            formErrors.value.priceError = true
-        } else {
-            formValid.value.price = true
-        }
-    }
-    // if (total.value === 0) {
-    //     formErrors.value.fileError = true
-    // } else {
-    //     formValid.value.file = true
-    // }
-
-}
-
-function valid(): boolean {
-    validation()
-    if (formValid.value.description === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true && formValid.value.property_type === true) {
-        return true
-    } else {
-        setTimeout(() => {
-            formErrors.value.descriptionError = false
-            // formErrors.value.fileError = false
-            formErrors.value.locationError = false
-            formErrors.value.priceError = false
-            formErrors.value.titleError = false
-            formErrors.value.propertyTypeError = false
-        }, 5000)
-        return false
-    }
-
+watch(inputValue, newVal => {
+    form.location = newVal
+})
+function showEditModal() {
+    show.value = false
+    show_edit_modal.value = true
+    setTimeout(() => {
+        const locationInput = document.getElementById('property_location') as HTMLInputElement
+        usePlaces(locationInput, locationInput.value)
+    }, 100)
 }
 function submit() {
+    form.put(route('listings.update', props.listings[currentIndex.value].id), {
+        onSuccess: () => {
+            show_edit_modal.value = false
+            toast('Success', 'Listing was updated successfully!')
+        }
+    })
     // form.inputFiles = filesArr.value
     // if (user.value === null) {
     //     return toast('Error', 'You need to be logged in to perform this action')
@@ -131,6 +82,12 @@ function submit() {
     //     })
     // }
 }
+
+if (show_edit_modal.value === true) {
+
+}
+onMounted(() => {
+})
 </script>
 
 <template>
@@ -304,7 +261,7 @@ function submit() {
                                 {{ listings[currentIndex].description }}
                             </p>
                             <div class="flex justify-between mt-3">
-                                <button @click="show_edit_modal = true" class="flex flex-col items-center">
+                                <button @click="showEditModal" class="flex flex-col items-center">
                                     <span class=" text-accent text-xl">
                                         <i class="fas fa-pen-to-square"></i>
                                     </span>
@@ -401,7 +358,7 @@ function submit() {
                         </p>
                         <button type="submit" class="bg-accent py-3 px-6 text-white"
                             :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
-                            Publish
+                            Update
                         </button>
                     </div>
                 </form>
@@ -418,7 +375,8 @@ function submit() {
                     </span>
                 </p>
                 <div class="flex justify-between">
-                    <button class="flex gap-2 py-1 px-3 rounded bg-gray-500 text-white">
+                    <button @click="router.delete(route('listings.delete', props.listings[currentIndex].id))"
+                        class="flex gap-2 py-1 px-3 rounded bg-gray-500 text-white">
                         <span>
                             <i class="fas fa-check"></i>
                         </span>
@@ -459,7 +417,7 @@ function submit() {
                         {{ listings[0].description }}
                     </p>
                     <div class="flex justify-between mt-3">
-                        <button @click="show_edit_modal = true" class="flex flex-col items-center">
+                        <button @click="showEditModal" class="flex flex-col items-center">
                             <span class=" text-accent text-xl">
                                 <i class="fas fa-pen-to-square"></i>
                             </span>

@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Inertia\Inertia;
 use App\Models\Listing;
 use App\Models\ListingImage;
-use App\Models\User;
 use CompressImage;
 use Illuminate\Http\Request;
 
@@ -49,8 +48,6 @@ class ListingController extends Controller
             'price' => $price,
             'property_type' => $property_type
         ];
-
-        // $user_data = User::find($request->user()->id)->with('listing');
 
         $listings = Listing::with('listingImage')->latest()->filter($query)->get();
         return Inertia::render(
@@ -98,6 +95,7 @@ class ListingController extends Controller
      */
     public function show(Listing $listing)
     {
+
         $full_listing = Listing::with('listingImage')->find($listing->id);
         return Inertia::render('Listings/show', [
             'listing' => $full_listing
@@ -115,16 +113,19 @@ class ListingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Listing $listing)
     {
-        //
+        $form_fields = $request->all();
+        $listing->update($form_fields);
+        redirect()->route('user.dashboard', $request->user()->id);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Listing $listing)
     {
-        //
+        $listing->delete();
+        back();
     }
 }
