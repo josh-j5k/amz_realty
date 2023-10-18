@@ -7,11 +7,13 @@ import { onMounted } from 'vue';
 import { onUnmounted } from 'vue';
 const page = usePage()
 const user = computed(() => page.props.auth.user)
+const userNameArr = ref(<string[]>[])
 const userName = ref('')
 const toggled = ref(false)
 const dropdownToggled = ref(false)
 if (user.value) {
-    userName.value = user.value.name.slice(0, 10)
+    userNameArr.value = user.value.name.split(' ')
+    userName.value = userNameArr.value[0]
 }
 function navToggle() {
     toggled.value = !toggled.value
@@ -23,20 +25,22 @@ function navToggle() {
 
     }
 }
-onMounted(() => {
-    document.documentElement.addEventListener('click', (ev: MouseEvent) => {
-        const element = ev.target as HTMLElement
-        if (dropdownToggled.value === true && !element.closest('#dashboard_dropdown-toggle')) {
-            dropdownToggled.value = false
+function closeDropdown(ev: MouseEvent) {
+    const element = ev.target as HTMLElement
+    if (dropdownToggled.value === true && !element.closest('#dashboard_dropdown-toggle')) {
+        dropdownToggled.value = false
 
-        }
-    })
+    }
+}
+onMounted(() => {
+    document.documentElement.addEventListener('click', closeDropdown)
 
 })
 onUnmounted(() => {
     if (toggled.value === true) {
         document.body.classList.remove('overflow-y-hidden')
     }
+    document.removeEventListener('click', closeDropdown)
 })
 </script>
 
@@ -136,17 +140,17 @@ onUnmounted(() => {
     </header>
     <div class="absolute -lg:hidden bg-white shadow py-4 px-8 z-50 top-20 right-4  flex-col items-start gap-2 transition-opacity duration-500 ease-in-out"
         id="dashboard_dropdown " :class="[dropdownToggled ? 'flex opacity-100' : 'hidden opacity-0']">
-        <span v-if="$page.props.auth.user">
+        <span v-if="$page.props.auth.user" class="flex flex-col items-center gap-3">
             <Link :href="route('user.dashboard', $page.props.auth.user.id)" class="capitalize">
             dashboard
             </Link>
             <Link :href="route('user.profile.edit', $page.props.auth.user.id)" class="capitalize">
             profile
             </Link>
+            <Link method="post" as="button" :href="route('logout')" class="capitalize">
+            logout
+            </Link>
         </span>
-        <Link method="post" as="button" :href="route('logout')" class="capitalize">
-        logout
-        </Link>
     </div>
 </template>
 

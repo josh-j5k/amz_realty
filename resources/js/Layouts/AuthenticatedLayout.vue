@@ -1,136 +1,137 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import Dropdown from '@/Components/Dropdown.vue';
-import DropdownLink from '@/Components/DropdownLink.vue';
-import NavLink from '@/Components/NavLink.vue';
-import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
-import { Link } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
+const page = usePage()
+const user = computed(() => page.props.auth.user)
+const userNameArr = ref(<string[]>[])
+const userName = ref('')
 
-const showingNavigationDropdown = ref(false);
+userNameArr.value = user.value.name.split(' ')
+userName.value = userNameArr.value[0]
+const dropdownToggled = ref(false)
+
+function closeDropdown(ev: MouseEvent) {
+    const element = ev.target as HTMLElement
+    if (dropdownToggled.value === true && !element.closest('#dashboard_dropdown-toggle')) {
+        dropdownToggled.value = false
+
+    }
+}
+onMounted(() => {
+    document.documentElement.addEventListener('click', closeDropdown)
+
+})
+onUnmounted(() => {
+    document.removeEventListener('click', closeDropdown)
+})
 </script>
 
 <template>
-    <div>
-        <div class="min-h-screen bg-gray-100">
-            <nav class="bg-white border-b border-gray-100">
-                <!-- Primary Navigation Menu -->
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div class="flex justify-between h-16">
-                        <div class="flex">
-                            <!-- Logo -->
-                            <div class="shrink-0 flex items-center">
-                                <Link :href="route('user.dashboard', $page.props.auth.user.id)">
-                                <ApplicationLogo class="block h-9 w-auto fill-current text-gray-800" />
-                                </Link>
-                            </div>
-
-                            <!-- Navigation Links -->
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('user.dashboard', $page.props.auth.user.id)"
-                                    :active="route().current('user.dashboard')">
-                                    Dashboard
-                                </NavLink>
-                            </div>
-                            <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
-                                <NavLink :href="route('Home')" :active="route().current('Home')">
-                                    Home
-                                </NavLink>
-                            </div>
+    <section class="lg:h-screen lg:w-screen">
+        <div class="lg:grid lg:grid-cols-[15%_85%]">
+            <div
+                class="lg:border-l lg:min-h-screen -lg:w-full -lg:fixed z-10 bottom-0 shadow lg:p-8 flex lg:flex-col bg-white -lg:bg-gray-50 lg:gap-4 -lg:justify-evenly">
+                <ApplicationLogo class="w-16 aspect-square lg:mb-20 -lg:hidden" />
+                <Link :href="route('user.dashboard', user.id)" class=" py-2 px-3 flex -lg:flex-col lg:gap-3 rounded"
+                    :class="[route().current('user.dashboard') ? 'bg-secondary text-white' : 'text-gray-600']">
+                <span class="-lg:text-2xl text-center">
+                    <i class="fas fa-home"></i>
+                </span>
+                <span>
+                    Home
+                </span>
+                </Link>
+                <Link :href="route('user.dashboard.messages', user.id)" class="py-2 px-3 flex -lg:flex-col lg:gap-3 rounded"
+                    :class="[route().current('user.dashboard.messages') ? 'bg-secondary text-white' : 'text-gray-600']">
+                <span class="-lg:text-2xl text-center">
+                    <i class="fas fa-message"></i>
+                </span>
+                <span>
+                    Messages
+                </span>
+                </Link>
+                <Link :href="route('user.dashboard.saved', user.id)" class="py-2 px-3 flex -lg:flex-col lg:gap-3 rounded"
+                    :class="[route().current('user.dashboard.saved') ? 'bg-secondary text-white' : 'text-gray-600']">
+                <span class="-lg:text-2xl text-center">
+                    <i class="fas fa-bookmark"></i>
+                </span>
+                <span>
+                    Saved
+                </span>
+                </Link>
+                <Link :href="route('user.profile.edit', user.id)" class="py-2 px-3 flex -lg:flex-col lg:gap-3 rounded"
+                    :class="[route().current('user.profile.edit') ? 'bg-secondary text-white' : 'text-gray-600']">
+                <span class="-lg:text-2xl text-center">
+                    <i class="fas fa-user"></i>
+                </span>
+                <span>
+                    Profile
+                </span>
+                </Link>
+                <Link :href="route('Home')" class="py-2 px-3 flex -lg:flex-col lg:gap-3 rounded">
+                <span class="-lg:text-2xl text-center">
+                    <i class="fas fa-right-from-bracket"></i>
+                </span>
+                <span>
+                    Exit
+                </span>
+                </Link>
+            </div>
+            <div>
+                <div class="border-b w-full flex justify-between items-center px-8 py-4">
+                    <div>
+                        <div class="flex items-center gap-1 font-bold -lg:hidden">
+                            <span>
+                                Hi,
+                            </span>
+                            <span>
+                                {{ userName }}
+                            </span>
+                            <span class="-rotate-45 text-orange-200">
+                                <i class="fas fa-hand"></i>
+                            </span>
                         </div>
+                        <ApplicationLogo class="w-10 aspect-square lg:mb-20 lg:hidden" />
+                    </div>
+                    <div class=" relative">
+                        <button @click="dropdownToggled = !dropdownToggled" id="dashboard_dropdown-toggle" type="button"
+                            class="flex gap-2.5 items-center dashboard_dropdown-toggle">
+                            <span v-if="user.avatar" id="avatar">
+                                <img :src="user.avatar" alt="user avatar" class="w-8 aspect-square rounded-full">
+                            </span>
+                            <span id="avatar" v-else
+                                class="w-8 aspect-square flex justify-center items-center bg-slate-900 rounded-full text-white border border-accent">
+                                <i class="fas fa-user"></i>
+                            </span>
+                            <span id="user_name">
+                                {{ userName }}
+                            </span>
+                            <span id="dropdown-icon" class="text-sm">
+                                <i class="fas fa-caret-down"></i>
+                            </span>
+                        </button>
+                        <div class="absolute -lg:hidden bg-white shadow py-4 px-8 z-50 top-10 -right-4  flex-col items-start gap-2 transition-opacity duration-500 ease-in-out"
+                            id="dashboard_dropdown " :class="[dropdownToggled ? 'flex opacity-100' : 'hidden opacity-0']">
 
-                        <div class="hidden sm:flex sm:items-center sm:ml-6">
-                            <!-- Settings Dropdown -->
-                            <div class="ml-3 relative">
-                                <Dropdown align="right" width="48">
-                                    <template #trigger>
-                                        <span class="inline-flex rounded-md">
-                                            <button type="button"
-                                                class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                                {{ $page.props.auth.user.name }}
+                            <Link :href="route('user.dashboard', user.id)" class="capitalize">
+                            dashboard
+                            </Link>
+                            <Link :href="route('user.profile.edit', user.id)" class="capitalize">
+                            profile
+                            </Link>
+                            <Link method="post" as="button" :href="route('logout')" class="capitalize">
+                            logout
+                            </Link>
 
-                                                <svg class="ml-2 -mr-0.5 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20" fill="currentColor">
-                                                    <path fill-rule="evenodd"
-                                                        d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                                        clip-rule="evenodd" />
-                                                </svg>
-                                            </button>
-                                        </span>
-                                    </template>
-
-                                    <template #content>
-                                        <DropdownLink :href="route('user.profile.edit', $page.props.auth.user.id)"> Profile
-                                        </DropdownLink>
-                                        <DropdownLink :href="route('logout')" method="post" as="button">
-                                            Log Out
-                                        </DropdownLink>
-                                    </template>
-                                </Dropdown>
-                            </div>
-                        </div>
-
-                        <!-- Hamburger -->
-                        <div class="-mr-2 flex items-center sm:hidden">
-                            <button @click="showingNavigationDropdown = !showingNavigationDropdown"
-                                class="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:bg-gray-100 focus:text-gray-500 transition duration-150 ease-in-out">
-                                <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
-                                    <path :class="{
-                                        hidden: showingNavigationDropdown,
-                                        'inline-flex': !showingNavigationDropdown,
-                                    }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 6h16M4 12h16M4 18h16" />
-                                    <path :class="{
-                                        hidden: !showingNavigationDropdown,
-                                        'inline-flex': showingNavigationDropdown,
-                                    }" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Responsive Navigation Menu -->
-                <div :class="{ block: showingNavigationDropdown, hidden: !showingNavigationDropdown }" class="sm:hidden">
-                    <div class="pt-2 pb-3 space-y-1">
-                        <ResponsiveNavLink :href="route('user.dashboard', $page.props.auth.user.id)"
-                            :active="route().current('user.dashboard')">
-                            Dashboard
-                        </ResponsiveNavLink>
-                    </div>
-
-                    <!-- Responsive Settings Options -->
-                    <div class="pt-4 pb-1 border-t border-gray-200">
-                        <div class="px-4">
-                            <div class="font-medium text-base text-gray-800">
-                                {{ $page.props.auth.user.name }}
-                            </div>
-                            <div class="font-medium text-sm text-gray-500">{{ $page.props.auth.user.email }}</div>
-                        </div>
-
-                        <div class="mt-3 space-y-1">
-                            <ResponsiveNavLink :href="route('user.profile.edit', $page.props.auth.user.id)"> Profile
-                            </ResponsiveNavLink>
-                            <ResponsiveNavLink :href="route('logout')" method="post" as="button">
-                                Log Out
-                            </ResponsiveNavLink>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-
-            <!-- Page Heading -->
-            <header class="bg-white shadow" v-if="$slots.header">
-                <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                    <slot name="header" />
-                </div>
-            </header>
-
-            <!-- Page Content -->
-            <main>
-                <slot />
-            </main>
+                <main>
+                    <slot />
+                </main>
+            </div>
         </div>
-    </div>
+
+    </section>
 </template>

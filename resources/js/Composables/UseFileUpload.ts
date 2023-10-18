@@ -18,8 +18,6 @@ export function useFileUpload() {
                 for (let index = 0; index < inputTarget.files.length; index++) {
                     const file = inputTarget.files[index] as File
                     if (!file.type.startsWith("image/")) {
-                        fileTypeImage.value = false
-                        inputTarget.files = null
                         return
                     }
                     fileTypeImage.value = true
@@ -49,8 +47,6 @@ export function useFileUpload() {
         for (let index = 0; index < dt.files.length; index++) {
             const file = dt.files[index] as File;
             if (!file.type.startsWith("image/")) {
-                fileTypeImage.value = false
-                fileInput.files = null
                 return
             }
             fileTypeImage.value = true

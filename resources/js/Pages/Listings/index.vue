@@ -4,14 +4,14 @@ import { Head, router, Link } from '@inertiajs/vue3';
 import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
-import { Query, Listing } from '@/types/listings'
+import { Query, Listings } from '@/types/listings'
 import Card from '@/Components/Card.vue';
 import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 
 
 const props = defineProps<{
     query: Query,
-    listings: Listing
+    listings: Listings
 }>()
 const { usePlaces, inputValue } = useGoogleMaps()
 const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
@@ -217,8 +217,8 @@ onUnmounted(() => {
                                 applied filters
                             </h3>
                             <button @click="sidebarToggled = !sidebarToggled"
-                                class=" bg-accent text-white w-12 h-8 rounded-3xl lg:hidden absolute left-0 z-50 transition-transform"
-                                :class="[sidebarToggled ? 'translate-x-[80vw]' : 'translate-x-0']">
+                                class=" bg-accent text-white w-12 h-8 rounded-3xl lg:hidden z-50 transition-transform"
+                                :class="[sidebarToggled ? 'fixed right-4' : 'translate-x-0 absolute left-0']">
                                 <span class="relative h-full w-full flex justify-center items-center">
                                     <span class="absolute" :class="[sidebarToggled ? 'opacity-0' : 'opacity-100']">
                                         <i class="fa-solid fa-bars-staggered "></i>

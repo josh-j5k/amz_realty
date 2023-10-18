@@ -3,27 +3,29 @@ import InputError from '@/Components/InputError.vue';
 import InputLabel from '@/Components/InputLabel.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
-import { ref } from 'vue';
-import { Link, useForm, usePage } from '@inertiajs/vue3';
-import { useFileUpload } from '@/Composables/UseFileUpload'
+import { ref, onMounted } from 'vue';
+import { Link, router, useForm, usePage } from '@inertiajs/vue3';
 import Modal from '@/Components/Modal.vue';
+
+
 
 
 defineProps<{
     mustVerifyEmail?: Boolean;
     status?: String;
 }>();
+const user = usePage().props.auth.user;
 const show = ref(false)
 const closeable = ref(false)
-const user = usePage().props.auth.user;
-const { assignFiles, imgSrc, filesArr, fileTypeImage } = useFileUpload()
 const form = useForm({
     name: user.name,
     email: user.email,
-    avatar: user.avatar
 });
+const avatarForm = useForm({
+    avatar: <File[]>[]
+})
 function changeAvatar() {
-    document.getElementById('avatar').click()
+    document.getElementById('avatar')?.click()
 }
 function closeModal() {
     show.value = false
@@ -31,9 +33,30 @@ function closeModal() {
 function updateAvatar() {
     show.value = true
 }
+function formSubmit() {
+    const fileInput = document.getElementById('avatar') as HTMLInputElement
+    const btn = document.getElementById('profile-update') as HTMLButtonElement
+    if (fileInput?.files !== null) {
+        const file = fileInput.files[0] as File
+        avatarForm.avatar.push(file)
+    }
+
+    btn.click()
+}
+function submit() {
+    if (avatarForm.avatar.length > 0) {
+        avatarForm.post(route('user.profile.update.avatar', user.id), {
+            onSuccess: () => router.reload({
+                only: ['users']
+            })
+        })
+    } else {
+        form.patch(route('user.profile.update', user.id))
+    }
+}
 onMounted(() => {
     const input = <HTMLInputElement>document.getElementById('avatar')
-    assignFiles(input)
+    input.addEventListener('change', formSubmit)
 })
 </script>
 
@@ -47,7 +70,7 @@ onMounted(() => {
             </p>
         </header>
 
-        <form @submit.prevent="form.patch(route('user.profile.update', $page.props.auth.user.id))" class="mt-6 space-y-6">
+        <form @submit.prevent="submit" class="mt-6 space-y-6" enctype="multipart/form-data" method="post">
             <div>
                 <InputLabel for="name" value="Name" />
 
@@ -68,7 +91,7 @@ onMounted(() => {
             <div>
                 <InputLabel for="avatar" value="Update Avatar" />
                 <div class="mt-3">
-                    <input hidden type="file" name="avatar" id="avatar">
+                    <input hidden type="file" name="avatar" id="avatar" accept=".jpg, .jpeg, .png, .webp">
                     <div aria-labelledby="button" @click="updateAvatar"
                         class="w-20 h-20 rounded-full bg-gray-200 cursor-pointer">
                         <img v-if="user.avatar" :src="user.avatar" alt="avatar" class="w-20 h-20 rounded-full">
@@ -77,8 +100,6 @@ onMounted(() => {
                         </span>
                     </div>
                 </div>
-
-                <InputError class="mt-2" :message="form.errors.avatar" />
             </div>
 
             <div v-if="mustVerifyEmail && user.email_verified_at === null">
@@ -96,12 +117,13 @@ onMounted(() => {
             </div>
 
             <div class="flex items-center gap-4">
-                <PrimaryButton :disabled="form.processing">Save</PrimaryButton>
+                <PrimaryButton id="profile-update" :disabled="form.processing">Save</PrimaryButton>
 
                 <Transition enter-active-class="transition ease-in-out" enter-from-class="opacity-0"
                     leave-active-class="transition ease-in-out" leave-to-class="opacity-0">
                     <p v-if="form.recentlySuccessful" class="text-sm text-gray-600">Saved.</p>
                 </Transition>
+
             </div>
         </form>
         <Modal @close="closeModal" :show="show" max-width="lg" :closeable="closeable">

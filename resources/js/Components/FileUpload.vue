@@ -12,7 +12,8 @@
         },
         fileError: {
             type: Boolean
-        }
+        },
+        accept: String
 
     })
     const emit = defineEmits(['file-upload'])
@@ -43,7 +44,7 @@
             <label class="sr-only" for="file_upload">
                 File Upload
             </label>
-            <input type="file" multiple class="hidden" name="file_upload" id="file_upload">
+            <input type="file" multiple class="hidden" name="file_upload" :accept="accept" id="file_upload">
             <p class="mb-4 text-center"><span class="capitalize font-bold">Add photos</span> <br><span>or Drag & Drop</span>
             </p>
         </div>

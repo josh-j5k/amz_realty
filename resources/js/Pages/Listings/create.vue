@@ -204,7 +204,7 @@ onUnmounted(() => {
                                 </div>
                             </template>
                             <FileUpload @file-upload="fileUpload" file_type="image" :file-error="formErrors.fileError"
-                                width="100%" />
+                                width="100%" accept=".jpg, .jpeg, .png, .webp" />
                         </div>
                     </div>
                     <p v-if="formErrors.fileError" class="text-red-500"> Please upload at least one photo.</p>

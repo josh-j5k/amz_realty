@@ -12,7 +12,7 @@ type listingImage = {
     listing_image: string,
     listing_id: string
 }
-export type ListingData = {
+export type Listing = {
     description: string,
     id: string,
     location: string,
@@ -22,7 +22,7 @@ export type ListingData = {
     title: string,
     listing_image: Array<listingImage>
 }
-export type Listing = Array<ListingData>
+export type Listings = Array<Listing>
 export type form = {
     location?: string,
     status?: string,

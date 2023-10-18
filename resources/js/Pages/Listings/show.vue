@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ListingData } from '@/types/listings'
+import { Listing } from '@/types/listings'
 import CloseButton from '@/Components/CloseButton.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
 
 
 const props = defineProps<{
-    listing: ListingData
+    listing: Listing
 }>()
 
 const currentIndex = ref(0)

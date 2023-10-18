@@ -2,14 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use App\Models\User;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Redirect;
+use App\Http\Requests\ProfileUpdateRequest;
+use CompressImage;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class ProfileController extends Controller
 {
@@ -18,7 +20,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render('Profile/Edit', [
+        return Inertia::render('Dashboard/Profile/Edit', [
             'mustVerifyEmail' => $request->user() instanceof MustVerifyEmail,
             'status' => session('status'),
         ]);
@@ -27,8 +29,21 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
+    public function updateAvatar(Request $request, CompressImage $compressImage): RedirectResponse
+    {
+        $user_id = $request->user()->id;
+
+
+
+        $avatar = $compressImage->compress($request->avatar[0], 100, 100, 'avatars');
+        User::where('id', $request->user()->id)->update(['avatar' => '/' . $avatar]);
+
+        return Redirect::route('user.profile.edit', $user_id);
+    }
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        $user_id = $request->user()->id;
+
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -37,7 +52,8 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+
+        return Redirect::route('user.profile.edit', $user_id);
     }
 
     /**
