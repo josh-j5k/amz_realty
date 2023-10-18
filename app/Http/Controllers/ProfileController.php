@@ -33,8 +33,6 @@ class ProfileController extends Controller
     {
         $user_id = $request->user()->id;
 
-
-
         $avatar = $compressImage->compress($request->avatar[0], 100, 100, 'avatars');
         User::where('id', $request->user()->id)->update(['avatar' => '/' . $avatar]);
 

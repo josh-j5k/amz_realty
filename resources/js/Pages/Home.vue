@@ -6,6 +6,12 @@ import { Link, useForm, Head } from '@inertiajs/vue3';
 import { onMounted, ref } from 'vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 import { Loader } from "@googlemaps/js-api-loader"
+import { Listings } from '@/types/listings';
+
+const props = defineProps<{
+    listings: Listings
+}>()
+
 const options = {
     componentRestrictions: { country: "cm" },
     strictBounds: false,
@@ -52,6 +58,7 @@ onMounted(() => {
 
     })
 })
+console.log(props.listings);
 
 </script>
 
@@ -164,13 +171,13 @@ onMounted(() => {
                 <button type="button" class="border border-white capitalize p-2"> find a house</button>
             </div>
         </section>
-        <section class="p-8 pt-12">
+        <section class="p-8 pt-12 ">
             <div class="md:w-5/6 w-full mx-auto md:bg-blue-100 rounded-lg">
                 <div class="flex md:justify-between -md:flex-col  md:px-16 py-8">
                     <h3 class="md:text-2xl text-xl font-bold text-center">
                         Houses near you
                     </h3>
-                    <Link href="" class="text-accent flex justify-center mt-3">
+                    <Link :href="route('listings.index')" class="text-accent flex justify-center mt-3">
                     <span class="capitalize mr-2">
                         show more houses
                     </span>
@@ -179,12 +186,57 @@ onMounted(() => {
                     </span>
                     </Link>
                 </div>
-                <div class="px-8 grid md:grid-cols-4 grid-cols-1 gap-3 md:translate-y-1/4">
-                    <template v-for="cards in 4">
-                        <div class="w-full h-80 bg-slate-300 shadow">
-                            <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
-                            <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
-                        </div>
+                <div class="px-8 grid md:grid-cols-4 grid-cols-1 gap-3 md:translate-y-[5%]">
+                    <template v-for="(listing, index) in listings.data">
+
+                        <Card class="bg-white relative">
+                            <div>
+                                <img v-if="listing.listing_image?.length > 0" :src="listing.listing_image[0]" alt="">
+                                <img v-else src="/images/no_image_placeholder.jpg" alt="">
+                            </div>
+                            <div class="p-4">
+                                <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
+                                    <span>
+                                        FCFA
+                                    </span>
+                                    <span>
+
+                                        <span v-if="listing.property_status === 'rent'">
+                                            <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                ",").concat('.00') }}</span>/Month
+                                        </span>
+                                        <span v-else>
+                                            {{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                ",").concat('.00') }}
+                                        </span>
+                                    </span>
+                                </p>
+                                <div>
+                                    <p class="font-bold mb-1">
+                                        {{ listing.title.slice(0, 35) }}
+                                    </p>
+
+
+                                </div>
+                                <p class="text-sm opacity-75 mb-3 capitalize">
+                                    {{ listing.property_type }}
+                                </p>
+                                <hr class="w-full h-[1px] bg-slate-100 mb-3">
+                                <div class="flex gap-2 text-sm">
+                                    <span>
+                                        <i class="fas fa-location-dot text-accent"></i>
+                                    </span>
+                                    <p>{{ listing.location.slice(0, 40) }}</p>
+                                </div>
+
+                            </div>
+                            <span
+                                class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
+                                :class="[listing.property_status === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                for {{ listing.property_status }}
+                            </span>
+                        </Card>
+
                     </template>
                 </div>
             </div>

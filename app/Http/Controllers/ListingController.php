@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use CompressImage;
 use Inertia\Inertia;
 use App\Models\Listing;
 use App\Models\ListingImage;
-use CompressImage;
 use Illuminate\Http\Request;
+use App\Http\Resources\ListingResource;
 
 class ListingController extends Controller
 {
@@ -49,7 +50,7 @@ class ListingController extends Controller
             'property_type' => $property_type
         ];
 
-        $listings = Listing::with('listingImage')->latest()->filter($query)->get();
+        $listings = ListingResource::collection(Listing::latest()->filter($query)->get());
         return Inertia::render(
             'Listings/index',
             [

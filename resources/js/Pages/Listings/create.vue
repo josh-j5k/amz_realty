@@ -143,7 +143,6 @@ function submit() {
 }
 
 onMounted(() => {
-    const locationInput = document.getElementById('property_location') as HTMLInputElement
     function dropEnter(ev: any) {
         drop(ev, file_upload)
     }
@@ -155,6 +154,7 @@ onMounted(() => {
     dropbox.addEventListener("dragover", dragover, false);
     dropbox.addEventListener("drop", dropEnter, false);
 
+    const locationInput = document.getElementById('property_location') as HTMLInputElement
     usePlaces(locationInput, locationInput.value)
 
 })

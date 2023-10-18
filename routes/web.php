@@ -8,7 +8,8 @@ use Illuminate\Foundation\Application;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
-
+use App\Http\Resources\ListingResource;
+use App\Models\Listing;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,7 +32,11 @@ Route::get('/welcome', function () {
     ]);
 });
 Route::get('/', function () {
-    return Inertia::render('Home');
+    $listing = ListingResource::collection(Listing::latest()->limit(4)->get());
+    return Inertia::render(
+        'Home',
+        ['listings' => $listing]
+    );
 })->name('Home');
 Route::get('/contact', function () {
     return Inertia::render('Contact');

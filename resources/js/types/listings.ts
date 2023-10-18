@@ -7,11 +7,7 @@ export type Query = {
     },
     property_type: string[]
 }
-type listingImage = {
-    id: string,
-    listing_image: string,
-    listing_id: string
-}
+
 export type Listing = {
     description: string,
     id: string,
@@ -20,9 +16,11 @@ export type Listing = {
     property_status: string,
     property_type: string,
     title: string,
-    listing_image: Array<listingImage>
+    listing_image: string[]
 }
-export type Listings = Array<Listing>
+export type Listings = {
+    data: Array<Listing>
+}
 export type form = {
     location?: string,
     status?: string,

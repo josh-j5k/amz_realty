@@ -3,7 +3,6 @@ export function useFileUpload() {
     const filesArr = ref(<File[]>[])
     const imgSrc = ref(<string[]>[])
     const total = ref(0)
-    const fileTypeImage = ref<boolean | null>(null)
     function updateFilesDisplayImages(fileInput: HTMLInputElement) {
         const newDt = new DataTransfer()
         filesArr.value.forEach(file => newDt.items.add(file))
@@ -20,7 +19,7 @@ export function useFileUpload() {
                     if (!file.type.startsWith("image/")) {
                         return
                     }
-                    fileTypeImage.value = true
+
                     handleFiles(file)
                     filesArr.value = [...filesArr.value, file]
                 }
@@ -49,7 +48,6 @@ export function useFileUpload() {
             if (!file.type.startsWith("image/")) {
                 return
             }
-            fileTypeImage.value = true
             handleFiles(file)
             filesArr.value = [...filesArr.value, file];
         }
@@ -78,7 +76,7 @@ export function useFileUpload() {
     }
 
     return {
-        drop, dragenter, dragover, deleteFile, assignFiles, total, imgSrc, filesArr, fileTypeImage
+        drop, dragenter, dragover, deleteFile, assignFiles, total, imgSrc, filesArr,
     }
 
 

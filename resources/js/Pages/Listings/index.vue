@@ -95,7 +95,6 @@ onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     usePlaces(locationInput, locations.value)
     setInputsValues(props.query?.location, props.query?.status, props.query.price.min, props.query.price.max, props.query.property_type)
-
 })
 onUnmounted(() => {
     locations.value = ''
@@ -277,12 +276,11 @@ onUnmounted(() => {
 
                     <div class="mt-8 grid transition-all -md:w-full  gap-3"
                         :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 w-full' : 'grid-cols-1 ']">
-                        <template v-for="(listing, index) in listings">
+                        <template v-for="(listing, index) in listings.data">
                             <Link :href="(route('listings.show', listing.id))">
                             <Card class="bg-white relative" :class="[activeGrid === 'tiles' ? 'flex gap-4' : '']">
                                 <div>
-                                    <img v-if="listing.listing_image?.length !== 0"
-                                        :src="listing.listing_image[0].listing_image" alt=""
+                                    <img v-if="listing.listing_image?.length > 0" :src="listing.listing_image[0]" alt=""
                                         :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px] md:aspect-square -md:h-full object-cover' : '']">
                                     <img v-else src="/images/no_image_placeholder.jpg" alt=""
                                         :class="[activeGrid === 'tiles' ? 'max-w-[200px] md:aspect-square -md:h-full object-cover -md:max-w-[150px]' : '']">
@@ -325,7 +323,7 @@ onUnmounted(() => {
                                         <span>
                                             <i class="fas fa-location-dot text-accent"></i>
                                         </span>
-                                        <p>{{ listing.location.slice(0, 30) }}</p>
+                                        <p>{{ listing.location.slice(0, 40) }}</p>
                                     </div>
                                     <div v-else class="flex gap-2 text-sm">
                                         <span>
