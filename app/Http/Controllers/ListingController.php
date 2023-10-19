@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use CompressImage;
+use App\Helpers\CompressImage;
 use Inertia\Inertia;
 use App\Models\Listing;
 use App\Models\ListingImage;
@@ -85,7 +85,7 @@ class ListingController extends Controller
             $url = $compressImage->compress($file_input, 1080, 100, $folder, $subFolders);
 
             ListingImage::create([
-                'listing_image' => '/' . $url,
+                'listing_image' => '/images' . $url,
                 'listing_id' => $listing->id
             ]);
         }

@@ -58,7 +58,7 @@ onMounted(() => {
 
     })
 })
-console.log(props.listings);
+
 
 </script>
 
@@ -186,7 +186,7 @@ console.log(props.listings);
                     </span>
                     </Link>
                 </div>
-                <div class="px-8 grid md:grid-cols-4 grid-cols-1 gap-3 md:translate-y-[5%]">
+                <div class="px-8 grid lg:grid-cols-4 md:grid-cols-2 grid-cols-1 gap-3 md:translate-y-[5%]">
                     <template v-for="(listing, index) in listings.data">
 
                         <Card class="bg-white relative">
@@ -260,7 +260,7 @@ console.log(props.listings);
                     </span>
                     </Link>
                 </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 lg:grid-rows-2 lg:gap-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2 lg:gap-2 gap-6">
                     <div class="w-full relative">
                         <img src="/images/355280246_2871413009661347_7662648592867538430_n.jpg" alt="house interior"
                             class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
@@ -278,7 +278,8 @@ console.log(props.listings);
                             </span>
                         </div>
                     </div>
-                    <div class="w-full relative">
+                    <div
+                        class="w-full relative md:col-start-1 md:col-end-3 md:justify-center md:w-1/2 md:aspect-square md:mx-auto">
                         <img src="/images/385909430_1003122750912505_3112270827831116516_n.jpg" alt="house interior"
                             class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
                         <span class="bg-secondary text-white py-1 px-2.5 rounded absolute top-12 -left-8">

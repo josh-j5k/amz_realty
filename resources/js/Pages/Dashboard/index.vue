@@ -86,6 +86,7 @@ function submit() {
 if (show_edit_modal.value === true) {
 
 }
+
 onMounted(() => {
 })
 </script>
@@ -170,7 +171,7 @@ onMounted(() => {
                                     show = true
                                 }" class="bg-white relative flex gap-4 cursor-pointer lg:hidden">
                                     <div>
-                                        <img v-if="listing.listing_image?.length > 0" :src="listing.listing_image[0]" alt=""
+                                        <img v-if="listing.listing_image" :src="listing.listing_image[0]" alt=""
                                             class="max-w-[200px] h-full object-cover -md:max-w-[150px]">
                                         <img v-else src="/images/no_image_placeholder.jpg" alt=""
                                             class="h-full object-cover max-w-[200px] -md:max-w-[150px]">
@@ -226,13 +227,13 @@ onMounted(() => {
                             <h2 class="mb-4 text-2xl font-bold">{{ listings.data[currentIndex].title }}</h2>
                             <div class="grid grid-cols-[70%_30%] gap-3 h-[390]">
 
-                                <img v-if="listings.data[currentIndex].listing_image.length > 0"
+                                <img v-if="listings.data[currentIndex].listing_image"
                                     :src="listings.data[currentIndex].listing_image[mainImage]" alt=""
                                     class="row-span-full">
                                 <img v-else src="/images/no_image_placeholder.jpg" alt=""
                                     class="w-96 rounded-3xl aspect-square">
                                 <div class="flex flex-col gap-3 overflow-y-auto">
-                                    <template v-if="listings.data[currentIndex].listing_image.length > 0"
+                                    <template v-if="listings.data[currentIndex].listing_image"
                                         v-for="(image, index) in listings.data[currentIndex].listing_image">
                                         <img @click="mainImage = index" :src="image" alt=""
                                             class="w-[124px] aspect-square object-cover rounded-xl">
@@ -396,7 +397,7 @@ onMounted(() => {
         <Modal :show="show" :closeable="closeable" @close="closeModal">
             <div class="p-8 relative">
                 <div>
-                    <img v-if="listings.data[currentIndex].listing_image.length > 0"
+                    <img v-if="listings.data[currentIndex].listing_image"
                         :src="listings.data[currentIndex].listing_image[0]" alt="">
                     <img v-else src="/images/no_image_placeholder.jpg" alt="">
                 </div>

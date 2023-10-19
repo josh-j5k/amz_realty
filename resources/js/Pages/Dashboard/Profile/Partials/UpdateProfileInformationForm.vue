@@ -21,10 +21,14 @@ const form = useForm({
     name: user.name,
     email: user.email,
 });
+console.log(user.avatar);
+
 const avatarForm = useForm({
     avatar: <File[]>[]
 })
 function changeAvatar() {
+    console.log(document.getElementById('avatar'));
+
     document.getElementById('avatar')?.click()
 }
 function closeModal() {

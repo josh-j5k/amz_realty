@@ -1,8 +1,10 @@
 <?php
 
+namespace App\Helpers;
+
 class CompressImage
 {
-    public static function compress($original_image, int $max_width, int $quality, string $folder, string | null $subfolder = null)
+    public static function compress($original_image, int $max_width, int $quality, string $folder, string | null $subfolder = null): string
     {
 
         $dir = $folder;
@@ -33,7 +35,10 @@ class CompressImage
         if ($subfolder) {
 
             $url = '/' . $folder . '/' . $subfolder . '/' . $img_name;
+        } else {
+            $url = '/' . $folder . '/' . $img_name;
         }
+
         return $url;
     }
 }
