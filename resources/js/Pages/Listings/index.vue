@@ -280,9 +280,10 @@ onUnmounted(() => {
                             <Link :href="(route('listings.show', listing.id))">
                             <Card class="bg-white relative" :class="[activeGrid === 'tiles' ? 'flex gap-4' : '']">
                                 <div>
-                                    <img v-if="listing.listing_image?.length > 0" :src="listing.listing_image[0]" alt=""
-                                        :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px] md:aspect-square -md:h-full object-cover' : '']">
-                                    <img v-else src="/images/no_image_placeholder.jpg" alt=""
+                                    <img v-if="listing.listingImage?.length > 0" :src="listing.listingImage[0]" alt=""
+                                        class="md:aspect-square"
+                                        :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px]  -md:h-full object-cover' : '']">
+                                    <img v-else src="/Images/no_image_placeholder.jpg" alt=""
                                         :class="[activeGrid === 'tiles' ? 'max-w-[200px] md:aspect-square -md:h-full object-cover -md:max-w-[150px]' : '']">
                                 </div>
                                 <div class="p-4">
@@ -292,7 +293,7 @@ onUnmounted(() => {
                                         </span>
                                         <span>
 
-                                            <span v-if="listing.property_status === 'rent'">
+                                            <span v-if="listing.propertyStatus === 'rent'">
                                                 <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
                                                     ",").concat('.00') }}</span>/Month
                                             </span>
@@ -316,7 +317,7 @@ onUnmounted(() => {
                                         </div>
                                     </div>
                                     <p class="text-sm opacity-75 mb-3 capitalize">
-                                        {{ listing.property_type }}
+                                        {{ listing.propertyType }}
                                     </p>
                                     <hr class="w-full h-[1px] bg-slate-100 mb-3">
                                     <div v-if="activeGrid === 'grid'" class="flex gap-2 text-sm">
@@ -335,8 +336,8 @@ onUnmounted(() => {
                                 </div>
                                 <span
                                     class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
-                                    :class="[listing.property_status === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
-                                    for {{ listing.property_status }}
+                                    :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                    for {{ listing.propertyStatus }}
                                 </span>
                             </Card>
                             </Link>

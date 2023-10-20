@@ -4,10 +4,15 @@ namespace App\Helpers;
 
 class CompressImage
 {
-    public static function compress($original_image, int $max_width, int $quality, string $folder, string | null $subfolder = null): string
+    public static function compress($original_image, int $max_width, int $quality, string $folder, string $subfolder, string | null $file_folder = null): string
     {
 
-        $dir = $folder;
+        if ($file_folder) {
+
+            $dir = 'Images/' . $folder . '/' . $subfolder . '/' . $file_folder;
+        } else {
+            $dir = 'Images/' . $folder . '/' . $subfolder;
+        }
         if (!is_dir($dir)) {
             mkdir($dir, recursive: true);
         }
@@ -29,16 +34,11 @@ class CompressImage
 
         $MAX_HEIGHT = getimagesize($original_image)[1] * $scale_size;
         $resized_img = imagescale($img, $MAX_WIDTH, $MAX_HEIGHT);
-        imagewebp($resized_img, $dir . '/' . $img_name, $quality);
+        imagewebp($resized_img,  $dir . '/' . $img_name, $quality);
         imagedestroy($img);
         imagedestroy($resized_img);
-        if ($subfolder) {
 
-            $url = '/' . $folder . '/' . $subfolder . '/' . $img_name;
-        } else {
-            $url = '/' . $folder . '/' . $img_name;
-        }
-
+        $url = '/' . $dir . '/' . $img_name;
         return $url;
     }
 }

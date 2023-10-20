@@ -32,8 +32,8 @@ class ListingResource extends JsonResource
             'propertyStatus' => $this->property_status,
             'listingImage' => $listingImg,
             'propertyType' => $this->property_type,
-            'price' => $this->price
-
+            'price' => $this->price,
+            'description' => $this->description,
         ];
     }
 }

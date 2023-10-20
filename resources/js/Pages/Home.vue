@@ -70,7 +70,7 @@ onMounted(() => {
         <section class="relative h-screen w-full isolate flex flex-col items-center justify-center px-2">
             <div
                 class="w-full h-screen absolute inset-0 -z-10 before:content-emptystring before:absolute before:inset-0 before:bg-black-opacity-50 before:w-full before:h-full">
-                <img src="images/house-with-balcony-sky-background.jpg" alt="background-img"
+                <img src="Images/house-with-balcony-sky-background.jpg" alt="background-img"
                     class="w-full h-screen object-cover">
             </div>
             <h2 class="md:text-5xl text-4xl text-white font-bold max-w-2xl text-center mb-12">Lets find a home that is
@@ -159,7 +159,7 @@ onMounted(() => {
                         valuation</button>
                 </div>
                 <div class="-lg:row-start-1 -lg:row-end-1 -lg:pt-16">
-                    <img src="/images/high-view-hands-stationery-items.jpg" alt="house valuation" class="">
+                    <img src="/Images/high-view-hands-stationery-items.jpg" alt="house valuation" class="">
                 </div>
             </div>
         </section>
@@ -192,7 +192,7 @@ onMounted(() => {
                         <Card class="bg-white relative">
                             <div>
                                 <img v-if="listing.listing_image?.length > 0" :src="listing.listing_image[0]" alt="">
-                                <img v-else src="/images/no_image_placeholder.jpg" alt="">
+                                <img v-else src="/Images/no_image_placeholder.jpg" alt="">
                             </div>
                             <div class="p-4">
                                 <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
@@ -201,7 +201,7 @@ onMounted(() => {
                                     </span>
                                     <span>
 
-                                        <span v-if="listing.property_status === 'rent'">
+                                        <span v-if="listing.propertyStatus === 'rent'">
                                             <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
                                                 ",").concat('.00') }}</span>/Month
                                         </span>
@@ -219,7 +219,7 @@ onMounted(() => {
 
                                 </div>
                                 <p class="text-sm opacity-75 mb-3 capitalize">
-                                    {{ listing.property_type }}
+                                    {{ listing.propertyType }}
                                 </p>
                                 <hr class="w-full h-[1px] bg-slate-100 mb-3">
                                 <div class="flex gap-2 text-sm">
@@ -232,8 +232,8 @@ onMounted(() => {
                             </div>
                             <span
                                 class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
-                                :class="[listing.property_status === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
-                                for {{ listing.property_status }}
+                                :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                for {{ listing.propertyStatus }}
                             </span>
                         </Card>
 
@@ -262,7 +262,7 @@ onMounted(() => {
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2 lg:gap-2 gap-6">
                     <div class="w-full relative">
-                        <img src="/images/355280246_2871413009661347_7662648592867538430_n.jpg" alt="house interior"
+                        <img src="/Images/355280246_2871413009661347_7662648592867538430_n.jpg" alt="house interior"
                             class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
                         <span class="bg-secondary text-white py-1 px-2.5 rounded absolute top-12 -left-8">
                             04:70:00
@@ -270,7 +270,7 @@ onMounted(() => {
                     </div>
                     <div class=" w-full lg:row-start-1 lg:row-end-3 lg:col-start-2 lg:col-end-3">
                         <div class="grid items-end h-full w-full relative">
-                            <img src="/images/385808252_849018929958297_1588544965478260459_n.jpg" alt="house exterior"
+                            <img src="/Images/385808252_849018929958297_1588544965478260459_n.jpg" alt="house exterior"
                                 class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
                             <span
                                 class="bg-secondary text-white py-1 px-2.5 rounded absolute lg:bottom-1/3 -lg:top-12 -left-8">
@@ -279,8 +279,8 @@ onMounted(() => {
                         </div>
                     </div>
                     <div
-                        class="w-full relative md:col-start-1 md:col-end-3 md:justify-center md:w-1/2 md:aspect-square md:mx-auto">
-                        <img src="/images/385909430_1003122750912505_3112270827831116516_n.jpg" alt="house interior"
+                        class="w-full relative tablet:col-start-1 tablet:col-end-3 tablet:justify-center tablet:w-1/2 tablet:aspect-square tablet:mx-auto">
+                        <img src="/Images/385909430_1003122750912505_3112270827831116516_n.jpg" alt="house interior"
                             class="lg:max-w-[250px] w-full aspect-square object-cover rounded-lg">
                         <span class="bg-secondary text-white py-1 px-2.5 rounded absolute top-12 -left-8">
                             22:10:20

@@ -51,7 +51,7 @@ Route::prefix('listings')
         Route::get('/',  'index')->name('index');
         Route::get('/create', 'create')->name('create');
         Route::post('/', 'store')->name('store');
-        Route::put('/{listing}', 'update')->name('update');
+        Route::post('/{listing}', 'update')->name('update');
         Route::delete('/{listing}', 'destroy')->name('delete');
         Route::get('/{listing}', 'show')->name('show');
     });

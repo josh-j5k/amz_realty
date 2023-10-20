@@ -8,15 +8,18 @@ export type Query = {
     property_type: string[]
 }
 
-export type Listing = {
+type Listing = {
     description: string,
     id: string,
     location: string,
     price: number,
-    property_status: string,
-    property_type: string,
+    propertyStatus: string,
+    propertyType: string,
     title: string,
-    listing_image: string[]
+    listingImage: string[]
+}
+export type SingleListing = {
+    listing: Listing
 }
 export type Listings = {
     data: Array<Listing>

@@ -85,7 +85,7 @@ class ListingController extends Controller
             $url = $compressImage->compress($file_input, 1080, 100, $folder, $subFolders);
 
             ListingImage::create([
-                'listing_image' => '/images' . $url,
+                'listing_image' =>  $url,
                 'listing_id' => $listing->id
             ]);
         }
@@ -97,7 +97,7 @@ class ListingController extends Controller
     public function show(Listing $listing)
     {
 
-        $full_listing = Listing::with('listingImage')->find($listing->id);
+        $full_listing = new ListingResource($listing);
         return Inertia::render('Listings/show', [
             'listing' => $full_listing
         ]);
@@ -114,9 +114,35 @@ class ListingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Listing $listing)
+    public function update(Request $request, Listing $listing, CompressImage $compressImage)
     {
-        $form_fields = $request->all();
+        $form_fields = $request->validate([
+            'title' => 'required',
+            'location' => 'required',
+            'price' => 'required',
+            'property_type' => 'required',
+            'property_status' => 'required',
+            'description' => 'required',
+        ]);
+        if ($request->deletedImages !== null) {
+            foreach ($request->deletedImages as $image) {
+                $listing->listingImage()->where('listing_image', $image)->delete();
+                $file_path = str_replace("/", "\\", $image);
+                unlink(public_path($file_path));
+            }
+        }
+        if ($request->hasFile('inputFiles')) {
+            foreach ($request->inputFiles as $file_input) {
+                $folder = date("Y");
+                $subFolders = date("m");
+                $url = $compressImage->compress($file_input, 1080, 100, $folder, $subFolders);
+
+                $listing->listingImage()->updateOrCreate([
+                    'listing_image' => $url,
+                    'listing_id' => $listing->id
+                ]);
+            }
+        }
         $listing->update($form_fields);
         redirect()->route('user.dashboard', $request->user()->id);
     }

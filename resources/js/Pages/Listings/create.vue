@@ -4,31 +4,13 @@ import { useFileUpload } from '@/Composables/UseFileUpload'
 import { useForm, usePage, Head } from '@inertiajs/vue3';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps';
+import { useListingFormValidator } from '@/Composables/UseListingFormValidator';
 import { useToast } from '@/Composables/UseToast'
 import Header from '../Partials/Header.vue';
 import { onUnmounted } from 'vue';
 const { toast } = useToast()
 const { drop, dragenter, dragover, assignFiles, total, imgSrc, deleteFile, filesArr } = useFileUpload()
-const formErrors = ref(
-    {
-        fileError: false,
-        titleError: false,
-        priceError: false,
-        locationError: false,
-        descriptionError: false,
-        propertyTypeError: false
-    }
-)
-const formValid = ref(
-    {
-        title: false,
-        file: false,
-        price: false,
-        location: false,
-        description: false,
-        property_type: false
-    }
-)
+const { validation, formErrors } = useListingFormValidator()
 const { usePlaces, inputValue } = useGoogleMaps()
 const form = useForm({
     title: '',
@@ -72,70 +54,17 @@ function nextPic() {
         currentIndex.value = 0
     }
 }
-function validation() {
-    const intPrice = parseInt(form.price)
-    if (form.title === '') {
-        formErrors.value.titleError = true
-    } else {
-        formValid.value.title = true
-    }
-    if (form.description === '') {
-        formErrors.value.descriptionError = true
-    } else {
-        formValid.value.description = true
-    }
-    if (form.property_type === '') {
-        formErrors.value.propertyTypeError = true
-    } else {
-        formValid.value.property_type = true
-    }
-    if (form.location === '') {
-        formErrors.value.locationError = true
-    } else {
-        formValid.value.location = true
-    }
-    if (form.price === '' || isNaN(intPrice)) {
-        formErrors.value.priceError = true
-    } else {
-        formValid.value.price = true
-    }
-    if (total.value === 0) {
-        formErrors.value.fileError = true
-    } else {
-        formValid.value.file = true
-    }
 
-}
-
-function valid(): boolean {
-    validation()
-    if (formValid.value.description === true && formValid.value.file === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true && formValid.value.property_type === true) {
-        return true
-    } else {
-        setTimeout(() => {
-            formErrors.value.descriptionError = false
-            formErrors.value.fileError = false
-            formErrors.value.locationError = false
-            formErrors.value.priceError = false
-            formErrors.value.titleError = false
-            formErrors.value.propertyTypeError = false
-        }, 5000)
-        return false
-    }
-
-}
 function submit() {
     form.inputFiles = filesArr.value
     if (user.value === null) {
         return toast('Error', 'You need to be logged in to perform this action')
-    } else if (valid()) {
+    } else if (validation(form.title, form.description, form.property_type, form.price, form.property_status, form.location, total.value)) {
         form.post(route('listings.index'), {
             preserveScroll: true,
             onSuccess: () => {
                 toast('Success', 'Listing added successfully')
-                form.reset()
-                filesArr.value = <File[]>[]
-                imgSrc.value = <string[]>[]
+                location.reload()
 
             }
         })

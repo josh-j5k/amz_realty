@@ -35,9 +35,11 @@ class ProfileController extends Controller
         $current_avatar = User::where('id', $request->user()->id)->value('avatar');
         if ($current_avatar !== null) {
             $file_path = str_replace("/", "\\", $current_avatar);
-            unlink(public_path('' . $file_path));
+            unlink(public_path($file_path));
         }
-        $avatar = $compressImage->compress($request->avatar[0], 100, 100, 'avatars');
+        $folder = date("Y");
+        $subFolders = date("m");
+        $avatar = $compressImage->compress($request->avatar[0], 100, 100, $folder, $subFolders, 'avatars');
         User::where('id', $request->user()->id)->update(['avatar' => $avatar]);
 
         return Redirect::route('user.profile.edit', $user_id);

@@ -21,13 +21,11 @@ const form = useForm({
     name: user.name,
     email: user.email,
 });
-console.log(user.avatar);
 
 const avatarForm = useForm({
     avatar: <File[]>[]
 })
 function changeAvatar() {
-    console.log(document.getElementById('avatar'));
 
     document.getElementById('avatar')?.click()
 }
@@ -50,10 +48,9 @@ function formSubmit() {
 function submit() {
     if (avatarForm.avatar.length > 0) {
         avatarForm.post(route('user.profile.update.avatar', user.id), {
-            onSuccess: () => router.reload({
-                only: ['users']
-            })
+            onSuccess: () => location.reload()
         })
+
     } else {
         form.patch(route('user.profile.update', user.id))
     }
