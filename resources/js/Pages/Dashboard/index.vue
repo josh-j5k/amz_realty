@@ -2,12 +2,14 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import Modal from '@/Components/Modal.vue';
 import Card from '@/Components/Card.vue';
+import FileUpload from '@/Components/FileUpload.vue';
 import { Head, Link, useForm, router } from '@inertiajs/vue3';
-import { ref, onMounted, watch } from 'vue';
+import { ref, onMounted, watch, onUnmounted } from 'vue';
 import { Listings } from '@/types/listings';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps';
 import { useListingFormValidator } from '@/Composables/UseListingFormValidator';
 import { useToast } from '@/Composables/UseToast';
+import { useFileUpload } from '@/Composables/UseFileUpload';
 
 const props = defineProps<{
     listings: Listings
@@ -15,17 +17,19 @@ const props = defineProps<{
 const currentIndex = ref(0)
 const { toast } = useToast()
 const { usePlaces, inputValue } = useGoogleMaps()
-const { valid, formErrors } = useListingFormValidator()
+const { validation, formErrors } = useListingFormValidator()
+const { deleteFile, imgSrc, total, assignFiles, dragenter, dragover, drop, filesArr, } = useFileUpload()
 const form = useForm({
-    title: props.listings[currentIndex.value].title,
-    description: props.listings[currentIndex.value].description,
+    title: props.listings.data[currentIndex.value].title,
+    description: props.listings.data[currentIndex.value].description,
     price: <string | number>'',
-    location: props.listings[currentIndex.value].location,
-    property_status: props.listings[currentIndex.value].property_status,
-    property_type: props.listings[currentIndex.value].property_type,
+    location: props.listings.data[currentIndex.value].location,
+    property_status: props.listings.data[currentIndex.value].propertyStatus,
+    property_type: props.listings.data[currentIndex.value].propertyType,
+    deletedImages: <string[]>[],
+    inputFiles: <File[]>[]
 })
-form.price = props.listings[currentIndex.value].price
-
+form.price = props.listings.data[currentIndex.value].price
 
 const mainImage = ref(0)
 
@@ -57,37 +61,60 @@ function showEditModal() {
     setTimeout(() => {
         const locationInput = document.getElementById('property_location') as HTMLInputElement
         usePlaces(locationInput, locationInput.value)
+        function dropEnter(ev: any) {
+            drop(ev, file_upload)
+        }
+        const dropbox = document.getElementById('dropbox') as HTMLDivElement
+        const file_upload = document.getElementById('file_upload') as HTMLInputElement
+
+        assignFiles(file_upload,)
+        dropbox.addEventListener("dragenter", dragenter, false);
+        dropbox.addEventListener("dragover", dragover, false);
+        dropbox.addEventListener("drop", dropEnter, false);
+        total.value = props.listings.data[currentIndex.value].listingImage.length
     }, 100)
 }
+
+function fileUpload(e: MouseEvent) {
+    const dropbox = e.currentTarget as HTMLDivElement
+    const input = dropbox.querySelector('#file_upload') as HTMLInputElement
+    input.click()
+
+}
+function removePhoto(ev: MouseEvent) {
+    const fileInput = document.querySelector('#file_upload') as HTMLInputElement
+    const btn = ev.currentTarget as HTMLButtonElement
+    const btnIndex = parseInt(btn.value)
+    deleteFile(fileInput, btnIndex)
+}
+function deletePhoto(ev: MouseEvent) {
+    const btn = ev.currentTarget as HTMLButtonElement
+    const btnIndex = parseInt(btn.value)
+    form.deletedImages.push(props.listings.data[currentIndex.value].listingImage[btnIndex])
+    props.listings.data[currentIndex.value].listingImage.splice(btnIndex, 1)
+}
 function submit() {
-    form.put(route('listings.update', props.listings[currentIndex.value].id), {
+    if (filesArr.value.length > 0) {
+        form.inputFiles = filesArr.value
+    }
+    form.post(route('listings.update', props.listings.data[currentIndex.value].id), {
         onSuccess: () => {
             show_edit_modal.value = false
             toast('Success', 'Listing was updated successfully!')
+            location.reload()
         }
     })
-    // form.inputFiles = filesArr.value
-    // if (user.value === null) {
-    //     return toast('Error', 'You need to be logged in to perform this action')
-    // } else if (valid()) {
-    //     form.post(route('listings.index'), {
-    //         preserveScroll: true,
-    //         onSuccess: () => {
-    //             toast('Success', 'Listing added successfully')
-    //             form.reset()
-    //             filesArr.value = <File[]>[]
-    //             imgSrc.value = <string[]>[]
-
-    //         }
-    //     })
-    // }
 }
 
 if (show_edit_modal.value === true) {
 
 }
+console.log(props.listings.data)
 onMounted(() => {
+
+
 })
+
 </script>
 
 <template>
@@ -97,7 +124,7 @@ onMounted(() => {
         <div class="pb-12 py-4">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div v-if="listings.length === 0" class="p-6 text-center text-gray-900">
+                    <div v-if="listings.data.length === 0" class="p-6 text-center text-gray-900">
                         <h2 class="text-2xl mb-4 font-bold">
                             You have no listings
                         </h2>
@@ -112,13 +139,12 @@ onMounted(() => {
                     </div>
                     <div v-else class="p-6 text-gray-900 gap-8 lg:grid grid-cols-[45%_55%]">
                         <div class="">
-                            <template v-for="(listing, index) in listings">
+                            <template v-for="(listing, index) in listings.data">
                                 <Card class="bg-white relative flex gap-4 cursor-pointer -lg:hidden">
                                     <div>
-                                        <img v-if="listing.listing_image?.length !== 0"
-                                            :src="listing.listing_image[0].listing_image" alt=""
-                                            class="max-w-[200px] h-full object-cover -md:max-w-[150px]">
-                                        <img v-else src="/images/no_image_placeholder.jpg" alt=""
+                                        <img v-if="listing.listingImage.length > 0" :src="listing.listingImage[0]" alt=""
+                                            class="max-w-[200px] object-cover aspect-square -md:max-w-[150px]">
+                                        <img v-else src="/Images/no_image_placeholder.jpg" alt=""
                                             class="h-full object-cover max-w-[200px] -md:max-w-[150px]">
                                     </div>
                                     <div class="p-4">
@@ -128,7 +154,7 @@ onMounted(() => {
                                             </span>
                                             <span>
 
-                                                <span v-if="listing.property_status === 'rent'">
+                                                <span v-if="listing.propertyStatus === 'rent'">
                                                     <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
                                                         ",").concat('.00') }}</span>/Month
                                                 </span>
@@ -148,7 +174,7 @@ onMounted(() => {
                                             </div>
                                         </div>
                                         <p class="text-sm opacity-75 mb-3 capitalize">
-                                            {{ listing.property_type }}
+                                            {{ listing.propertyType }}
                                         </p>
                                         <hr class="w-full h-[1px] bg-slate-100 mb-3">
 
@@ -162,8 +188,8 @@ onMounted(() => {
                                     </div>
                                     <span
                                         class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
-                                        :class="[listing.property_status === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
-                                        for {{ listing.property_status }}
+                                        :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                        for {{ listing.propertyStatus }}
                                     </span>
                                 </Card>
                                 <Card @click="function () {
@@ -171,10 +197,9 @@ onMounted(() => {
                                     show = true
                                 }" class="bg-white relative flex gap-4 cursor-pointer lg:hidden">
                                     <div>
-                                        <img v-if="listing.listing_image?.length !== 0"
-                                            :src="listing.listing_image[0].listing_image" alt=""
-                                            class="max-w-[200px] h-full object-cover -md:max-w-[150px]">
-                                        <img v-else src="/images/no_image_placeholder.jpg" alt=""
+                                        <img v-if="listing.listingImage.length > 0" :src="listing.listingImage[0]" alt=""
+                                            class="max-w-[200px] aspect-square object-cover -md:max-w-[150px]">
+                                        <img v-else src="/Images/no_image_placeholder.jpg" alt=""
                                             class="h-full object-cover max-w-[200px] -md:max-w-[150px]">
                                     </div>
                                     <div class="p-4">
@@ -184,7 +209,7 @@ onMounted(() => {
                                             </span>
                                             <span>
 
-                                                <span v-if="listing.property_status === 'rent'">
+                                                <span v-if="listing.propertyStatus === 'rent'">
                                                     <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
                                                         ",").concat('.00') }}</span>/Month
                                                 </span>
@@ -204,7 +229,7 @@ onMounted(() => {
                                             </div>
                                         </div>
                                         <p class="text-sm opacity-75 mb-3 capitalize">
-                                            {{ listing.property_type }}
+                                            {{ listing.propertyType }}
                                         </p>
                                         <hr class="w-full h-[1px] bg-slate-100 mb-3">
 
@@ -218,29 +243,29 @@ onMounted(() => {
                                     </div>
                                     <span
                                         class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
-                                        :class="[listing.property_status === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
-                                        for {{ listing.property_status }}
+                                        :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                        for {{ listing.propertyStatus }}
                                     </span>
                                 </Card>
                             </template>
                         </div>
                         <div class="px-3 -lg:hidden">
-                            <h2 class="mb-4 text-2xl font-bold">{{ listings[currentIndex].title }}</h2>
+                            <h2 class="mb-4 text-2xl font-bold">{{ listings.data[currentIndex].title }}</h2>
                             <div class="grid grid-cols-[70%_30%] gap-3 h-[390]">
 
-                                <img v-if="listings[currentIndex].listing_image.length > 0"
-                                    :src="listings[currentIndex].listing_image[mainImage].listing_image" alt=""
-                                    class="row-span-full">
-                                <img v-else src="/images/no_image_placeholder.jpg" alt=""
+                                <img v-if="listings.data[currentIndex].listingImage.length > 0"
+                                    :src="listings.data[currentIndex].listingImage[mainImage]" alt=""
+                                    class="row-span-full aspect-square">
+                                <img v-else src="/Images/no_image_placeholder.jpg" alt=""
                                     class="w-96 rounded-3xl aspect-square">
                                 <div class="flex flex-col gap-3 overflow-y-auto">
-                                    <template v-if="listings[currentIndex].listing_image.length > 0"
-                                        v-for="(image, index) in listings[currentIndex].listing_image">
-                                        <img @click="mainImage = index" :src="image.listing_image" alt=""
-                                            class="w-[124px] aspect-square object-cover rounded-xl">
+                                    <template v-if="listings.data[currentIndex].listingImage.length > 0"
+                                        v-for="(image, index) in listings.data[currentIndex].listingImage">
+                                        <img @click="mainImage = index" :src="image" alt=""
+                                            class="w-[124px] aspect-square object-cover rounded-xl cursor-pointer">
                                     </template>
                                     <template v-else v-for="(image, index) in 3">
-                                        <img src="/images/no_image_placeholder.jpg" alt=""
+                                        <img src="/Images/no_image_placeholder.jpg" alt=""
                                             class="w-[124px] aspect-square object-cover rounded-xl">
                                     </template>
                                 </div>
@@ -250,7 +275,7 @@ onMounted(() => {
                                     <i class="fas fa-location-dot"></i>
                                 </span>
                                 <span>
-                                    {{ listings[currentIndex].location }}
+                                    {{ listings.data[currentIndex].location }}
                                 </span>
                             </p>
                             <hr class="w-full h-[1px] bg-gray-200 my-4">
@@ -258,7 +283,7 @@ onMounted(() => {
                                 Property details
                             </p>
                             <p class="text-gray-700 ">
-                                {{ listings[currentIndex].description }}
+                                {{ listings.data[currentIndex].description }}
                             </p>
                             <div class="flex justify-between mt-3">
                                 <button @click="showEditModal" class="flex flex-col items-center">
@@ -287,6 +312,35 @@ onMounted(() => {
             <div class="p-8">
                 <form @submit.prevent="submit" enctype="multipart/form-data">
                     <div class="flex flex-col gap-4">
+                        <div class="relative max-h-[190px]  bg-gray-100  "
+                            :class="[listings.data[currentIndex].listingImage ? 'grid lg:grid-cols-3 grid-cols-2 gap-2 overflow-x-hidden overflow-y-auto p-4' : total > 0 ? 'grid lg:grid-cols-3 grid-cols-2 gap-2 overflow-x-hidden overflow-y-auto p-4' : 'justify-center items-center overflow-hidden']">
+                            <template v-for="(item, index) in imgSrc">
+                                <div
+                                    class="relative before:content-emptystring before:absolute before:w-full before:h-full before:inset-0 before:bg-[rgba(255,_255,_255,_0.1)] before:z-10">
+                                    <img :src="item" alt="" class="w-full aspect-square object-cover rounded">
+                                    <button @click="removePhoto" :value="index" type="button"
+                                        class="w-6 aspect-square bg-white rounded-full absolute top-2 right-4 z-20">
+                                        <span>
+                                            <i class="fas fa-xmark"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </template>
+                            <template v-for="(item, index) in listings.data[currentIndex].listingImage">
+                                <div v-if="listings.data[currentIndex].listingImage.length > 0"
+                                    class="relative before:content-emptystring before:absolute before:w-full before:h-full before:inset-0 before:bg-[rgba(255,_255,_255,_0.1)] before:z-10">
+                                    <img :src="item" alt="" class="w-full aspect-square object-cover rounded">
+                                    <button @click="deletePhoto" :value="index" type="button"
+                                        class="w-6 aspect-square bg-white rounded-full absolute top-2 right-4 z-20">
+                                        <span>
+                                            <i class="fas fa-xmark"></i>
+                                        </span>
+                                    </button>
+                                </div>
+                            </template>
+                            <FileUpload @file-upload="fileUpload" file_type="image" :file-error="formErrors.fileError"
+                                width="100%" accept=".jpg, .jpeg, .png, .webp" />
+                        </div>
 
                         <p v-if="formErrors.fileError" class="text-red-500"> Please upload at least one photo.</p>
                         <div class="flex flex-col">
@@ -375,7 +429,7 @@ onMounted(() => {
                     </span>
                 </p>
                 <div class="flex justify-between">
-                    <button @click="router.delete(route('listings.delete', props.listings[currentIndex].id))"
+                    <button @click="router.delete(route('listings.delete', props.listings.data[currentIndex].id))"
                         class="flex gap-2 py-1 px-3 rounded bg-gray-500 text-white">
                         <span>
                             <i class="fas fa-check"></i>
@@ -398,23 +452,23 @@ onMounted(() => {
         <Modal :show="show" :closeable="closeable" @close="closeModal">
             <div class="p-8 relative">
                 <div>
-                    <img v-if="listings[currentIndex].listing_image.length > 0"
-                        :src="listings[currentIndex].listing_image[0].listing_image" alt="">
-                    <img v-else src="/images/no_image_placeholder.jpg" alt="">
+                    <img v-if="listings.data[currentIndex].listingImage.length > 0"
+                        :src="listings.data[currentIndex].listingImage[0]" alt="">
+                    <img v-else src="/Images/no_image_placeholder.jpg" alt="">
                 </div>
                 <div>
                     <h2 class="font-bold text-2xl mt-6">
-                        {{ listings[currentIndex].title }}
+                        {{ listings.data[currentIndex].title }}
                     </h2>
                     <p class="text-sm text-gray-500 mt-1">
-                        {{ listings[currentIndex].location }}
+                        {{ listings.data[currentIndex].location }}
                     </p>
                     <p class="text-accent mt-2 mb-6">
-                        {{ listings[currentIndex].price }}
+                        {{ listings.data[currentIndex].price }}
                     </p>
                     <h3 class="font-bold text-lg mb-3">Description</h3>
                     <p>
-                        {{ listings[0].description }}
+                        {{ listings.data[0].description }}
                     </p>
                     <div class="flex justify-between mt-3">
                         <button @click="showEditModal" class="flex flex-col items-center">

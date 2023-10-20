@@ -8,6 +8,7 @@ export function useListingFormValidator() {
             priceError: false,
             locationError: false,
             descriptionError: false,
+            propertyStatusError: false,
             propertyTypeError: false
         }
     )
@@ -18,11 +19,11 @@ export function useListingFormValidator() {
             price: false,
             location: false,
             description: false,
+            property_status: false,
             property_type: false
         }
     )
-    function validation(title: string, description: string, property_type: string, price: string | number, property_status: string, location: string): void {
-
+    function validation(title: string, description: string, property_type: string, price: string | number, property_status: string, location: string, total: number): boolean {
         if (title === '') {
             formErrors.value.titleError = true
         } else {
@@ -43,6 +44,11 @@ export function useListingFormValidator() {
         } else {
             formValid.value.location = true
         }
+        if (property_status === '') {
+            formErrors.value.propertyStatusError = true
+        } else {
+            formValid.value.property_status = true
+        }
         if (price === '') {
             const intPrice = parseInt(price)
             if (isNaN(intPrice)) {
@@ -51,29 +57,27 @@ export function useListingFormValidator() {
                 formValid.value.price = true
             }
         }
-        // if (total.value === 0) {
-        //     formErrors.value.fileError = true
-        // } else {
-        //     formValid.value.file = true
-        // }
+        if (total === 0) {
+            formErrors.value.fileError = true
+        } else {
+            formValid.value.file = true
+        }
 
-    }
-    function valid(title: string, description: string, property_type: string, price: string | number, property_status: string, location: string): boolean {
-        validation(title, description, property_type, price, property_status, location)
-        if (formValid.value.description === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true && formValid.value.property_type === true) {
+        if (formValid.value.description === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true && formValid.value.property_type === true && formValid.value.property_status === true && formValid.value.file === true) {
             return true
         } else {
             setTimeout(() => {
                 formErrors.value.descriptionError = false
-                // formErrors.value.fileError = false
+                formErrors.value.fileError = false
                 formErrors.value.locationError = false
                 formErrors.value.priceError = false
                 formErrors.value.titleError = false
                 formErrors.value.propertyTypeError = false
+                formErrors.value.propertyStatusError = false
             }, 5000)
             return false
         }
 
     }
-    return { valid, formErrors }
+    return { formErrors, validation }
 }

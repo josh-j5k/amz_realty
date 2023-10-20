@@ -97,10 +97,10 @@ onUnmounted(() => {
                     <div class=" relative">
                         <button @click="dropdownToggled = !dropdownToggled" id="dashboard_dropdown-toggle" type="button"
                             class="flex gap-2.5 items-center dashboard_dropdown-toggle">
-                            <span v-if="user.avatar" id="avatar">
+                            <span v-if="user.avatar">
                                 <img :src="user.avatar" alt="user avatar" class="w-8 aspect-square rounded-full">
                             </span>
-                            <span id="avatar" v-else
+                            <span v-else
                                 class="w-8 aspect-square flex justify-center items-center bg-slate-900 rounded-full text-white border border-accent">
                                 <i class="fas fa-user"></i>
                             </span>

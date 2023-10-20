@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue';
 import { Link, router } from '@inertiajs/vue3';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
+import NavLink from '@/Components/NavLink.vue';
 import { usePage } from '@inertiajs/vue3';
 import { onMounted } from 'vue';
 import { onUnmounted } from 'vue';
@@ -59,24 +60,24 @@ onUnmounted(() => {
                 class="flex lg:items-center lg:justify-between -lg:fixed inset-0 -lg:bg-white -lg:shadow  -lg:text-gray-800 transition-transform duration-500 -lg:flex-col -lg:p-4 -lg:translate-x-full">
                 <nav id="primary-nav"
                     class="flex gap-4 h-full -lg:flex-col -lg:pt-16 -lg:px-8 text-sm -lg:text-xl -lg:font-bold">
-                    <Link class="font-bold" :href="route('Home')" :active="route().current('Home')">
-                    Home
-                    </Link>
-                    <Link :href="route('listings.index')" :active="route().current('Home')">
-                    Listings
-                    </Link>
+                    <NavLink :href="route('Home')" :active="route().current('Home')">
+                        Home
+                    </NavLink>
+                    <NavLink :href="route('listings.index')" :active="route().current('listings.index')">
+                        Listings
+                    </NavLink>
                     <a href="#">
                         New Homes
                     </a>
                     <a href="#">
                         Commercial
                     </a>
-                    <Link :href="route('Contact')" :active="route().current('Contact')">
-                    Contact Us
-                    </Link>
-                    <Link :href="route('About')" :active="route().current('About')">
-                    About Us
-                    </Link>
+                    <NavLink :href="route('Contact')" :active="route().current('Contact')">
+                        Contact Us
+                    </NavLink>
+                    <NavLink :href="route('About')" :active="route().current('About')">
+                        About Us
+                    </NavLink>
                 </nav>
                 <div class="flex gap-6 -lg:justify-between -lg:pt-8 -lg:border-t">
 

@@ -26,6 +26,8 @@ export default {
                 // => @media (max-width: 769px) { ... }
                 "-sm": { max: "639px" },
                 // => @media (max-width: 639px) { ... }
+                tablet: { min: "639px", max: "1023px" },
+                // => @media (width: > 639 <= 1023) { ... }
             },
             colors: {
                 accent: "#175fef",
