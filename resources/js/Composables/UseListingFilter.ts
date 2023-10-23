@@ -60,15 +60,10 @@ export function useListingFilter() {
         price.value.min = priceMin
         price.value.max = priceMax
     }
-    const search = location.search
     function submit(input: any, key: string, value: string): void {
         input[key] = value
-        if (search.length > 0) {
+        router.get('/listings', input)
 
-            router.get('/listings'.concat(search), input)
-        } else {
-            router.get('/listings', input)
-        }
     }
     function updateCheckbox() {
         statusCheckbox.value = [status.value]

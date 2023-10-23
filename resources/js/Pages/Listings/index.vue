@@ -103,7 +103,37 @@ function submitLocation(ev: KeyboardEvent) {
         locationSubmit()
     }
 }
-
+const search = location.search
+const pageInclude = search.includes('page=')
+const startQuery = search.startsWith('?page=')
+const pageIndex = search.indexOf('&page')
+const pageReplace = search.slice(pageIndex)
+const newSearch = search.replace(pageReplace, '')
+function pageQery(pageNumber: string) {
+    if (search.length > 0 && startQuery) {
+        router.get('/listings?' + 'page='.concat(pageNumber))
+    } else if (search.length > 0 && !pageInclude) {
+        router.get('/listings' + search + '&page='.concat(pageNumber))
+    } else if (search.length > 0 && pageInclude && !startQuery) {
+        router.get('/listings' + newSearch + '&page='.concat(pageNumber))
+    }
+    else {
+        router.get('/listings?' + 'page='.concat(pageNumber))
+    }
+}
+function paginatePrev() {
+    const prevPage = props.listings.meta.current_page - 1
+    pageQery(prevPage.toString())
+}
+function paginateNext() {
+    const nextPage = props.listings.meta.current_page + 1
+    pageQery(nextPage.toString())
+}
+function specificPage(ev: MouseEvent) {
+    const button = ev.target as HTMLButtonElement
+    const page = button.textContent!
+    pageQery(page)
+}
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     usePlaces(locationInput, locations.value)
@@ -220,7 +250,6 @@ console.log(props.listings);
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div>
                     <div class="w-[90%] mx-auto">
@@ -370,14 +399,16 @@ console.log(props.listings);
                     </div>
                     <div class="flex justify-between md:px-12 px-4 mt-8 bg-white h-20 -md:pb-8 pb-52 lg:pt-16 pt-8">
                         <div class="flex items-center">
-                            <button class="capitalize group border border-accent rounded-full aspect-square w-10">
-                                <i
-                                    class="fas fa-chevron-left transition-transform duration-200 ease-out group-hover:-translate-x-1"></i>
+                            <button @click="paginatePrev" :disabled="listings.links.prev === null"
+                                class="capitalize group border border-accent rounded-full aspect-square w-10"
+                                :class="[listings.links.prev === null ? 'opacity-70' : '']">
+                                <i class="fas fa-chevron-left transition-transform duration-200 ease-out"
+                                    :class="[listings.links.prev !== null ? 'group-hover:-translate-x-1' : '']"></i>
                             </button>
                         </div>
                         <div class="flex gap-2 items-center">
                             <template v-for="(item, index) in metaLinks">
-                                <button
+                                <button @click="specificPage"
                                     class="border rounded-full hover:bg-accent-hover hover:text-white transition-colors aspect-square w-10"
                                     :class="[item.active ? 'bg-accent text-white' : '']">
                                     {{ index + 1 }}
@@ -385,9 +416,11 @@ console.log(props.listings);
                             </template>
                         </div>
                         <div class="flex items-center">
-                            <button class="capitalize group border border-accent  rounded-full aspect-square w-10">
-                                <i
-                                    class="fas fa-chevron-right transition-transform duration-200 ease-out group-hover:translate-x-1"></i>
+                            <button @click="paginateNext" :disabled="listings.links.next === null"
+                                class="capitalize group border border-accent  rounded-full aspect-square w-10"
+                                :class="[listings.links.next === null ? 'opacity-70' : '']">
+                                <i class="fas fa-chevron-right transition-transform duration-200 ease-out"
+                                    :class="[listings.links.next !== null ? 'group-hover:translate-x-1' : '']"></i>
                             </button>
                         </div>
                     </div>
