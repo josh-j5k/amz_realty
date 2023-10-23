@@ -50,7 +50,7 @@ class ListingController extends Controller
             'property_type' => $property_type
         ];
 
-        $listings = ListingResource::collection(Listing::latest()->filter($query)->get());
+        $listings = ListingResource::collection(Listing::latest()->filter($query)->paginate(5));
         return Inertia::render(
             'Listings/index',
             [

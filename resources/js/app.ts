@@ -10,7 +10,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 
 
 
-const appName = import.meta.env.VITE_APP_NAME || 'AMZ Realty';
+const appName = import.meta.env.VITE_APP_NAME || "House Seeker's Hub";
 
 createInertiaApp({
     title: (title) => `${title} | ${appName}`,

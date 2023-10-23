@@ -75,7 +75,7 @@ console.log(props.listing);
                     </h1>
                     <p class="font-bold flex gap-1 text-sm text-accent">
                         <span>
-                            FCFA
+                            XAF
                         </span>
                         <span>
 
