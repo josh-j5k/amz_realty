@@ -163,7 +163,7 @@ onUnmounted(() => {
                             <input v-model="form.price" type="text" name="listing price" id="price_per_month"
                                 placeholder="Enter the price per month" class="px-14 w-full rounded-md"
                                 :class="[formErrors.priceError ? 'border-red-500' : '']">
-                            <span class="font-bold absolute left-2 top-1/2 text-secondary -translate-y-1/2">FCFA</span>
+                            <span class="font-bold absolute left-2 top-1/2 text-secondary -translate-y-1/2">XAF</span>
                         </div>
                         <p v-if="formErrors.priceError" class="text-red-500">
                             Please enter a valid price.
@@ -266,7 +266,7 @@ onUnmounted(() => {
                         </div>
                         <div>
                             <p v-if="form.price.length > 0" class="text-sm">
-                                <span class="font-bold mr-2">FCFA</span>
+                                <span class="font-bold mr-2">XAF</span>
                                 <span>{{ form.price }}</span>
                                 <span v-if="form.property_status === 'rent'">/month</span>
                             </p>

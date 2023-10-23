@@ -150,7 +150,7 @@ onMounted(() => {
                                     <div class="p-4">
                                         <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
                                             <span>
-                                                FCFA
+                                                XAF
                                             </span>
                                             <span>
 
@@ -205,7 +205,7 @@ onMounted(() => {
                                     <div class="p-4">
                                         <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
                                             <span>
-                                                FCFA
+                                                XAF
                                             </span>
                                             <span>
 
@@ -369,7 +369,7 @@ onMounted(() => {
                                 <input v-model="form.price" type="text" name="listing price" id="price_per_month"
                                     placeholder="Enter the price per month" class="px-14 w-full rounded-md"
                                     :class="[formErrors.priceError ? 'border-red-500' : '']">
-                                <span class="font-bold absolute left-2 top-1/2 text-secondary -translate-y-1/2">FCFA</span>
+                                <span class="font-bold absolute left-2 top-1/2 text-secondary -translate-y-1/2">XAF</span>
                             </div>
                             <p v-if="formErrors.priceError" class="text-red-500">
                                 Please enter a valid price.

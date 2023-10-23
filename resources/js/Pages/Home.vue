@@ -197,7 +197,7 @@ onMounted(() => {
                             <div class="p-4">
                                 <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
                                     <span>
-                                        FCFA
+                                        XAF
                                     </span>
                                     <span>
 
