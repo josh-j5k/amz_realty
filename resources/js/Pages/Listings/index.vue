@@ -6,13 +6,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 import { Query, Listings, metaLinks } from '@/types/listings'
 import Card from '@/Components/Card.vue';
-import SkeletonLoader from '@/Components/SkeletonLoader.vue';
+
 
 
 const props = defineProps<{
     query: Query,
     listings: Listings
 }>()
+const per_page = ref('16')
 const { usePlaces, inputValue } = useGoogleMaps()
 const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
 
@@ -55,7 +56,6 @@ const metaLinks = computed((): metaLinks[] => {
 
     return arr.value
 })
-console.log(metaLinks.value);
 
 function removeFilter(e: any) {
 
@@ -149,7 +149,6 @@ onUnmounted(() => {
     }
 })
 
-console.log(props.listings);
 
 </script>
 
@@ -272,6 +271,16 @@ console.log(props.listings);
                                     </span>
                                 </button>
                                 <div class="flex gap-3 items-center">
+                                    <div>
+                                        <label for="per_page">
+                                            Per Page
+                                        </label>
+                                        <select v-model="per_page" name="per page" id="per_page" class="h-8 py-1 rounded">
+                                            <option value="16">16</option>
+                                            <option value="32">32</option>
+                                            <option value="64">64</option>
+                                        </select>
+                                    </div>
                                     <div class="relative">
                                         <button type="button" title="sort by"
                                             class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
