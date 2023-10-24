@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import FileUpload from '@/Components/FileUpload.vue';
+import Preloader from '@/Components/Preloader.vue';
 import { useFileUpload } from '@/Composables/UseFileUpload'
-import { useForm, usePage, Head } from '@inertiajs/vue3';
+import { useForm, usePage, Head, router } from '@inertiajs/vue3';
 import { ref, onMounted, watch, computed } from 'vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps';
 import { useListingFormValidator } from '@/Composables/UseListingFormValidator';
@@ -21,6 +22,17 @@ const form = useForm({
     property_type: '',
     inputFiles: <File[]>[]
 
+})
+const preload = ref(false)
+router.on('start', () => preload.value = true)
+router.on('finish', (event) => {
+    if (event.detail.visit.completed) {
+        preload.value = false
+    } else if (event.detail.visit.interrupted) {
+        preload.value = false
+    } else if (event.detail.visit.cancelled) {
+        preload.value = false
+    }
 })
 const page = usePage()
 const user = computed(() => page.props.auth.user)
@@ -100,6 +112,7 @@ onUnmounted(() => {
         <title>Post a listing</title>
     </Head>
     <Header />
+    <Preloader v-if="preload" />
     <section
         class="w-full min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 pt-0 gap-4">
 

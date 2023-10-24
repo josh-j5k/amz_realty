@@ -158,7 +158,7 @@ onUnmounted(() => {
         <section class="min-h-screen w-full overflow-x-hidden relative bg-gray-200"
             :class="[sidebarToggled ? 'sidebar' : '']">
             <div class="grid lg:grid-cols-[25%_75%] grid-cols-1 -md:gap-4">
-                <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen -lg:w-5/6 shadow-md bg-white px-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
+                <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen -lg:w-5/6 shadow-md bg-white px-8 pt-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
                     :class="[sidebarToggled ? '-lg:translate-x-0' : '-lg:-translate-x-full']">
                     <div class="">
                         <h2 class="capitalize font-bold text-2xl mb-4">location</h2>
@@ -251,8 +251,8 @@ onUnmounted(() => {
                     </div>
                 </div>
                 <div>
-                    <div class="w-[90%] mx-auto">
-                        <div class=" w-full bg-white mt-8 p-4">
+                    <div class="">
+                        <div class=" md:w-[90%] mx-auto -md:px-8 bg-white mt-8 p-4">
                             <div class="flex relative -md:justify-end justify-between items-center">
                                 <h3 class="capitalize font-bold -md:hidden">
                                     applied filters
@@ -272,22 +272,23 @@ onUnmounted(() => {
                                 </button>
                                 <div class="flex gap-3 items-center">
                                     <div>
-                                        <label for="per_page">
+                                        <label for="per_page" class="text-sm">
                                             Per Page
                                         </label>
-                                        <select v-model="per_page" name="per page" id="per_page" class="h-8 py-1 rounded">
+                                        <select v-model="per_page" name="per page" id="per_page"
+                                            class="h-8 py-1 rounded w-12 px-1 bg-right">
                                             <option value="16">16</option>
                                             <option value="32">32</option>
                                             <option value="64">64</option>
                                         </select>
                                     </div>
-                                    <div class="relative">
+                                    <!-- <div class="relative">
                                         <button type="button" title="sort by"
                                             class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
                                             <span class="capitalize">sort by</span>
                                             <i class="fas fa-chevron-down"></i>
                                         </button>
-                                    </div>
+                                    </div> -->
 
                                     <button @click="activeGrid = 'grid'" type="button" title="Display each item in grid"
                                         class="rounded w-7 h-7 group">
@@ -312,7 +313,7 @@ onUnmounted(() => {
                                     </button>
                                 </div>
                             </div>
-                            <div class="flex gap-3 mt-3">
+                            <div class="flex  gap-3 mt-3">
                                 <template v-for="item in filter">
                                     <button type="button" title="cancel filter" @click="removeFilter"
                                         class="flex items-center text-sm gap-2 rounded-xl bg-blue-500 text-white h-8 px-4">
@@ -328,7 +329,7 @@ onUnmounted(() => {
                             </div>
                         </div>
 
-                        <div class="mt-8 grid transition-all  gap-3"
+                        <div class="mt-8 w-[90%] mx-auto grid transition-all  gap-3"
                             :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 -sm:grid-cols-1 ' : 'grid-cols-1']">
                             <template v-for="(listing) in listings.data">
                                 <Link :href="(route('listings.show', listing.id))">
@@ -406,7 +407,8 @@ onUnmounted(() => {
                         </div>
 
                     </div>
-                    <div class="flex justify-between md:px-12 px-4 mt-8 bg-white h-20 -md:pb-8 pb-52 lg:pt-16 pt-8">
+                    <div v-if="metaLinks.length > 1"
+                        class="flex justify-between md:px-12 px-4 mt-8 bg-white h-20 -md:pb-8 pb-52 lg:pt-16 pt-8">
                         <div class="flex items-center">
                             <button @click="paginatePrev" :disabled="listings.links.prev === null"
                                 class="capitalize group border border-accent rounded-full aspect-square w-10"

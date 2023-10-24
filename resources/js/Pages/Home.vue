@@ -2,8 +2,9 @@
 import SkeletonLoader from '@/Components/SkeletonLoader.vue';
 import AppLayout from '@/Layouts/AppLayout.vue';
 import Card from '@/Components/Card.vue';
+
 import { Link, useForm, Head } from '@inertiajs/vue3';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, onUnmounted } from 'vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 import { Loader } from "@googlemaps/js-api-loader"
 import { Listings } from '@/types/listings';
@@ -21,7 +22,6 @@ const loader = new Loader({
     version: "weekly",
     libraries: ['places'],
 });
-
 const { usePlaces } = useGoogleMaps()
 const input = ref('input')
 const form = useForm({
@@ -43,6 +43,9 @@ function submit() {
         form.get('/listings')
     }
 }
+
+
+
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     // usePlaces(locationInput, form.location)
@@ -57,7 +60,9 @@ onMounted(() => {
         })
 
     })
+
 })
+
 
 
 </script>
@@ -80,17 +85,20 @@ onMounted(() => {
             <form @submit.prevent="submit">
 
                 <div class="text-white flex justify-center gap-4">
-                    <label for="any-status" class="w-24 h-10 flex items-center justify-center rounded-tl-md rounded-tr-md "
+                    <label tabindex="0" for="any-status"
+                        class="w-24 h-10 focus:outline-accent flex cursor-pointer items-center justify-center rounded-tl-md rounded-tr-md "
                         :class="form.status === 'any' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
                         Any Status
                     </label>
                     <input class="hidden" type="radio" value="any" v-model="form.status" name="any-status" id="any-status">
-                    <label for="rent" class="w-24 h-10 flex items-center justify-center rounded-tl-md rounded-tr-md"
+                    <label tabindex="0" for="rent"
+                        class="w-24 h-10 focus:outline-accent cursor-pointer flex items-center justify-center rounded-tl-md rounded-tr-md"
                         :class="form.status === 'rent' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
                         Rent
                     </label>
                     <input class="hidden" type="radio" value="rent" v-model="form.status" name="rent" id="rent">
-                    <label for="sale" class="w-24 h-10 flex items-center justify-center rounded-tl-md rounded-tr-md "
+                    <label tabindex="0" for="sale"
+                        class="w-24 h-10 cursor-pointer focus:outline-accent flex items-center justify-center rounded-tl-md rounded-tr-md "
                         :class="form.status === 'sale' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
                         Sale
                     </label>
@@ -106,7 +114,7 @@ onMounted(() => {
                         <div class="flex items-center gap-4 w-full relative">
                             <input ref="input" required v-model="form.location" type="text"
                                 placeholder="Type your town, region" id="location"
-                                class="border-none bg-gray-100 focus:outline-none focus:ring-0 w-full">
+                                class="border-none bg-gray-100  focus:ring-accent w-full">
                             <span class="absolute right-2"><i class="fas fa-map"></i></span>
                         </div>
                     </div>
@@ -117,7 +125,7 @@ onMounted(() => {
                         </label>
                         <div class="flex items-center gap-4 w-full relative">
                             <select required v-model="form.property_type" id="property-type"
-                                class="border-none outline-none appearance-none focus:ring-0 bg-gray-100 w-full">
+                                class="border-none outline-none appearance-none focus:ring-accent bg-gray-100 w-full">
                                 <option value="" disabled>Please select an option</option>
                                 <option value="room">
                                     Room

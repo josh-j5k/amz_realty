@@ -23,7 +23,7 @@ function nextPic() {
         currentIndex.value = 0
     }
 }
-console.log(props.listing);
+
 
 
 </script>
