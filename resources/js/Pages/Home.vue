@@ -191,7 +191,7 @@ onMounted(() => {
 
                         <Card class="bg-white relative">
                             <div>
-                                <img v-if="listing.listing_image?.length > 0" :src="listing.listing_image[0]" alt="">
+                                <img v-if="listing.listingImage?.length > 0" :src="listing.listingImage[0]" alt="">
                                 <img v-else src="/Images/no_image_placeholder.jpg" alt="">
                             </div>
                             <div class="p-4">
@@ -244,6 +244,7 @@ onMounted(() => {
         <section class="lg:h-[90vh] p-12 mt-16">
             <div class="grid lg:grid-cols-[40%_60%] grid-cols-1 items-center justify-center lg:w-5/6 mx-auto gap-8">
                 <div>
+
                     <h2 class="lg:text-3xl text-2xl font-bold mb-6">
                         Your property search just got easier
                     </h2>
@@ -292,18 +293,28 @@ onMounted(() => {
         <section class="lg:min-h-screen p-12 bg-slate-100">
             <div class="md:w-5/6 mx-auto grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 ">
                 <Card class="p-8 w-full bg-white">
-                    <h3 class="mb-6 text-2xl font-bold">
-                        Help me choose
-                    </h3>
+                    <div class="flex gap-4">
+                        <span>
+                            <i class="fa-solid fa-hand-holding-hand text-3xl"></i>
+                        </span>
+                        <h3 class="mb-6 text-2xl font-bold">
+                            Help me choose
+                        </h3>
+                    </div>
                     <p>
                         We can help you find your dream home by guiding you through a few simple steps and matching you with
                         tailor-made property listings.
                     </p>
                 </Card>
                 <Card class="p-8 w-full bg-blue-900 text-white">
-                    <h3 class="mb-6 text-2xl font-bold">
-                        Introducing wish list
-                    </h3>
+                    <div class="flex gap-4 ">
+                        <span>
+                            <i class="fa-regular fa-heart text-3xl"></i>
+                        </span>
+                        <h3 class="mb-6 text-2xl font-bold">
+                            Introducing wish list
+                        </h3>
+                    </div>
                     <p>
                         What are the things you’re really looking for in your next property? Create a Wish List of features,
                         from deal-breakers to nice-to-haves, then we’ll sort your property search results accordingly. It’s
@@ -311,18 +322,28 @@ onMounted(() => {
                     </p>
                 </Card>
                 <Card class="p-8 w-full bg-secondary text-white">
-                    <h3 class="mb-6 text-2xl font-bold">
-                        Travel Time Search
-                    </h3>
+                    <div class="flex gap-4">
+                        <span>
+                            <i class="fa-regular fa-clock text-3xl"></i>
+                        </span>
+                        <h3 class="mb-6 text-2xl font-bold">
+                            Travel Time Search
+                        </h3>
+                    </div>
                     <p>
                         Need to find a property near your workplace, children’s school or train station? We’ll help you find
                         your dream property in the right location.
                     </p>
                 </Card>
                 <Card class="p-8 w-full bg-slate-900 text-white">
-                    <h3 class="mb-6 text-2xl font-bold">
-                        Instant Valuation
-                    </h3>
+                    <div class="flex gap-4">
+                        <span>
+                            <i class="fa-solid fa-bolt text-3xl"></i>
+                        </span>
+                        <h3 class="mb-6 text-2xl font-bold">
+                            Instant Valuation
+                        </h3>
+                    </div>
                     <p>
                         Our online valuation service gives you a free and instant estimate of your home’s current value in
                         minutes.

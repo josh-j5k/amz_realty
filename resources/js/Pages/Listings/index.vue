@@ -6,13 +6,14 @@ import AppLayout from '@/Layouts/AppLayout.vue';
 import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
 import { Query, Listings, metaLinks } from '@/types/listings'
 import Card from '@/Components/Card.vue';
-import SkeletonLoader from '@/Components/SkeletonLoader.vue';
+
 
 
 const props = defineProps<{
     query: Query,
     listings: Listings
 }>()
+const per_page = ref('16')
 const { usePlaces, inputValue } = useGoogleMaps()
 const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
 
@@ -55,7 +56,6 @@ const metaLinks = computed((): metaLinks[] => {
 
     return arr.value
 })
-console.log(metaLinks.value);
 
 function removeFilter(e: any) {
 
@@ -103,7 +103,37 @@ function submitLocation(ev: KeyboardEvent) {
         locationSubmit()
     }
 }
-
+const search = location.search
+const pageInclude = search.includes('page=')
+const startQuery = search.startsWith('?page=')
+const pageIndex = search.indexOf('&page')
+const pageReplace = search.slice(pageIndex)
+const newSearch = search.replace(pageReplace, '')
+function pageQery(pageNumber: string) {
+    if (search.length > 0 && startQuery) {
+        router.get('/listings?' + 'page='.concat(pageNumber))
+    } else if (search.length > 0 && !pageInclude) {
+        router.get('/listings' + search + '&page='.concat(pageNumber))
+    } else if (search.length > 0 && pageInclude && !startQuery) {
+        router.get('/listings' + newSearch + '&page='.concat(pageNumber))
+    }
+    else {
+        router.get('/listings?' + 'page='.concat(pageNumber))
+    }
+}
+function paginatePrev() {
+    const prevPage = props.listings.meta.current_page - 1
+    pageQery(prevPage.toString())
+}
+function paginateNext() {
+    const nextPage = props.listings.meta.current_page + 1
+    pageQery(nextPage.toString())
+}
+function specificPage(ev: MouseEvent) {
+    const button = ev.target as HTMLButtonElement
+    const page = button.textContent!
+    pageQery(page)
+}
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     usePlaces(locationInput, locations.value)
@@ -119,7 +149,6 @@ onUnmounted(() => {
     }
 })
 
-console.log(props.listings);
 
 </script>
 
@@ -220,7 +249,6 @@ console.log(props.listings);
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div>
                     <div class="w-[90%] mx-auto">
@@ -243,6 +271,16 @@ console.log(props.listings);
                                     </span>
                                 </button>
                                 <div class="flex gap-3 items-center">
+                                    <div>
+                                        <label for="per_page">
+                                            Per Page
+                                        </label>
+                                        <select v-model="per_page" name="per page" id="per_page" class="h-8 py-1 rounded">
+                                            <option value="16">16</option>
+                                            <option value="32">32</option>
+                                            <option value="64">64</option>
+                                        </select>
+                                    </div>
                                     <div class="relative">
                                         <button type="button" title="sort by"
                                             class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
@@ -370,14 +408,16 @@ console.log(props.listings);
                     </div>
                     <div class="flex justify-between md:px-12 px-4 mt-8 bg-white h-20 -md:pb-8 pb-52 lg:pt-16 pt-8">
                         <div class="flex items-center">
-                            <button class="capitalize group border border-accent rounded-full aspect-square w-10">
-                                <i
-                                    class="fas fa-chevron-left transition-transform duration-200 ease-out group-hover:-translate-x-1"></i>
+                            <button @click="paginatePrev" :disabled="listings.links.prev === null"
+                                class="capitalize group border border-accent rounded-full aspect-square w-10"
+                                :class="[listings.links.prev === null ? 'opacity-70' : '']">
+                                <i class="fas fa-chevron-left transition-transform duration-200 ease-out"
+                                    :class="[listings.links.prev !== null ? 'group-hover:-translate-x-1' : '']"></i>
                             </button>
                         </div>
                         <div class="flex gap-2 items-center">
                             <template v-for="(item, index) in metaLinks">
-                                <button
+                                <button @click="specificPage"
                                     class="border rounded-full hover:bg-accent-hover hover:text-white transition-colors aspect-square w-10"
                                     :class="[item.active ? 'bg-accent text-white' : '']">
                                     {{ index + 1 }}
@@ -385,9 +425,11 @@ console.log(props.listings);
                             </template>
                         </div>
                         <div class="flex items-center">
-                            <button class="capitalize group border border-accent  rounded-full aspect-square w-10">
-                                <i
-                                    class="fas fa-chevron-right transition-transform duration-200 ease-out group-hover:translate-x-1"></i>
+                            <button @click="paginateNext" :disabled="listings.links.next === null"
+                                class="capitalize group border border-accent  rounded-full aspect-square w-10"
+                                :class="[listings.links.next === null ? 'opacity-70' : '']">
+                                <i class="fas fa-chevron-right transition-transform duration-200 ease-out"
+                                    :class="[listings.links.next !== null ? 'group-hover:translate-x-1' : '']"></i>
                             </button>
                         </div>
                     </div>

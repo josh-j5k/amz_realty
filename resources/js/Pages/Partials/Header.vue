@@ -47,7 +47,7 @@ onUnmounted(() => {
 
 <template>
     <header class="h-24 w-full flex flex-col z-[9990] justify-center lg:px-16 px-8 overflow-x-hidden"
-        :class="route().current('Home') ? 'absolute inset-0 bg-transparent text-white' : 'bg-white text-black relative '">
+        :class="route().current('Home') ? 'absolute inset-0 bg-transparent text-white' : 'bg-white text-black relative shadow'">
         <div class=" lg:grid lg:grid-cols-[20%_80%] grid-cols-2 -lg:flex -lg:justify-between items-center">
             <ApplicationLogo width="50" />
             <button id="nav-toggle" type="button" @click="navToggle" class="lg:hidden z-[990] relative "
@@ -66,12 +66,12 @@ onUnmounted(() => {
                     <NavLink :href="route('listings.index')" :active="route().current('listings.index')">
                         Listings
                     </NavLink>
-                    <a href="#">
+                    <NavLink href="#">
                         New Homes
-                    </a>
-                    <a href="#">
+                    </NavLink>
+                    <NavLink href="#">
                         Commercial
-                    </a>
+                    </NavLink>
                     <NavLink :href="route('Contact')" :active="route().current('Contact')">
                         Contact Us
                     </NavLink>
@@ -81,23 +81,26 @@ onUnmounted(() => {
                 </nav>
                 <div class="flex gap-6 -lg:justify-between -lg:pt-8 -lg:border-t">
 
-                    <button type="button" title="New listing" @click=" router.get('listings/create')"
-                        class="text-white hover:bg-accent-hover bg-accent flex items-center gap-2 px-3 py-1.5 rounded-md text-sm">
-                        <span>
-                            <i class="fas fa-circle-plus"></i>
-                        </span>
-                        <span class="capitalize">
-                            new listing
-                        </span>
-                    </button>
+                    <div class="flex items-center gap-2 h-12">
+                        <button type="button" title="New listing" @click=" router.get('listings/create')"
+                            class="text-white hover:bg-accent-hover bg-accent flex items-center justify-center gap-2 h-9 w-32 rounded-md ">
+                            <span>
+                                <i class="fas fa-circle-plus"></i>
+                            </span>
+                            <span class="capitalize">
+                                new listing
+                            </span>
+                        </button>
+                    </div>
                     <div class="flex items-center relative">
                         <button v-if="!user" type="button" title="login/register" @click="router.get(route('login'))"
-                            class="flex gap-2 px-4 py-2 text-sm">
-                            <span>
-                                <i class="fa-regular fa-user"></i>
+                            class="flex items-center gap-2 h-12 ">
+                            <span
+                                class="w-8 aspect-square rounded-full flex justify-center items-end border-2 border-accent overflow-hidden">
+                                <i class="fa-regular fa-user text-2xl text-accent translate-y-1.5"></i>
                             </span>
                             <span>
-                                Register/Login
+                                Sign in
                             </span>
                         </button>
 

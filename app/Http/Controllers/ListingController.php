@@ -49,8 +49,12 @@ class ListingController extends Controller
             'price' => $price,
             'property_type' => $property_type
         ];
-
-        $listings = ListingResource::collection(Listing::latest()->filter($query)->paginate(5));
+        if (is_null($request->per_page)) {
+            $per_page = 16;
+        } else {
+            $per_page = (int) $request->per_page;
+        }
+        $listings = ListingResource::collection(Listing::latest()->filter($query)->paginate($per_page));
         return Inertia::render(
             'Listings/index',
             [
