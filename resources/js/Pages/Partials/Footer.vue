@@ -24,7 +24,7 @@ const year = new Date().getFullYear()
         </div>
         <div class="w-[90%] mx-auto grid py-20 grid-cols-1 lg:grid-cols-[30%_20%_20%_30%] gap-8">
             <div>
-                <ApplicationLogo width="50" />
+                <ApplicationLogo class="w-16" />
                 <p class="text-sm mt-4">
                     Every property you see advertised with us is on the market with full-service estate or letting agents
                     who are experts in their local area.

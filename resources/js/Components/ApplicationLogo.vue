@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import { Link } from '@inertiajs/vue3';
 defineProps<{
-    width: string
+    class: string
 }>()
 </script>
 <template>
     <Link :href="route('Home')">
-    <svg id="Layer_1" :width="width" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 645 430.56">
+    <svg :class="class" id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 645 430.56">
         <g>
             <rect class="cls-1" width="31" height="331" />
             <rect class="cls-1" x="175" width="31" height="331" />

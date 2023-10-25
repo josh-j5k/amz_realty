@@ -49,7 +49,7 @@ onUnmounted(() => {
     <header class="h-24 w-full flex flex-col z-[9990] justify-center lg:px-16 px-8 overflow-x-hidden"
         :class="route().current('Home') ? 'absolute inset-0 bg-transparent text-white' : 'bg-white text-black relative shadow'">
         <div class=" lg:grid lg:grid-cols-[20%_80%] grid-cols-2 -lg:flex -lg:justify-between items-center">
-            <ApplicationLogo width="50" />
+            <ApplicationLogo class="w-16" />
             <button id="nav-toggle" type="button" @click="navToggle" class="lg:hidden z-[990] relative "
                 :class="toggled ? 'text-black' : 'text-white'" title="nav toggle" aria-controls="primary-nav"
                 :aria-expanded="toggled" aria-haspopup="true">

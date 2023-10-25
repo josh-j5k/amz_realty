@@ -48,7 +48,7 @@ class AuthenticatedWithSocialsController extends Controller
             $user->markEmailAsVerified();
             Auth::login($user);
 
-            return redirect()->intended('user.dashboard',  $socialiteUser->getId());
+            return redirect()->route('user.dashboard',  $socialiteUser->getId());
         }
     }
 }

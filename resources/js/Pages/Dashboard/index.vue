@@ -19,17 +19,26 @@ const { toast } = useToast()
 const { usePlaces, inputValue } = useGoogleMaps()
 const { validation, formErrors } = useListingFormValidator()
 const { deleteFile, imgSrc, total, assignFiles, dragenter, dragover, drop, filesArr, } = useFileUpload()
+console.log(props.listings.data.length);
+
 const form = useForm({
-    title: props.listings.data[currentIndex.value].title,
-    description: props.listings.data[currentIndex.value].description,
+    title: '',
+    description: '',
     price: <string | number>'',
-    location: props.listings.data[currentIndex.value].location,
-    property_status: props.listings.data[currentIndex.value].propertyStatus,
-    property_type: props.listings.data[currentIndex.value].propertyType,
+    location: '',
+    property_status: '',
+    property_type: '',
     deletedImages: <string[]>[],
     inputFiles: <File[]>[]
 })
-form.price = props.listings.data[currentIndex.value].price
+if (props.listings.data.length > 0) {
+    form.title = props.listings.data[currentIndex.value].title,
+        form.description = props.listings.data[currentIndex.value].description,
+        form.location = props.listings.data[currentIndex.value].location,
+        form.property_status = props.listings.data[currentIndex.value].propertyStatus,
+        form.property_type = props.listings.data[currentIndex.value].propertyType,
+        form.price = props.listings.data[currentIndex.value].price
+}
 
 const mainImage = ref(0)
 
@@ -109,7 +118,7 @@ function submit() {
 if (show_edit_modal.value === true) {
 
 }
-console.log(props.listings.data)
+
 onMounted(() => {
 
 
