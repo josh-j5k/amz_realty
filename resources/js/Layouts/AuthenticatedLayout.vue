@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import ApplicationLogo from '@/Components/ApplicationLogo.vue';
-import { Link, usePage } from '@inertiajs/vue3';
+import { Link, usePage, router } from '@inertiajs/vue3';
 const page = usePage()
 const user = computed(() => page.props.auth.user)
 const userNameArr = ref(<string[]>[])
@@ -81,7 +81,7 @@ onUnmounted(() => {
             <div>
                 <div class="border-b w-full flex justify-between items-center px-8 py-4">
                     <div>
-                        <div class="flex items-center gap-1 font-bold -lg:hidden">
+                        <div class="flex items-center gap-1 font-bold">
                             <span>
                                 Hi,
                             </span>
@@ -92,38 +92,51 @@ onUnmounted(() => {
                                 <i class="fas fa-hand"></i>
                             </span>
                         </div>
-                        <ApplicationLogo class="w-10 aspect-square lg:mb-20 lg:hidden" />
+
                     </div>
-                    <div class=" relative">
-                        <button @click="dropdownToggled = !dropdownToggled" id="dashboard_dropdown-toggle" type="button"
-                            class="flex gap-2.5 items-center dashboard_dropdown-toggle">
-                            <span v-if="user.avatar">
-                                <img :src="user.avatar" alt="user avatar" class="w-8 aspect-square rounded-full">
+                    <div class="flex gap-2 items-center">
+                        <button type="button" title="New listing" @click=" router.get('listings/create')"
+                            class="text-white hover:bg-accent-hover bg-accent flex items-center justify-center gap-2 h-8 w-28 rounded-md text-sm ">
+                            <span>
+                                <i class="fas fa-circle-plus"></i>
                             </span>
-                            <span v-else
-                                class="w-8 aspect-square flex justify-center items-center bg-slate-900 rounded-full text-white border border-accent">
-                                <i class="fas fa-user"></i>
-                            </span>
-                            <span id="user_name">
-                                {{ userName }}
-                            </span>
-                            <span id="dropdown-icon" class="text-sm">
-                                <i class="fas fa-caret-down"></i>
+                            <span class="capitalize">
+                                new listing
                             </span>
                         </button>
-                        <div class="absolute -lg:hidden bg-white shadow py-4 px-8 z-50 top-10 -right-4  flex-col items-start gap-2 transition-opacity duration-500 ease-in-out"
-                            id="dashboard_dropdown " :class="[dropdownToggled ? 'flex opacity-100' : 'hidden opacity-0']">
+                        <div class=" relative">
 
-                            <Link :href="route('user.dashboard', user.id)" class="capitalize">
-                            dashboard
-                            </Link>
-                            <Link :href="route('user.profile.edit', user.id)" class="capitalize">
-                            profile
-                            </Link>
-                            <Link method="post" as="button" :href="route('logout')" class="capitalize">
-                            logout
-                            </Link>
+                            <button @click="dropdownToggled = !dropdownToggled" id="dashboard_dropdown-toggle" type="button"
+                                class="flex gap-2.5 items-center dashboard_dropdown-toggle">
+                                <span v-if="user.avatar">
+                                    <img :src="user.avatar" alt="user avatar" class="w-8 aspect-square rounded-full">
+                                </span>
+                                <span v-else
+                                    class="w-8 aspect-square flex justify-center items-center bg-slate-900 rounded-full text-white border border-accent">
+                                    <i class="fas fa-user"></i>
+                                </span>
+                                <span id="user_name">
+                                    {{ userName }}
+                                </span>
+                                <span id="dropdown-icon" class="text-sm">
+                                    <i class="fas fa-caret-down"></i>
+                                </span>
+                            </button>
+                            <div class="absolute bg-white shadow py-4 px-8 z-50 top-10 -right-4  flex-col items-start gap-2 transition-opacity duration-500 ease-in-out"
+                                id="dashboard_dropdown "
+                                :class="[dropdownToggled ? 'flex opacity-100' : 'hidden opacity-0']">
 
+                                <Link :href="route('user.dashboard', user.id)" class="capitalize">
+                                dashboard
+                                </Link>
+                                <Link :href="route('user.profile.edit', user.id)" class="capitalize">
+                                profile
+                                </Link>
+                                <Link method="post" as="button" :href="route('logout')" class="capitalize">
+                                logout
+                                </Link>
+
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -122,6 +122,15 @@ function submit() {
     }
 }
 
+function deleteConfirmed() {
+    router.delete(route('listings.delete', props.listings.data[currentIndex.value].id), {
+        onSuccess: () => {
+            show_delete_warning.value = false
+            toast('Success', 'Listing was deleted successfully!')
+
+        }
+    })
+}
 
 
 onMounted(() => {
@@ -442,8 +451,7 @@ onMounted(() => {
                     </span>
                 </p>
                 <div class="flex justify-between">
-                    <button @click="router.delete(route('listings.delete', props.listings.data[currentIndex].id))"
-                        class="flex gap-2 py-1 px-3 rounded bg-gray-500 text-white">
+                    <button @click="deleteConfirmed" class="flex gap-2 py-1 px-3 rounded bg-gray-500 text-white">
                         <span>
                             <i class="fas fa-check"></i>
                         </span>

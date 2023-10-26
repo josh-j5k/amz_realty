@@ -157,7 +157,7 @@ onUnmounted(() => {
     <AppLayout>
         <section class="min-h-screen w-full overflow-x-hidden relative "
             :class="[sidebarToggled ? 'sidebar' : '', listings.data.length > 0 ? 'bg-gray-200' : 'bg-white']">
-            <div class="grid lg:grid-cols-[25%_75%] grid-cols-1 -md:gap-4">
+            <div class="grid lg:grid-cols-[25%_75%] min-h-screen grid-cols-1 -md:gap-4">
                 <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen -lg:w-5/6 shadow-md bg-white px-8 pt-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
                     :class="[sidebarToggled ? '-lg:translate-x-0' : '-lg:-translate-x-full']">
                     <div class="">
@@ -331,7 +331,7 @@ onUnmounted(() => {
 
                         <template v-if="listings.data.length > 0">
                             <div class="mt-8 w-[90%] mx-auto grid transition-all gap-3"
-                                :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 -sm:grid-cols-1 ' : 'grid-cols-1', metaLinks.length < 2 ? 'md:pb-44' : '']">
+                                :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 -sm:grid-cols-1 ' : 'grid-cols-1']">
                                 <template v-for="(listing) in listings.data">
                                     <Link :href="(route('listings.show', listing.id))">
                                     <Card class="bg-white relative" :class="[activeGrid === 'tiles' ? 'flex gap-4' : '']">
@@ -425,7 +425,7 @@ onUnmounted(() => {
                         </template>
                     </div>
                     <div v-if="metaLinks.length > 1"
-                        class="flex justify-between md:px-12 px-4 mt-8 bg-white h-20 -md:pb-8 pb-52 lg:pt-16 pt-8">
+                        class="flex justify-between md:px-12 px-4 mt-8 bg-white h-20 -md:pb-8 lg:pt-16 pt-8">
                         <div class="flex items-center">
                             <button @click="paginatePrev" :disabled="listings.links.prev === null"
                                 class="capitalize group border border-accent rounded-full aspect-square w-10"
