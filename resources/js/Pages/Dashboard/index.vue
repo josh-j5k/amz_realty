@@ -19,7 +19,7 @@ const { toast } = useToast()
 const { usePlaces, inputValue } = useGoogleMaps()
 const { validation, formErrors } = useListingFormValidator()
 const { deleteFile, imgSrc, total, assignFiles, dragenter, dragover, drop, filesArr, } = useFileUpload()
-console.log(props.listings.data.length);
+
 
 const form = useForm({
     title: '',
@@ -102,22 +102,27 @@ function deletePhoto(ev: MouseEvent) {
     form.deletedImages.push(props.listings.data[currentIndex.value].listingImage[btnIndex])
     props.listings.data[currentIndex.value].listingImage.splice(btnIndex, 1)
 }
+
 function submit() {
     if (filesArr.value.length > 0) {
         form.inputFiles = filesArr.value
     }
-    form.post(route('listings.update', props.listings.data[currentIndex.value].id), {
-        onSuccess: () => {
-            show_edit_modal.value = false
-            toast('Success', 'Listing was updated successfully!')
-            location.reload()
-        }
-    })
+    if (validation(form.title, form.description, form.property_type, form.price, form.property_status, form.location, total.value)) {
+        form.post(route('listings.update', props.listings.data[currentIndex.value].id), {
+            onSuccess: () => {
+                show_edit_modal.value = false
+                toast('Success', 'Listing was updated successfully!')
+                form.reset('description', 'inputFiles', 'location', 'price', 'property_status', 'property_type', 'title')
+                const file_upload = document.getElementById('file_upload') as HTMLInputElement
+                const newDt = new DataTransfer()
+                file_upload.files = newDt.files
+                imgSrc.value = []
+            }
+        })
+    }
 }
 
-if (show_edit_modal.value === true) {
 
-}
 
 onMounted(() => {
 
@@ -130,190 +135,189 @@ onMounted(() => {
     <Head title="Dashboard" />
 
     <AuthenticatedLayout>
-        <div class="pb-12 py-4">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div v-if="listings.data.length === 0" class="p-6 text-center text-gray-900">
-                        <h2 class="text-2xl mb-4 font-bold">
-                            You have no listings
-                        </h2>
-                        <Link :href="route('listings.create')" class="text-accent">
-                        <span>
-                            Create your first listing
-                        </span>
-                        <span>
-                            <i class="fas fa-circle-arrow-right"></i>
-                        </span>
-                        </Link>
-                    </div>
-                    <div v-else class="p-6 text-gray-900 gap-8 lg:grid grid-cols-[45%_55%]">
-                        <div class="">
-                            <template v-for="(listing, index) in listings.data">
-                                <Card class="bg-white relative flex gap-4 cursor-pointer -lg:hidden">
-                                    <div>
-                                        <img v-if="listing.listingImage.length > 0" :src="listing.listingImage[0]" alt=""
-                                            class="max-w-[200px] object-cover aspect-square -md:max-w-[150px]">
-                                        <img v-else src="/Images/no_image_placeholder.jpg" alt=""
-                                            class="h-full object-cover max-w-[200px] -md:max-w-[150px]">
-                                    </div>
-                                    <div class="p-4">
-                                        <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
-                                            <span>
-                                                XAF
-                                            </span>
-                                            <span>
-
-                                                <span v-if="listing.propertyStatus === 'rent'">
-                                                    <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                                        ",").concat('.00') }}</span>/Month
-                                                </span>
-                                                <span v-else>
-                                                    {{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                                        ",").concat('.00') }}
-                                                </span>
-                                            </span>
-                                        </p>
-                                        <div>
-
-                                            <div>
-
-                                                <p class="font-bold mb-1">
-                                                    {{ listing.title.slice(0, 35) }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <p class="text-sm opacity-75 mb-3 capitalize">
-                                            {{ listing.propertyType }}
-                                        </p>
-                                        <hr class="w-full h-[1px] bg-slate-100 mb-3">
-
-                                        <div class="flex gap-2 text-sm">
-                                            <span>
-                                                <i class="fas fa-location-dot text-accent"></i>
-                                            </span>
-
-                                            <p class="">{{ listing.location.slice(0, 30) }}</p>
-                                        </div>
-                                    </div>
-                                    <span
-                                        class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
-                                        :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
-                                        for {{ listing.propertyStatus }}
-                                    </span>
-                                </Card>
-                                <Card @click="function () {
-                                    currentIndex = index
-                                    show = true
-                                }" class="bg-white relative flex gap-4 cursor-pointer lg:hidden">
-                                    <div>
-                                        <img v-if="listing.listingImage.length > 0" :src="listing.listingImage[0]" alt=""
-                                            class="max-w-[200px] aspect-square object-cover -md:max-w-[150px]">
-                                        <img v-else src="/Images/no_image_placeholder.jpg" alt=""
-                                            class="h-full object-cover max-w-[200px] -md:max-w-[150px]">
-                                    </div>
-                                    <div class="p-4">
-                                        <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
-                                            <span>
-                                                XAF
-                                            </span>
-                                            <span>
-
-                                                <span v-if="listing.propertyStatus === 'rent'">
-                                                    <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                                        ",").concat('.00') }}</span>/Month
-                                                </span>
-                                                <span v-else>
-                                                    {{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                                        ",").concat('.00') }}
-                                                </span>
-                                            </span>
-                                        </p>
-                                        <div>
-
-                                            <div>
-
-                                                <p class="font-bold mb-1">
-                                                    {{ listing.title.slice(0, 35) }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <p class="text-sm opacity-75 mb-3 capitalize">
-                                            {{ listing.propertyType }}
-                                        </p>
-                                        <hr class="w-full h-[1px] bg-slate-100 mb-3">
-
-                                        <div class="flex gap-2 text-sm">
-                                            <span>
-                                                <i class="fas fa-location-dot text-accent"></i>
-                                            </span>
-
-                                            <p class="">{{ listing.location.slice(0, 30) }}</p>
-                                        </div>
-                                    </div>
-                                    <span
-                                        class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
-                                        :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
-                                        for {{ listing.propertyStatus }}
-                                    </span>
-                                </Card>
-                            </template>
-                        </div>
-                        <div class="px-3 -lg:hidden">
-                            <h2 class="mb-4 text-2xl font-bold">{{ listings.data[currentIndex].title }}</h2>
-                            <div class="grid grid-cols-[70%_30%] gap-3 h-[390]">
-
-                                <img v-if="listings.data[currentIndex].listingImage.length > 0"
-                                    :src="listings.data[currentIndex].listingImage[mainImage]" alt=""
-                                    class="row-span-full aspect-square">
-                                <img v-else src="/Images/no_image_placeholder.jpg" alt=""
-                                    class="w-96 rounded-3xl aspect-square">
-                                <div class="flex flex-col gap-3 overflow-y-auto">
-                                    <template v-if="listings.data[currentIndex].listingImage.length > 0"
-                                        v-for="(image, index) in listings.data[currentIndex].listingImage">
-                                        <img @click="mainImage = index" :src="image" alt=""
-                                            class="w-[124px] aspect-square object-cover rounded-xl cursor-pointer">
-                                    </template>
-                                    <template v-else v-for="(image, index) in 3">
-                                        <img src="/Images/no_image_placeholder.jpg" alt=""
-                                            class="w-[124px] aspect-square object-cover rounded-xl">
-                                    </template>
+        <div class="pb-12 py-4 lg:h-[calc(100vh-65px)] lg:overflow-hidden">
+            <div class="max-w-7xl bg-white shadow-sm  h-full w-full sm:rounded-lg mx-auto sm:px-6 lg:px-8">
+                <div v-if="listings.data.length === 0" class="p-6 text-center text-gray-900">
+                    <h2 class="text-2xl mb-4 font-bold">
+                        You have no listings
+                    </h2>
+                    <Link :href="route('listings.create')" class="text-accent">
+                    <span>
+                        Create your first listing
+                    </span>
+                    <span>
+                        <i class="fas fa-circle-arrow-right"></i>
+                    </span>
+                    </Link>
+                </div>
+                <div v-else class="p-6 h-full text-gray-900 gap-8 overflow-hidden lg:grid grid-cols-[45%_55%]">
+                    <div class="flex overflow-auto flex-col gap-4">
+                        <template v-for="(listing, index) in listings.data">
+                            <Card @click="currentIndex = index" class="bg-white flex gap-4 cursor-pointer -lg:hidden">
+                                <div>
+                                    <img v-if="listing.listingImage.length > 0" :src="listing.listingImage[0]" alt=""
+                                        class="max-w-[200px] object-cover aspect-square -md:max-w-[150px]">
+                                    <img v-else src="/Images/no_image_placeholder.jpg" alt=""
+                                        class="h-full object-cover max-w-[200px] -md:max-w-[150px]">
                                 </div>
-                            </div>
-                            <p class="mt-3 text-gray-500 flex gap-3 ">
-                                <span>
-                                    <i class="fas fa-location-dot"></i>
+                                <div class="p-4">
+                                    <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
+                                        <span>
+                                            XAF
+                                        </span>
+                                        <span>
+
+                                            <span v-if="listing.propertyStatus === 'rent'">
+                                                <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                    ",").concat('.00') }}</span>/Month
+                                            </span>
+                                            <span v-else>
+                                                {{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                    ",").concat('.00') }}
+                                            </span>
+                                        </span>
+                                    </p>
+                                    <div>
+
+                                        <div>
+
+                                            <p class="font-bold mb-1">
+                                                {{ listing.title.slice(0, 35) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm opacity-75 mb-3 capitalize">
+                                        {{ listing.propertyType }}
+                                    </p>
+                                    <hr class="w-full h-[1px] bg-slate-100 mb-3">
+
+                                    <div class="flex gap-2 text-sm">
+                                        <span>
+                                            <i class="fas fa-location-dot text-accent"></i>
+                                        </span>
+
+                                        <p class="">{{ listing.location.slice(0, 30) }}</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
+                                    :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                    for {{ listing.propertyStatus }}
                                 </span>
-                                <span>
-                                    {{ listings.data[currentIndex].location }}
+                            </Card>
+                            <Card @click="function () {
+                                currentIndex = index
+                                show = true
+                            }" class="bg-white relative flex gap-4 cursor-pointer lg:hidden">
+                                <div>
+                                    <img v-if="listing.listingImage.length > 0" :src="listing.listingImage[0]" alt=""
+                                        class="max-w-[200px] aspect-square object-cover -md:max-w-[150px]">
+                                    <img v-else src="/Images/no_image_placeholder.jpg" alt=""
+                                        class="h-full object-cover max-w-[200px] -md:max-w-[150px]">
+                                </div>
+                                <div class="p-4">
+                                    <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
+                                        <span>
+                                            XAF
+                                        </span>
+                                        <span>
+
+                                            <span v-if="listing.propertyStatus === 'rent'">
+                                                <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                    ",").concat('.00') }}</span>/Month
+                                            </span>
+                                            <span v-else>
+                                                {{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
+                                                    ",").concat('.00') }}
+                                            </span>
+                                        </span>
+                                    </p>
+                                    <div>
+
+                                        <div>
+
+                                            <p class="font-bold mb-1">
+                                                {{ listing.title.slice(0, 35) }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <p class="text-sm opacity-75 mb-3 capitalize">
+                                        {{ listing.propertyType }}
+                                    </p>
+                                    <hr class="w-full h-[1px] bg-slate-100 mb-3">
+
+                                    <div class="flex gap-2 text-sm">
+                                        <span>
+                                            <i class="fas fa-location-dot text-accent"></i>
+                                        </span>
+
+                                        <p class="">{{ listing.location.slice(0, 30) }}</p>
+                                    </div>
+                                </div>
+                                <span
+                                    class="capitalize rounded py-1 px-2 absolute top-3 left-3 text-white text-sm cursor-default"
+                                    :class="[listing.propertyStatus === 'rent' ? 'bg-green-500' : 'bg-orange-500']">
+                                    for {{ listing.propertyStatus }}
                                 </span>
-                            </p>
-                            <hr class="w-full h-[1px] bg-gray-200 my-4">
-                            <p class="font-bold mb-2 ">
-                                Property details
-                            </p>
-                            <p class="text-gray-700 ">
-                                {{ listings.data[currentIndex].description }}
-                            </p>
-                            <div class="flex justify-between mt-3">
-                                <button @click="showEditModal" class="flex flex-col items-center">
-                                    <span class=" text-accent text-xl">
-                                        <i class="fas fa-pen-to-square"></i>
-                                    </span>
-                                    <span class="uppercase">
-                                        edit listing
-                                    </span>
-                                </button>
-                                <button @click="showDeleteModal" class="flex flex-col items-center">
-                                    <span class=" text-red-500 text-xl">
-                                        <i class="fas fa-trash"></i>
-                                    </span>
-                                    <span class="uppercase">
-                                        delete listing
-                                    </span>
-                                </button>
+                            </Card>
+                        </template>
+                    </div>
+                    <div class="px-3 overflow-auto -lg:hidden">
+                        <h2 class="mb-4 text-2xl font-bold">{{ listings.data[currentIndex].title }}</h2>
+                        <div class="grid grid-cols-[70%_30%] gap-3 h-[390]">
+
+                            <img v-if="listings.data[currentIndex].listingImage.length > 0"
+                                :src="listings.data[currentIndex].listingImage[mainImage]" alt=""
+                                class="row-span-full aspect-square">
+                            <img v-else src="/Images/no_image_placeholder.jpg" alt=""
+                                class="w-96 rounded-3xl aspect-square">
+                            <div class="flex flex-col gap-3 overflow-y-auto">
+                                <template v-if="listings.data[currentIndex].listingImage.length > 0"
+                                    v-for="(image, index) in listings.data[currentIndex].listingImage">
+                                    <img @click="mainImage = index" :src="image" alt=""
+                                        class="w-[124px] aspect-square object-cover rounded-xl cursor-pointer">
+                                </template>
+                                <template v-else v-for="(image, index) in 3">
+                                    <img src="/Images/no_image_placeholder.jpg" alt=""
+                                        class="w-[124px] aspect-square object-cover rounded-xl">
+                                </template>
                             </div>
                         </div>
+                        <p class="mt-3 text-gray-500 flex gap-3 ">
+                            <span>
+                                <i class="fas fa-location-dot"></i>
+                            </span>
+                            <span>
+                                {{ listings.data[currentIndex].location }}
+                            </span>
+                        </p>
+                        <hr class="w-full h-[1px] bg-gray-200 my-4">
+                        <p class="font-bold mb-2 ">
+                            Property details
+                        </p>
+                        <p class="text-gray-700 ">
+                            {{ listings.data[currentIndex].description }}
+                        </p>
+                        <div class="flex justify-between mt-3">
+                            <button @click="showEditModal" class="flex flex-col items-center">
+                                <span class=" text-accent text-xl">
+                                    <i class="fas fa-pen-to-square"></i>
+                                </span>
+                                <span class="uppercase">
+                                    edit listing
+                                </span>
+                            </button>
+                            <button @click="showDeleteModal" class="flex flex-col items-center">
+                                <span class=" text-red-500 text-xl">
+                                    <i class="fas fa-trash"></i>
+                                </span>
+                                <span class="uppercase">
+                                    delete listing
+                                </span>
+                            </button>
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

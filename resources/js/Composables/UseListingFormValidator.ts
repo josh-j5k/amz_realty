@@ -12,58 +12,59 @@ export function useListingFormValidator() {
             propertyTypeError: false
         }
     )
-    const formValid = ref(
-        {
-            title: false,
-            file: false,
-            price: false,
-            location: false,
-            description: false,
-            property_status: false,
-            property_type: false
-        }
-    )
+    const valid =
+    {
+        title: false,
+        file: false,
+        price: false,
+        location: false,
+        description: false,
+        property_status: false,
+        property_type: false
+    }
+
     function validation(title: string, description: string, property_type: string, price: string | number, property_status: string, location: string, total: number): boolean {
+        const strPrice = price.toString()
         if (title === '') {
             formErrors.value.titleError = true
         } else {
-            formValid.value.title = true
+            valid.title = true
         }
         if (description === '') {
             formErrors.value.descriptionError = true
         } else {
-            formValid.value.description = true
+            valid.description = true
         }
         if (property_type === '') {
             formErrors.value.propertyTypeError = true
         } else {
-            formValid.value.property_type = true
+            valid.property_type = true
         }
         if (location === '') {
             formErrors.value.locationError = true
         } else {
-            formValid.value.location = true
+            valid.location = true
         }
         if (property_status === '') {
             formErrors.value.propertyStatusError = true
         } else {
-            formValid.value.property_status = true
+            valid.property_status = true
         }
-        if (price === '') {
-            const intPrice = parseInt(price)
-            if (isNaN(intPrice)) {
-                formErrors.value.priceError = true
-            } else {
-                formValid.value.price = true
-            }
+        if (isNaN(parseInt(strPrice))) {
+
+            formErrors.value.priceError = true
+
+        } else {
+            valid.price = true
         }
         if (total === 0) {
             formErrors.value.fileError = true
         } else {
-            formValid.value.file = true
+            valid.file = true
         }
 
-        if (formValid.value.description === true && formValid.value.location === true && formValid.value.price === true && formValid.value.title === true && formValid.value.property_type === true && formValid.value.property_status === true && formValid.value.file === true) {
+
+        if (valid.description && valid.location && valid.price && valid.title && valid.property_type && valid.property_status && valid.file) {
             return true
         } else {
             setTimeout(() => {

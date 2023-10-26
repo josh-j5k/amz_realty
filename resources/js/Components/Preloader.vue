@@ -1,6 +1,6 @@
 
 <template>
-    <div class="w-screen h-screen z-max fixed isolate flex bg-transparent justify-center items-center bg-white">
+    <div class="w-screen h-screen z-max fixed isolate flex justify-center items-center bg-[rgba(255,255,255,0.75)]">
         <div class="container">
             <div
                 class="w-16 aspect-square rounded-full bg-transparent border-b-transparent border-2 border-accent animate-spin">

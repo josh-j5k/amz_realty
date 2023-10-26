@@ -142,7 +142,7 @@ onUnmounted(() => {
         <hr class="w-[80%] h-[1px] mx-auto bg-white opacity-20 mt-4 -lg:hidden"
             :class="[route().current('Home') ? '' : 'hidden']">
     </header>
-    <div class="absolute -lg:hidden bg-white shadow py-4 px-8 z-50 top-20 right-4  flex-col items-start gap-2 transition-opacity duration-500 ease-in-out"
+    <div class="absolute -lg:hidden bg-white shadow py-4 px-8 top-20 right-4  flex-col items-start z-[9998] gap-2 transition-opacity duration-500 ease-in-out"
         id="dashboard_dropdown " :class="[dropdownToggled ? 'flex opacity-100' : 'hidden opacity-0']">
         <span v-if="$page.props.auth.user" class="flex flex-col items-center gap-3">
             <Link :href="route('user.dashboard', $page.props.auth.user.id)" class="capitalize">
