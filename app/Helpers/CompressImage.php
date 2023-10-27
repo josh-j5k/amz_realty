@@ -4,6 +4,7 @@ namespace App\Helpers;
 
 class CompressImage
 {
+
     public static function compress($original_image, int $max_width, int $quality, string $folder, string $subfolder, string | null $file_folder = null): string
     {
 
@@ -17,6 +18,7 @@ class CompressImage
             mkdir($dir, recursive: true);
         }
         $imageType = getimagesize($original_image)['mime'];
+
         if ($imageType === 'image/png') {
             $img = imagecreatefrompng($original_image);
         } elseif ($imageType === 'image/jpeg') {

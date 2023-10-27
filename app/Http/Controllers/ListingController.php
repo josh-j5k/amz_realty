@@ -86,6 +86,7 @@ class ListingController extends Controller
         foreach ($request->inputFiles as $file_input) {
             $folder = date("Y");
             $subFolders = date("m");
+
             $url = $compressImage->compress($file_input, 1080, 100, $folder, $subFolders);
 
             ListingImage::create([

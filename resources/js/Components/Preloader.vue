@@ -1,154 +1,17 @@
 <script setup lang="ts">
-import { ref, onMounted, Teleport } from 'vue';
-
-const duration = 500
-const delay = 500
-let count = ref(0)
-
-
-onMounted(() => {
-    const items = document.querySelectorAll(".color")
-    function animateForwards() {
-
-        items.forEach((item, index) => {
-            if (index === 1) {
-                item.animate([
-                    { height: '100%' }
-                ], {
-                    duration: duration,
-                    delay: delay * (index + 1),
-                    fill: 'forwards'
-                })
-            } else if (index === 2 || index === 3) {
-                item.animate([
-                    { width: '0' }
-                ], {
-                    duration: duration,
-                    delay: delay * (index + 1),
-                    fill: 'forwards'
-                })
-            } else if (index === 4) {
-                item.animate([
-                    { height: '0' }
-                ], {
-                    duration: duration,
-                    delay: delay * (index + 1),
-                    fill: 'forwards',
-                })
-            } else {
-                item.animate([
-                    { width: '100%' }
-                ], {
-                    duration: duration,
-                    delay: delay * (index + 1),
-                    fill: 'forwards',
-                })
-            }
-        })
-    }
-    function animateBackwards() {
-
-
-        items[0].animate([
-            { width: '0' }
-        ], {
-            duration: duration,
-            delay: delay * 6,
-            fill: 'forwards',
-
-        })
-        items[1].animate([
-            { height: '0' }
-        ], {
-            duration: duration,
-            delay: delay * 5,
-            fill: 'forwards',
-
-        })
-        items[2].animate([
-            { width: '100%' }
-        ], {
-            duration: duration,
-            delay: delay * 4,
-            fill: 'forwards',
-
-        })
-        items[3].animate([
-            { width: '100%' }
-        ], {
-            duration: duration,
-            delay: delay * 3,
-            fill: 'forwards',
-
-        })
-        items[4].animate([
-            { height: '100%' }
-        ], {
-            duration: duration,
-            delay: delay * 2,
-            fill: 'forwards',
-
-        })
-        items[5].animate([
-            { width: '0' }
-        ], {
-            duration: duration,
-            delay: delay * 1,
-            fill: 'forwards',
-
-        })
-    }
-
-    animateForwards()
-
-    setInterval(() => {
-        count.value++
-        if (count.value++ % 2 === 0) {
-            animateForwards()
-        } else {
-            animateBackwards()
-        }
-
-    }, 4000)
-})
+import { Teleport } from 'vue';
 </script>
 <template>
-    <div
-        class="w-screen h-screen z-max fixed isolate flex bg-transparent justify-center items-center before:content-emptystring before:absolute before:inset-0 before:w-full before:h-full before:bg-[rgba(255,_255,_255,_0.3)] before:-z-[1px]">
+    <div class="w-screen h-screen z-max fixed isolate flex justify-center items-center bg-[rgba(255,255,255,0.75)]">
         <div class="container">
-            <div data-index="1">
-                <div class="color"></div>
-            </div>
-            <div data-index="2">
-                <div class="color"></div>
-            </div>
-            <div data-index="3">
-                <div class="color"></div>
-            </div>
-            <div data-index="4">
-                <div class="color"></div>
-            </div>
-            <div data-index="5">
-                <div class="color"></div>
-            </div>
-            <div data-index="6">
-                <div class="color"></div>
+            <div
+                class="w-16 aspect-square rounded-full bg-transparent border-b-transparent border-2 border-accent animate-spin">
+
             </div>
         </div>
     </div>
 </template>
 <style scoped>
-    body {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        height: 100vh;
-        width: 100vw;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
     .container {
         --delay: 2000ms;
         width: 100px;

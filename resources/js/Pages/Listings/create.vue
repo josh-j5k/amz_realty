@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import FileUpload from '@/Components/FileUpload.vue';
+import Preloader from '@/Components/Preloader.vue';
 import { useFileUpload } from '@/Composables/UseFileUpload'
 import { useForm, usePage, Head } from '@inertiajs/vue3';
 import { ref, onMounted, watch, computed } from 'vue';
@@ -8,9 +9,12 @@ import { useListingFormValidator } from '@/Composables/UseListingFormValidator';
 import { useToast } from '@/Composables/UseToast'
 import Header from '../Partials/Header.vue';
 import { onUnmounted } from 'vue';
+import { usePreloader } from '@/Composables/UsePreloader';
+
 const { toast } = useToast()
 const { drop, dragenter, dragover, assignFiles, total, imgSrc, deleteFile, filesArr } = useFileUpload()
-const { validation, formErrors } = useListingFormValidator()
+const { formErrors, validation } = useListingFormValidator()
+const { preload, showClosePreloader } = usePreloader()
 const { usePlaces, inputValue } = useGoogleMaps()
 const form = useForm({
     title: '',
@@ -48,6 +52,8 @@ function prevPic() {
 
     }
 }
+showClosePreloader()
+
 function nextPic() {
     currentIndex.value++
     if (currentIndex.value > imgSrc.value.length - 1) {
@@ -56,22 +62,47 @@ function nextPic() {
 }
 
 function submit() {
+    form.title.trim()
+    form.description.trim()
     form.inputFiles = filesArr.value
+
+
     if (user.value === null) {
         return toast('Error', 'You need to be logged in to perform this action')
     } else if (validation(form.title, form.description, form.property_type, form.price, form.property_status, form.location, total.value)) {
+
         form.post(route('listings.index'), {
             preserveScroll: true,
             onSuccess: () => {
                 toast('Success', 'Listing added successfully')
-                location.reload()
+                form.reset('description', 'inputFiles', 'location', 'price', 'property_status', 'property_type', 'title')
+                const file_upload = document.getElementById('file_upload') as HTMLInputElement
+                const newDt = new DataTransfer()
+                file_upload.files = newDt.files
+                imgSrc.value = []
+                total.value = 0
 
-            }
+            },
         })
     }
 }
 
 onMounted(() => {
+    const titleInput = document.getElementById('listing_title') as HTMLInputElement
+    titleInput.addEventListener('change', () => {
+
+        const arr = <string[]>[]
+        const convertToCamelCase = form.title.split(' ')
+        convertToCamelCase.forEach((word) => {
+            const uppercaseFirstLetter = word[0].toUpperCase()
+            const firstLetter = word[0]
+
+
+            const newWord = word.replace(firstLetter, uppercaseFirstLetter)
+            arr.push(newWord)
+        })
+        form.title = arr.join(' ')
+    })
     function dropEnter(ev: any) {
         drop(ev, file_upload)
     }
@@ -99,12 +130,10 @@ onUnmounted(() => {
     <Head>
         <title>Post a listing</title>
     </Head>
+    <Preloader v-if="preload" />
     <Header />
     <section
         class="w-full min-h-screen bg-gray-100 grid grid-cols-[30%_70%] -lg:grid-cols-1 justify-center items-center p-8 pt-0 gap-4">
-
-
-
         <div
             class="lg:w-[30vw] -lg:h-full h-screen lg:overflow-y-auto lg:fixed lg:left-0 top-0 bg-white shadow px-8 py-12 lg:pt-28">
             <form @submit.prevent="submit" enctype="multipart/form-data">
