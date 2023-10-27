@@ -1,4 +1,6 @@
-
+<script setup lang="ts">
+import { Teleport } from 'vue';
+</script>
 <template>
     <div class="w-screen h-screen z-max fixed isolate flex justify-center items-center bg-[rgba(255,255,255,0.75)]">
         <div class="container">

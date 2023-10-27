@@ -95,7 +95,7 @@ onUnmounted(() => {
 
                     </div>
                     <div class="flex gap-2 items-center">
-                        <button type="button" title="New listing" @click=" router.get('listings/create')"
+                        <button type="button" title="New listing" @click=" router.get(route('listings.create'))"
                             class="text-white hover:bg-accent-hover bg-accent flex items-center justify-center gap-2 h-8 w-28 rounded-md text-sm ">
                             <span>
                                 <i class="fas fa-circle-plus"></i>

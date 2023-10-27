@@ -330,7 +330,7 @@ onUnmounted(() => {
                         </div>
 
                         <template v-if="listings.data.length > 0">
-                            <div class="mt-8 w-[90%] mx-auto grid transition-all gap-3"
+                            <div class="mt-8 w-[90%] mx-auto grid pb-8 transition-all gap-3"
                                 :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 -sm:grid-cols-1 ' : 'grid-cols-1']">
                                 <template v-for="(listing) in listings.data">
                                     <Link :href="(route('listings.show', listing.id))">

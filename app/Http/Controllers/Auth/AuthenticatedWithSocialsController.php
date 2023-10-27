@@ -2,14 +2,12 @@
 
 namespace App\Http\Controllers\Auth;
 
-use Carbon\Traits\Timestamp;
 use Exception;
 use App\Models\User;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+use Carbon\Traits\Timestamp;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Session;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -40,6 +38,7 @@ class AuthenticatedWithSocialsController extends Controller
 
                 'name' => $socialiteUser->getName(),
                 'email' => $socialiteUser->getEmail(),
+                'remember_token' => Str::random(15),
                 'avatar' => $socialiteUser->getAvatar(),
                 'provider_id' => $socialiteUser->getId(),
                 'provider' => $provider

@@ -3,7 +3,8 @@ import { SingleListing } from '@/types/listings'
 import CloseButton from '@/Components/CloseButton.vue';
 import { Head } from '@inertiajs/vue3';
 import { ref } from 'vue';
-
+import { usePreloader } from '@/Composables/UsePreloader';
+const { preload, showClosePreloader } = usePreloader()
 
 const props = defineProps<{
     listing: SingleListing
@@ -23,6 +24,7 @@ function nextPic() {
         currentIndex.value = 0
     }
 }
+showClosePreloader()
 
 
 
@@ -30,7 +32,7 @@ function nextPic() {
 
 <template>
     <Head :title="listing.listing.title" />
-
+    <Preloader v-if="preload" />
     <section class="md:h-screen min-h-screen w-full overflow-x-hidden">
         <CloseButton route-name="listings.index" position="top-8 left-8" />
         <div class="grid lg:grid-cols-[75%_25%] grid-cols-1">

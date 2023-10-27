@@ -31,14 +31,6 @@ const form = useForm({
     deletedImages: <string[]>[],
     inputFiles: <File[]>[]
 })
-if (props.listings.data.length > 0) {
-    form.title = props.listings.data[currentIndex.value].title,
-        form.description = props.listings.data[currentIndex.value].description,
-        form.location = props.listings.data[currentIndex.value].location,
-        form.property_status = props.listings.data[currentIndex.value].propertyStatus,
-        form.property_type = props.listings.data[currentIndex.value].propertyType,
-        form.price = props.listings.data[currentIndex.value].price
-}
 
 const mainImage = ref(0)
 
@@ -67,6 +59,12 @@ watch(inputValue, newVal => {
 function showEditModal() {
     show.value = false
     show_edit_modal.value = true
+    form.title = props.listings.data[currentIndex.value].title
+    form.location = props.listings.data[currentIndex.value].location
+    form.price = props.listings.data[currentIndex.value].price
+    form.description = props.listings.data[currentIndex.value].description
+    form.property_status = props.listings.data[currentIndex.value].propertyStatus
+    form.property_type = props.listings.data[currentIndex.value].propertyType
     setTimeout(() => {
         const locationInput = document.getElementById('property_location') as HTMLInputElement
         usePlaces(locationInput, locationInput.value)
@@ -271,20 +269,20 @@ onMounted(() => {
                             </Card>
                         </template>
                     </div>
-                    <div class="px-3 overflow-auto -lg:hidden">
+                    <div class="px-3 overflow-auto scrollbar_invisible -lg:hidden">
                         <h2 class="mb-4 text-2xl font-bold">{{ listings.data[currentIndex].title }}</h2>
-                        <div class="grid grid-cols-[70%_30%] gap-3 h-[390]">
+                        <div class="grid grid-cols-[70%_30%] overflow-hidden gap-3 h-[390px]">
 
                             <img v-if="listings.data[currentIndex].listingImage.length > 0"
                                 :src="listings.data[currentIndex].listingImage[mainImage]" alt=""
                                 class="row-span-full aspect-square">
                             <img v-else src="/Images/no_image_placeholder.jpg" alt=""
                                 class="w-96 rounded-3xl aspect-square">
-                            <div class="flex flex-col gap-3 overflow-y-auto">
+                            <div class="flex flex-col gap-3 scrollbar_invisible overflow-y-auto">
                                 <template v-if="listings.data[currentIndex].listingImage.length > 0"
                                     v-for="(image, index) in listings.data[currentIndex].listingImage">
                                     <img @click="mainImage = index" :src="image" alt=""
-                                        class="w-[124px] aspect-square object-cover rounded-xl cursor-pointer">
+                                        class="w-36 aspect-square object-cover rounded-xl cursor-pointer">
                                 </template>
                                 <template v-else v-for="(image, index) in 3">
                                     <img src="/Images/no_image_placeholder.jpg" alt=""
@@ -330,6 +328,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+        <!-- edit modal -->
         <Modal :show="show_edit_modal" @close="closeEditModal">
             <div class="p-8">
                 <form @submit.prevent="submit" enctype="multipart/form-data">
@@ -440,6 +439,7 @@ onMounted(() => {
                 </form>
             </div>
         </Modal>
+        <!-- show delete modal -->
         <Modal :show="show_delete_warning" @close="closeDeleteWarning" max-width="sm">
             <div class="p-8">
                 <p class="flex justify-center items-center gap-3 mb-4">
@@ -470,6 +470,7 @@ onMounted(() => {
                 </div>
             </div>
         </Modal>
+        <!-- show primary modal -->
         <Modal :show="show" :closeable="closeable" @close="closeModal">
             <div class="p-8 relative">
                 <div>
@@ -518,3 +519,9 @@ onMounted(() => {
         </Modal>
     </AuthenticatedLayout>
 </template>
+<style scoped>
+    .scrollbar_invisible::-webkit-scrollbar {
+        width: 0px;
+        background: transparent;
+    }
+</style>
