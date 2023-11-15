@@ -99,7 +99,7 @@ const year = new Date().getFullYear()
             <hr class="w-[90%] h-[1px] mx-auto bg-slate-900 mb-4 opacity-20">
             <p>
                 &copy; <span>{{ year }}</span> . <span class="capitalize">all rights reserve</span>. <span
-                    class="capitalize"> designed by achumanze</span>
+                    class="capitalize"> designed by achumanzeh</span>
             </p>
         </div>
     </footer>

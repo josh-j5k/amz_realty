@@ -246,11 +246,11 @@ onUnmounted(() => {
                                 <input @change="propertySubmit" type="checkbox" name="duplex" id="property-duplex"
                                     class="checkbox checked:bg-accent" value="duplex" v-model="propertyType">
                                 <label for="property-duplex" class="capitalize">duplex</label>
-                            </div>
                         </div>
                     </div>
                 </div>
-                <div>
+            </div>
+            <div>
                     <div class="">
                         <div class=" md:w-[90%] mx-auto -md:px-8 bg-white mt-8 p-4">
                             <div class="flex relative -md:justify-end justify-between items-center">
@@ -283,12 +283,12 @@ onUnmounted(() => {
                                         </select>
                                     </div>
                                     <!-- <div class="relative">
-                                        <button type="button" title="sort by"
-                                            class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
-                                            <span class="capitalize">sort by</span>
-                                            <i class="fas fa-chevron-down"></i>
-                                        </button>
-                                    </div> -->
+                                                <button type="button" title="sort by"
+                                                    class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
+                                                    <span class="capitalize">sort by</span>
+                                                    <i class="fas fa-chevron-down"></i>
+                                                </button>
+                                            </div> -->
 
                                     <button @click="activeGrid = 'grid'" type="button" title="Display each item in grid"
                                         class="rounded w-7 h-7 group">
@@ -337,10 +337,10 @@ onUnmounted(() => {
                                     <Card class="bg-white relative" :class="[activeGrid === 'tiles' ? 'flex gap-4' : '']">
                                         <div>
                                             <img v-if="listing.listingImage?.length > 0" :src="listing.listingImage[0]"
-                                                alt="" class="md:aspect-square"
-                                                :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px]  -md:h-full object-cover' : '']">
+                                                alt="" class="md:aspect-square object-cover"
+                                                :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px] rounded-l-lg  -md:h-full' : 'w-full aspect-square rounded-tr-lg rounded-tl-lg']">
                                             <img v-else src="/Images/no_image_placeholder.jpg" alt=""
-                                                :class="[activeGrid === 'tiles' ? 'max-w-[200px] md:aspect-square -md:h-full object-cover -md:max-w-[150px]' : '']">
+                                                :class="[activeGrid === 'tiles' ? 'max-w-[200px] md:aspect-square  -md:h-full object-cover -md:max-w-[150px]' : '']">
                                         </div>
                                         <div class="p-4">
                                             <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
@@ -400,11 +400,11 @@ onUnmounted(() => {
                                 </template>
 
                                 <!-- <template v-for="cards in 24">
-                            <div class="w-full h-80 bg-slate-300 shadow">
-                                <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
-                                <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
-                            </div>
-                        </template> -->
+                                    <div class="w-full h-80 bg-slate-300 shadow">
+                                        <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
+                                        <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
+                                    </div>
+                                </template> -->
                             </div>
                         </template>
                         <template v-else>

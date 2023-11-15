@@ -199,7 +199,8 @@ onMounted(() => {
 
                         <Card class="bg-white relative">
                             <div>
-                                <img v-if="listing.listingImage?.length > 0" :src="listing.listingImage[0]" alt="">
+                                <img v-if="listing.listingImage?.length > 0" :src="listing.listingImage[0]"
+                                    alt="listing image" class="w-full aspect-square">
                                 <img v-else src="/Images/no_image_placeholder.jpg" alt="">
                             </div>
                             <div class="p-4">
