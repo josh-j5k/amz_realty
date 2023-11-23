@@ -49,7 +49,7 @@ onUnmounted(() => {
     <header class="h-24 w-full flex flex-col z-[9990] justify-center lg:px-16 px-8 overflow-x-hidden"
         :class="route().current('Home') ? 'absolute inset-0 bg-transparent text-white' : 'bg-white text-black relative shadow'">
         <div class=" lg:grid lg:grid-cols-[20%_80%] grid-cols-2 -lg:flex -lg:justify-between items-center">
-            <ApplicationLogo class="w-16" />
+            <ApplicationLogo class="md:w-16 w-12" />
             <button id="nav-toggle" type="button" @click="navToggle" class="lg:hidden z-[990] relative "
                 :class="toggled ? 'text-black' : 'text-white'" title="nav toggle" aria-controls="primary-nav"
                 :aria-expanded="toggled" aria-haspopup="true">
@@ -82,7 +82,7 @@ onUnmounted(() => {
                 <div class="flex gap-6 -lg:justify-between -lg:pt-8 -lg:border-t">
 
                     <div class="flex items-center gap-2 h-12">
-                        <button type="button" title="New listing" @click=" router.get('listings/create')"
+                        <button type="button" title="New listing" @click="router.get('listings/create')"
                             class="text-white hover:bg-accent-hover bg-accent flex items-center justify-center gap-2 h-9 w-32 rounded-md ">
                             <span>
                                 <i class="fas fa-circle-plus"></i>

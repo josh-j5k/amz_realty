@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use App\Http\Requests\ProfileUpdateRequest;
-use App\Helpers\CompressImage;
+use App\Helpers\ImageCompressHelper;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 class ProfileController extends Controller
@@ -29,7 +29,7 @@ class ProfileController extends Controller
     /**
      * Update the user's profile information.
      */
-    public function updateAvatar(Request $request, CompressImage $compressImage): RedirectResponse
+    public function updateAvatar(Request $request): RedirectResponse
     {
         $user_id = $request->user()->id;
         $current_avatar = User::where('id', $request->user()->id)->value('avatar');
@@ -39,7 +39,8 @@ class ProfileController extends Controller
         }
         $folder = date("Y");
         $subFolders = date("m");
-        $avatar = $compressImage->compress($request->avatar[0], 100, 100, $folder, $subFolders, 'avatars');
+        $image_compresser = new ImageCompressHelper($request->avatar[0], 100, 100, $folder, $subFolders, 'avatars');
+        $avatar = $image_compresser->compress();
         User::where('id', $request->user()->id)->update(['avatar' => $avatar]);
 
         return Redirect::route('user.profile.edit', $user_id);

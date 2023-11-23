@@ -283,12 +283,12 @@ onUnmounted(() => {
                                         </select>
                                     </div>
                                     <!-- <div class="relative">
-                                                <button type="button" title="sort by"
-                                                    class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
-                                                    <span class="capitalize">sort by</span>
-                                                    <i class="fas fa-chevron-down"></i>
-                                                </button>
-                                            </div> -->
+                                                                    <button type="button" title="sort by"
+                                                                        class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
+                                                                        <span class="capitalize">sort by</span>
+                                                                        <i class="fas fa-chevron-down"></i>
+                                                                    </button>
+                                                                </div> -->
 
                                     <button @click="activeGrid = 'grid'" type="button" title="Display each item in grid"
                                         class="rounded w-7 h-7 group">
@@ -318,7 +318,7 @@ onUnmounted(() => {
                                     <button type="button" title="cancel filter" @click="removeFilter"
                                         class="flex items-center text-sm gap-2 rounded-xl bg-blue-500 text-white h-8 px-4">
                                         <span class="">
-                                            {{ item }}
+                                            {{ item.slice(0, 10) }}
                                         </span>
                                         <span
                                             class="h-1/2 aspect-square rounded-full bg-white text-blue-500 flex justify-center items-center">
@@ -400,11 +400,11 @@ onUnmounted(() => {
                                 </template>
 
                                 <!-- <template v-for="cards in 24">
-                                    <div class="w-full h-80 bg-slate-300 shadow">
-                                        <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
-                                        <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
-                                    </div>
-                                </template> -->
+                                                        <div class="w-full h-80 bg-slate-300 shadow">
+                                                            <SkeletonLoader class="w-full h-5/6 bg-slate-300" />
+                                                            <SkeletonLoader class="w-5/6 h-8 mx-auto bg-slate-400" />
+                                                        </div>
+                                                    </template> -->
                             </div>
                         </template>
                         <template v-else>
@@ -424,8 +424,7 @@ onUnmounted(() => {
                             </div>
                         </template>
                     </div>
-                    <div v-if="metaLinks.length > 1"
-                        class="flex justify-between md:px-12 px-4 mt-8 bg-white h-20 -md:pb-8 lg:pt-16 pt-8">
+                    <div v-if="metaLinks.length > 1" class="flex justify-between md:px-12 px-4 mt-8 bg-white h-32">
                         <div class="flex items-center">
                             <button @click="paginatePrev" :disabled="listings.links.prev === null"
                                 class="capitalize group border border-accent rounded-full aspect-square w-10"

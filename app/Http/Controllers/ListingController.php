@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\CompressImage;
+use App\Helpers\ImageCompressHelper;
 use Inertia\Inertia;
 use App\Models\Listing;
 use App\Models\ListingImage;
@@ -76,7 +76,7 @@ class ListingController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, CompressImage $compressImage)
+    public function store(Request $request)
     {
         $user = $request->user();
         $form_fields = $request->all();
@@ -86,8 +86,8 @@ class ListingController extends Controller
         foreach ($request->inputFiles as $file_input) {
             $folder = date("Y");
             $subFolders = date("m");
-
-            $url = $compressImage->compress($file_input, 1080, 100, $folder, $subFolders);
+            $image_compresser = new ImageCompressHelper($file_input, 1080, 100, $folder, $subFolders);
+            $url = $image_compresser->compress();
 
             ListingImage::create([
                 'listing_image' =>  $url,
@@ -119,7 +119,7 @@ class ListingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Listing $listing, CompressImage $compressImage)
+    public function update(Request $request, Listing $listing,)
     {
         $form_fields = $request->validate([
             'title' => 'required',
@@ -140,7 +140,8 @@ class ListingController extends Controller
             foreach ($request->inputFiles as $file_input) {
                 $folder = date("Y");
                 $subFolders = date("m");
-                $url = $compressImage->compress($file_input, 1080, 100, $folder, $subFolders);
+                $image_compresser = new ImageCompressHelper($file_input, 1080, 100, $folder, $subFolders);
+                $url = $image_compresser->compress();
 
                 $listing->listingImage()->updateOrCreate([
                     'listing_image' => $url,
