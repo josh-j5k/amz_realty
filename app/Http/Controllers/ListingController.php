@@ -132,8 +132,9 @@ class ListingController extends Controller
         if ($request->deletedImages !== null) {
             foreach ($request->deletedImages as $image) {
                 $listing->listingImage()->where('listing_image', $image)->delete();
-                $file_path = str_replace("/", "\\", $image);
-                unlink(public_path($file_path));
+                if (is_dir(public_path($image))) {
+                    unlink(public_path($image));
+                }
             }
         }
         if ($request->hasFile('inputFiles')) {

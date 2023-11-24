@@ -33,9 +33,9 @@ class ProfileController extends Controller
     {
         $user_id = $request->user()->id;
         $current_avatar = User::where('id', $request->user()->id)->value('avatar');
-        if ($current_avatar !== null) {
-            $file_path = str_replace("/", "\\", $current_avatar);
-            unlink(public_path($file_path));
+        if (is_dir(public_path($current_avatar))) {
+
+            unlink(public_path($current_avatar));
         }
         $folder = date("Y");
         $subFolders = date("m");

@@ -108,13 +108,14 @@ function submit() {
     if (validation(form.title, form.description, form.property_type, form.price, form.property_status, form.location, total.value)) {
         form.post(route('listings.update', props.listings.data[currentIndex.value].id), {
             onSuccess: () => {
+                const file_upload = document.getElementById('file_upload') as HTMLInputElement
                 show_edit_modal.value = false
                 toast('Success', 'Listing was updated successfully!')
                 form.reset('description', 'inputFiles', 'location', 'price', 'property_status', 'property_type', 'title')
-                const file_upload = document.getElementById('file_upload') as HTMLInputElement
                 const newDt = new DataTransfer()
                 file_upload.files = newDt.files
                 imgSrc.value = []
+                filesArr.value = <File[]>[]
             }
         })
     }

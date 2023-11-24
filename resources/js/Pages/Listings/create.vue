@@ -80,6 +80,7 @@ function submit() {
                 const newDt = new DataTransfer()
                 file_upload.files = newDt.files
                 imgSrc.value = []
+                filesArr.value = <File[]>[]
                 total.value = 0
 
             },
