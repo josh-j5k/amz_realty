@@ -1,21 +1,21 @@
 <?php
 
-use App\Models\Listing;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('listing_images', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->string('listing_image');
-            $table->foreignIdFor(Listing::class, 'listing_id')->onDelete('cascade');
+        Schema::create('uploads', function (Blueprint $table) {
+            $table->id();
+            $table->integer('uploadable_id');
+            $table->string('uploadable_type');
+            $table->string('url');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('listing_images');
+        Schema::dropIfExists('uploads');
     }
 };

@@ -19,3 +19,14 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::apiResource('listings', ListingController::class);
+
+Route::get('user-update', function (Request $request) {
+    $id = 1;
+    $users = DB::table('users')->orderByDesc('created_at')->get();
+
+    foreach ($users as $user) {
+        DB::table('users')->where('id', $user->id)->update(['id' => $id]);
+        $id++;
+    }
+    return response()->json($users, 200);
+});
