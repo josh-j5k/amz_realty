@@ -6,7 +6,7 @@ import { ref } from 'vue';
 import { usePreloader } from '@/Composables/UsePreloader';
 const { preload, showClosePreloader } = usePreloader()
 
-const props = defineProps<{
+const { listing } = defineProps<{
     listing: SingleListing
 }>()
 
@@ -14,13 +14,13 @@ const currentIndex = ref(0)
 function prevPic() {
     currentIndex.value--
     if (currentIndex.value < 0) {
-        currentIndex.value = props.listing.listing.listingImage?.length - 1
+        currentIndex.value = listing.listing.images?.length - 1
 
     }
 }
 function nextPic() {
     currentIndex.value++
-    if (currentIndex.value > props.listing.listing.listingImage?.length - 1) {
+    if (currentIndex.value > listing.listing.images?.length - 1) {
         currentIndex.value = 0
     }
 }
@@ -31,6 +31,7 @@ showClosePreloader()
 </script>
 
 <template>
+
     <Head :title="listing.listing.title" />
     <Preloader v-if="preload" />
     <section class="md:h-screen min-h-screen w-full overflow-x-hidden">
@@ -38,15 +39,17 @@ showClosePreloader()
         <div class="grid lg:grid-cols-[75%_25%] grid-cols-1">
             <div
                 class="min-h-screen isolate relative before:content-emptystring before:absolute before:w-full before:h-full before:inset-0 before:bg-[rgba(0,_0,_0,_0.2)] overflow-clip before:-z-10 flex justify-center items-center bg-slate-500">
+                <!-- backdrop background -->
                 <div class="w-full h-full absolute">
-                    <img v-if="listing.listing.listingImage?.length > 0" :src="listing.listing.listingImage[currentIndex]"
-                        alt="" class="w-full h-full object-cover absolute inset-0 blur-lg -z-20">
+                    <img v-if="listing.listing.images?.length > 0" :src="listing.listing.images[currentIndex]"
+                        alt="listing image" class="w-full h-full object-cover absolute inset-0 blur-lg -z-20">
                     <img v-else src="/Images/no_image_placeholder.jpg" alt=""
                         class="w-full h-full object-cover absolute inset-0 blur-lg -z-20">
                 </div>
+                <!-- listing image -->
                 <div>
-                    <img v-if="listing.listing.listingImage?.length > 0" :src="listing.listing.listingImage[currentIndex]"
-                        alt="" class="max-w-lg">
+                    <img v-if="listing.listing.images?.length > 0" :src="listing.listing.images[currentIndex]"
+                        alt="listing image" class="max-w-lg">
                     <img v-else src="/Images/no_image_placeholder.jpg" alt="" class="max-w-lg">
                 </div>
                 <button @click="prevPic" type="button" title="click to get previous image"
@@ -61,9 +64,9 @@ showClosePreloader()
                         <i class="fas fa-chevron-right"></i>
                     </span>
                 </button>
-                <div v-if="listing.listing.listingImage.length > 0"
+                <div v-if="listing.listing.images.length > 0"
                     class="absolute flex gap-2 overflow-x-auto overflow-y-hidden py-1 mx-auto bottom-2 z-10 bg-[rgba(255,_255,_255,_0.1)] justify-center w-full h-16">
-                    <template v-for="(item, index) in listing.listing.listingImage">
+                    <template v-for="(item, index) in listing.listing.images">
                         <img @click="currentIndex = index" :src="item" alt=""
                             class="w-20 aspect-square object-cover cursor-pointer"
                             :class="[index === currentIndex ? 'border-2 border-blue-500' : '']">
@@ -76,18 +79,20 @@ showClosePreloader()
                         {{ listing.listing.title }}
                     </h1>
                     <p class="font-bold flex gap-1 text-sm text-accent">
-                        <span>
-                            XAF
-                        </span>
+
                         <span>
 
                             <span v-if="listing.listing.propertyStatus === 'rent'">
-                                <span>{{ listing.listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                    ",").concat('.00') }}</span>/Month
+                                <span>{{ listing.listing.price.toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'XAF'
+                                }) }}</span>/Month
                             </span>
                             <span v-else>
-                                {{ listing.listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                    ",").concat('.00') }}
+                                {{ listing.listing.price.toLocaleString('en-US', {
+                                    style: 'currency',
+                                    currency: 'XAF'
+                                }) }}
                             </span>
                         </span>
                     </p>
@@ -109,17 +114,20 @@ showClosePreloader()
                                 message
                             </span>
                         </button>
-                        <button type="button" title="like" class="flex gap-3 bg-secondary text-white py-1 px-3 rounded-lg">
+                        <button type="button" title="like"
+                            class="flex gap-3 bg-secondary text-white py-1 px-3 rounded-lg">
                             <span>
                                 <i class="fa-regular fa-heart"></i>
                             </span>
                         </button>
-                        <button type="button" title="share" class="flex gap-3 bg-secondary text-white py-1 px-3 rounded-lg">
+                        <button type="button" title="share"
+                            class="flex gap-3 bg-secondary text-white py-1 px-3 rounded-lg">
                             <span>
                                 <i class="fa-solid fa-share"></i>
                             </span>
                         </button>
-                        <button type="button" title="share" class="flex gap-3 bg-secondary text-white py-1 px-3 rounded-lg">
+                        <button type="button" title="share"
+                            class="flex gap-3 bg-secondary text-white py-1 px-3 rounded-lg">
                             <span>
                                 <i class="fa-solid fa-ellipsis"></i>
                             </span>

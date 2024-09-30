@@ -1,9 +1,9 @@
 export type Query = {
     location: string | null,
-    status: string,
+    status: "any" | "rent" | "sale",
     price: {
-        min: string,
-        max: string
+        min: string | null,
+        max: string | null
     },
     property_type: string[]
 }
@@ -28,14 +28,15 @@ type Meta = {
     total: number
 }
 type Listing = {
-    description: string,
     id: string,
+    description: string,
+    ref: string,
     location: string,
     price: number,
     propertyStatus: string,
     propertyType: string,
     title: string,
-    listingImage: string[]
+    images: string[]
 }
 export type SingleListing = {
     listing: Listing

@@ -1,13 +1,13 @@
 <?php
 
 namespace App\Models\Traits;
-use Illuminate\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Builder;
 
 trait ListingQueryScopeFilter
 {
-    public static function scopeFilter(array $filters, Builder $builder): Builder
+    public static function scopeFilter(Builder $builder, array $filters): Builder
     {
-        $builder->when(filled($filters['location']), function (Builder $builder) use ($filters): void {
+        $builder->latest()->when(filled($filters['location']), function (Builder $builder) use ($filters): void {
             $builder->where('location', 'like', '%' . $filters['location'] . '%');
         })
             // filter if status
@@ -19,12 +19,12 @@ trait ListingQueryScopeFilter
                 $builder->whereIn('property_type', $filters['property_type']);
             })
             // filter if price
-            ->when(filled($filters['price']), function (Builder $builder) use ($filters): void {
-                $builder->when($filters['min'] !== '' && $filters['max'] === '', function (Builder $builder) use ($filters): void {
+            ->when(count($filters['price']) > 0, function (Builder $builder) use ($filters): void {
+                $builder->when($filters['price']['min'] && is_null($filters['price']['max']), function (Builder $builder) use ($filters): void {
                     $builder->where('price', '>=', $filters['price']['min']);
-                })->when($filters['min'] === '' && $filters['max'] !== '', function (Builder $builder) use ($filters): void {
+                })->when(is_null($filters['price']['min']) && $filters['price']['max'], function (Builder $builder) use ($filters): void {
                     $builder->where('price', '<=', $filters['price']['max']);
-                })->when($filters['min'] !== '' && $filters['max'] !== '', function (Builder $builder) use ($filters): void {
+                })->when($filters['price']['min'] && $filters['price']['max'], function (Builder $builder) use ($filters): void {
                     $builder->whereBetween('price', [$filters['price']['min'], $filters['price']['max']]);
                 });
             });

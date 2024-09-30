@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Helpers\ImageCompressHelper;
 use Inertia\Inertia;
 use App\Models\Listing;
-use App\Models\ListingImage;
 use Illuminate\Http\Request;
 use App\Http\Resources\ListingResource;
 
@@ -19,21 +18,14 @@ class ListingController extends Controller
 
         $location = $request->location;
 
-        $status = $request->status;
-        if (is_null($status)) {
-            $status = 'any';
-        }
-        $price = [
-            'min' => '',
-            'max' => ''
-        ];
-        if (is_null($request->property_type)) {
-            $property_type = [];
-        } else {
-            $property_type = explode('|', $request->property_type);
-        }
-        if (is_null($request->price) === false) {
+        $status = $request->status ?? 'any';
 
+        $price = [
+
+        ];
+        $property_type = filled($request->property_type) ? explode('|', $request->property_type) : [];
+
+        if (filled($request->price)) {
             $temPrice = explode('|', $request->price);
             foreach ($temPrice as $item) {
                 if (str_starts_with($item, 'over')) {
@@ -43,22 +35,20 @@ class ListingController extends Controller
                 }
             }
         }
-        $query = [
+        $filters = [
             'location' => $location,
             'status' => $status,
             'price' => $price,
             'property_type' => $property_type
         ];
-        if (is_null($request->per_page)) {
-            $per_page = 16;
-        } else {
-            $per_page = (int) $request->per_page;
-        }
-        $listings = ListingResource::collection(Listing::latest()->filter($query)->paginate($per_page));
+
+        $per_page = (int) $request->per_page ?? 16;
+        $listings = ListingResource::collection(Listing::filter($filters)->paginate($per_page));
+
         return Inertia::render(
             'Listings/index',
             [
-                'query' =>  $query,
+                'query' => $filters,
                 'listings' => $listings
 
             ]
@@ -86,25 +76,22 @@ class ListingController extends Controller
         foreach ($request->inputFiles as $file_input) {
             $folder = date("Y");
             $subFolders = date("m");
-            $image_compresser = new ImageCompressHelper($file_input, 1080, 100, $folder, $subFolders);
-            $url = $image_compresser->compress();
+            ;
+            $url = ImageCompressHelper::compress($file_input, 1080, 100, $folder, $subFolders);
 
-            ListingImage::create([
-                'listing_image' =>  $url,
-                'listing_id' => $listing->id
-            ]);
+
         }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(Listing $listing)
+    public function show($ref)
     {
 
-        $full_listing = new ListingResource($listing);
+        $listing = new ListingResource(Listing::where('ref', $ref)->firstOrFail());
         return Inertia::render('Listings/show', [
-            'listing' => $full_listing
+            'listing' => $listing
         ]);
     }
 
@@ -119,7 +106,7 @@ class ListingController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Listing $listing,)
+    public function update(Request $request, Listing $listing, )
     {
         $form_fields = $request->validate([
             'title' => 'required',
@@ -141,8 +128,8 @@ class ListingController extends Controller
             foreach ($request->inputFiles as $file_input) {
                 $folder = date("Y");
                 $subFolders = date("m");
-                $image_compresser = new ImageCompressHelper($file_input, 1080, 100, $folder, $subFolders);
-                $url = $image_compresser->compress();
+
+                $url = ImageCompressHelper::compress($file_input, 1080, 100, $folder, $subFolders);
 
                 $listing->listingImage()->updateOrCreate([
                     'listing_image' => $url,

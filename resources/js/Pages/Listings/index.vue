@@ -1,33 +1,28 @@
 <script setup lang="ts">
 import { ref, onMounted, watch, computed, onUnmounted, } from 'vue';
 import { Head, router, Link } from '@inertiajs/vue3';
-import { useListingFilter } from '@/Composables/UseListingFilter'
 import AppLayout from '@/Layouts/AppLayout.vue';
-import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
-import { Query, Listings, metaLinks } from '@/types/listings'
+import Sidebar from './Components/Sidebar.vue';
+import { useListingFilter } from '@/Composables/UseListingFilter'
+import { type Query, type Listings, type metaLinks } from '@/types/listings'
 import Card from '@/Components/Card.vue';
+import { useGoogleMaps } from '@/Composables/UseGoogleMaps'
+
+const { usePlaces, inputValue } = useGoogleMaps()
+
+const { locations, form, setInputsValues } = useListingFilter()
 
 
-
-const props = defineProps<{
+const { query, listings } = defineProps<{
     query: Query,
     listings: Listings
 }>()
 const per_page = ref('16')
-const { usePlaces, inputValue } = useGoogleMaps()
-const { locations, locationError, locationSubmit, price, priceError, statusCheckbox, status, updateCheckbox, propertyType, priceSubmit, propertySubmit, form, setInputsValues } = useListingFilter()
+
 
 const sidebarToggled = ref(false)
-const appliedFilter = ref(false)
 const activeGrid = ref('grid')
 
-if (Object.keys(form).length > 0) {
-    appliedFilter.value = true
-}
-watch(inputValue, (newVal) => {
-
-    locations.value = newVal
-})
 
 const filter = computed(() => {
     const filArr = Object.values(form)
@@ -44,20 +39,7 @@ const filter = computed(() => {
     })
     return arr
 })
-const metaLinks = computed((): metaLinks[] => {
-    const arr = ref(<metaLinks[]>[])
-    const links = props.listings.meta.links
-    let index = ref(1)
-    while (index.value < links.length - 1) {
-        const element = links[index.value] as metaLinks
-        arr.value.push(element)
-        index.value++
-    }
-
-    return arr.value
-})
-
-function removeFilter(e: any) {
+function removeFilter(e: any): void {
 
     const item = e.currentTarget.textContent as string;
     for (const [key, value] of Object.entries(form)) {
@@ -90,19 +72,22 @@ function removeFilter(e: any) {
 
 
 }
-
-function submitPrice(ev: KeyboardEvent) {
-
-    if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
-        priceSubmit()
+const metaLinks = computed((): metaLinks[] => {
+    const arr = ref(<metaLinks[]>[])
+    const links = listings.meta.links
+    let index = ref(1)
+    while (index.value < links.length - 1) {
+        const element = links[index.value] as metaLinks
+        arr.value.push(element)
+        index.value++
     }
-}
-function submitLocation(ev: KeyboardEvent) {
 
-    if (ev.code === 'Enter' || ev.code === 'NumpadEnter') {
-        locationSubmit()
-    }
-}
+    return arr.value
+})
+
+
+
+
 const search = location.search
 const pageInclude = search.includes('page=')
 const startQuery = search.startsWith('?page=')
@@ -122,11 +107,11 @@ function pageQery(pageNumber: string) {
     }
 }
 function paginatePrev() {
-    const prevPage = props.listings.meta.current_page - 1
+    const prevPage = listings.meta.current_page - 1
     pageQery(prevPage.toString())
 }
 function paginateNext() {
-    const nextPage = props.listings.meta.current_page + 1
+    const nextPage = listings.meta.current_page + 1
     pageQery(nextPage.toString())
 }
 function specificPage(ev: MouseEvent) {
@@ -134,10 +119,15 @@ function specificPage(ev: MouseEvent) {
     const page = button.textContent!
     pageQery(page)
 }
+watch(inputValue, (newVal) => {
+
+    locations.value = newVal
+})
+
 onMounted(() => {
     const locationInput = <HTMLInputElement>document.getElementById('location')
     usePlaces(locationInput, locations.value)
-    setInputsValues(props.query?.location, props.query?.status, props.query.price.min, props.query.price.max, props.query.property_type)
+    setInputsValues(query?.location, query?.status, query.price, query.property_type)
 })
 onUnmounted(() => {
     locations.value = ''
@@ -153,104 +143,14 @@ onUnmounted(() => {
 </script>
 
 <template>
+
     <Head title="Listings" />
     <AppLayout>
         <section class="min-h-screen w-full overflow-x-hidden relative "
             :class="[sidebarToggled ? 'sidebar' : '', listings.data.length > 0 ? 'bg-gray-200' : 'bg-white']">
             <div class="grid lg:grid-cols-[25%_75%] min-h-screen grid-cols-1 -md:gap-4">
-                <div class="-lg:fixed z-40 top-0 left-0 -lg:h-screen -lg:w-5/6 shadow-md bg-white px-8 pt-8 -lg:pt-28 pb-8 -lg:overflow-y-auto transition-transform "
-                    :class="[sidebarToggled ? '-lg:translate-x-0' : '-lg:-translate-x-full']">
-                    <div class="">
-                        <h2 class="capitalize font-bold text-2xl mb-4">location</h2>
-                        <label for="location" class="sr-only">location</label>
-                        <div class="flex gap-3">
-                            <input @keydown="submitLocation" v-model="locations"
-                                :class="locationError ? 'border-red-500' : ''" type="text" name="" id="location"
-                                placeholder="Type your town, region">
-                            <button @click="locationSubmit" type="button" title="submit location"><i
-                                    class="fas fa-chevron-right fa-lg"></i></button>
-                        </div>
-                        <p v-if="locationError" class="text-red-500">Please enter a location</p>
-                    </div>
-                    <hr class="w-4/5 bg-slate-300 my-8">
-                    <div>
-                        <h2 class="capitalize font-bold text-2xl mb-4">status</h2>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex gap-3 items-center h-full">
-                                <div class="relative">
-                                    <input tabindex="-1" class="opacity-0" @change="updateCheckbox" v-model="status"
-                                        value="any" type="radio" id="status-all">
-                                    <input type="checkbox" value="any" v-model="statusCheckbox"
-                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox checked:bg-accent">
-                                </div>
-                                <label for="status-all" class="capitalize"> any</label>
-                            </div>
-                            <div class="flex gap-3 items-center h-full">
-                                <div class="relative">
-                                    <input tabindex="-1" class="opacity-0" @change="updateCheckbox" v-model="status"
-                                        value="rent" type="radio" id="status-rent">
-                                    <input type="checkbox" value="rent" v-model="statusCheckbox"
-                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox checked:bg-accent">
-                                </div>
-
-                                <label for="status-rent" class="capitalize"> rent</label>
-                            </div>
-                            <div class="flex gap-3 items-center h-full">
-
-                                <div class="relative">
-                                    <input @change="updateCheckbox" v-model="status" value="sale" type="radio"
-                                        id="status-sale" tabindex="-1" class="opacity-0">
-                                    <input type="checkbox" value="sale" v-model="statusCheckbox"
-                                        class="absolute inset-0 top-1/2 -translate-y-1/2 -z-10 checkbox checked:bg-accent">
-                                </div>
-                                <label for="status-sale" class="capitalize"> sale</label>
-                            </div>
-                        </div>
-                    </div>
-                    <hr class="w-4/5 bg-slate-300 my-8">
-                    <div>
-                        <h2 class="capitalize font-bold text-2xl mb-4">Price</h2>
-                        <div class="flex gap-3 items-center">
-                            <input @keydown="submitPrice" :class="priceError ? 'border-red-500' : ''" v-model="price.min"
-                                placeholder="min" type="text" size="7" name="min" id="price-min">
-                            <label for="price-min" class="sr-only"> Minimum price</label>
-                            <span>To</span>
-                            <input @keydown="submitPrice" :class="priceError ? 'border-red-500' : ''" v-model="price.max"
-                                placeholder="max" size="7" type="text" name="max" id="price-max">
-                            <label for="price-max" class="sr-only"> Maximum price</label>
-                            <button @click="priceSubmit" title="submit price" type="button"><i
-                                    class="fas fa-chevron-right fa-lg"></i></button>
-                        </div>
-                        <p v-if="priceError" class="text-red-500">Please enter a valid price range</p>
-                    </div>
-                    <hr class="w-4/5 bg-slate-300 my-8">
-                    <div>
-                        <h2 class="capitalize font-bold text-2xl mb-4">Property type</h2>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="room" id="property-room"
-                                    class="checkbox checked:bg-accent" value="room" v-model="propertyType">
-                                <label for="property-room" class="capitalize">room</label>
-                            </div>
-                            <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="studio" id="property-studio"
-                                    class="checkbox checked:bg-accent" value="studio" v-model="propertyType">
-                                <label for="property-studio" class="capitalize">studio</label>
-                            </div>
-                            <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="appartment" id="property-appartment"
-                                    class="checkbox checked:bg-accent" value="appartment" v-model="propertyType">
-                                <label for="property-appartment" class="capitalize">appartment</label>
-                            </div>
-                            <div class="flex gap-2 items-center">
-                                <input @change="propertySubmit" type="checkbox" name="duplex" id="property-duplex"
-                                    class="checkbox checked:bg-accent" value="duplex" v-model="propertyType">
-                                <label for="property-duplex" class="capitalize">duplex</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div>
+                <Sidebar :sidebar-toggled="sidebarToggled" :form="form" />
+                <div>
                     <div class="">
                         <div class=" md:w-[90%] mx-auto -md:px-8 bg-white mt-8 p-4">
                             <div class="flex relative -md:justify-end justify-between items-center">
@@ -282,13 +182,7 @@ onUnmounted(() => {
                                             <option value="64">64</option>
                                         </select>
                                     </div>
-                                    <!-- <div class="relative">
-                                                                    <button type="button" title="sort by"
-                                                                        class="flex gap-1 bg-gray-300 py-1 px-3 rounded items-center">
-                                                                        <span class="capitalize">sort by</span>
-                                                                        <i class="fas fa-chevron-down"></i>
-                                                                    </button>
-                                                                </div> -->
+
 
                                     <button @click="activeGrid = 'grid'" type="button" title="Display each item in grid"
                                         class="rounded w-7 h-7 group">
@@ -300,8 +194,8 @@ onUnmounted(() => {
                                             </template>
                                         </span>
                                     </button>
-                                    <button @click="activeGrid = 'tiles'" type="button" title="Display each item in tiles"
-                                        class="rounded w-7 h-7 group">
+                                    <button @click="activeGrid = 'tiles'" type="button"
+                                        title="Display each item in tiles" class="rounded w-7 h-7 group">
                                         <span
                                             class="grid grid-cols-[25%_75%] grid-rows-3 h-full w-full items-center justify-center">
                                             <template v-for="item in 6">
@@ -333,29 +227,32 @@ onUnmounted(() => {
                             <div class="mt-8 w-[90%] mx-auto grid pb-8 transition-all gap-3"
                                 :class="[activeGrid === 'grid' ? 'grid-cols-4 -md:grid-cols-2 -sm:grid-cols-1 ' : 'grid-cols-1']">
                                 <template v-for="(listing) in listings.data">
-                                    <Link :href="(route('listings.show', listing.id))">
-                                    <Card class="bg-white relative" :class="[activeGrid === 'tiles' ? 'flex gap-4' : '']">
+                                    <Link :href="(route('listings.show', listing.ref))">
+                                    <Card class="bg-white relative" :class="activeGrid === 'tiles' ? 'flex gap-4' : ''">
                                         <div>
-                                            <img v-if="listing.listingImage?.length > 0" :src="listing.listingImage[0]"
-                                                alt="" class="md:aspect-square object-cover"
+                                            <img v-if="listing.images?.length > 0" :src="listing.images[0]" alt=""
+                                                class="md:aspect-square object-cover"
                                                 :class="[activeGrid === 'tiles' ? 'max-w-[200px] -md:max-w-[150px] rounded-l-lg  -md:h-full' : 'w-full aspect-square rounded-tr-lg rounded-tl-lg']">
                                             <img v-else src="/Images/no_image_placeholder.jpg" alt=""
                                                 :class="[activeGrid === 'tiles' ? 'max-w-[200px] md:aspect-square  -md:h-full object-cover -md:max-w-[150px]' : '']">
                                         </div>
                                         <div class="p-4">
                                             <p class="font-bold flex gap-1 mb-3 text-sm text-accent">
-                                                <span>
-                                                    XAF
-                                                </span>
+
                                                 <span>
 
                                                     <span v-if="listing.propertyStatus === 'rent'">
-                                                        <span>{{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                                            ",").concat('.00') }}</span>/Month
+                                                        <span>{{
+                                                            listing.price.toLocaleString('en-US', {
+                                                                style: 'currency',
+                                                            currency: 'XAF'
+                                                            }) }}</span>/Month
                                                     </span>
                                                     <span v-else>
-                                                        {{ listing.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g,
-                                                            ",").concat('.00') }}
+                                                        {{ listing.price.toLocaleString('en-US', {
+                                                            style: 'currency',
+                                                            currency: 'XAF'
+                                                        }) }}
                                                     </span>
                                                 </span>
                                             </p>
@@ -458,14 +355,14 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-    .sidebar::before {
-        position: absolute;
-        content: '';
-        inset: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        z-index: 30;
+.sidebar::before {
+    position: absolute;
+    content: '';
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 30;
 
-    }
+}
 </style>

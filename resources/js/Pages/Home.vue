@@ -68,6 +68,7 @@ onMounted(() => {
 </script>
 
 <template>
+
     <Head>
         <title>House, properties to rent and for sale</title>
     </Head>
@@ -90,7 +91,8 @@ onMounted(() => {
                         :class="form.status === 'any' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
                         Any Status
                     </label>
-                    <input class="hidden" type="radio" value="any" v-model="form.status" name="any-status" id="any-status">
+                    <input class="hidden" type="radio" value="any" v-model="form.status" name="any-status"
+                        id="any-status">
                     <label tabindex="0" for="rent"
                         class="w-24 h-10 focus:outline-accent cursor-pointer flex items-center justify-center rounded-tl-md rounded-tr-md"
                         :class="form.status === 'rent' ? 'bg-white text-black border-t-2 border-accent' : 'bg-secondary text-white'">
@@ -199,8 +201,8 @@ onMounted(() => {
 
                         <Card class="bg-white relative">
                             <div>
-                                <img v-if="listing.listingImage?.length > 0" :src="listing.listingImage[0]"
-                                    alt="listing image" class="w-full aspect-square">
+                                <img v-if="listing.images?.length > 0" :src="listing.images[0]" alt="listing image"
+                                    class="w-full aspect-square">
                                 <img v-else src="/Images/no_image_placeholder.jpg" alt="">
                             </div>
                             <div class="p-4">
@@ -258,7 +260,8 @@ onMounted(() => {
                         Your property search just got easier
                     </h2>
                     <p class="mb-4">
-                        We feature thousands of new properties every month, 24 hours or more before they’re advertised on
+                        We feature thousands of new properties every month, 24 hours or more before they’re advertised
+                        on
                         Rightmove or Zoopla. Find out more about Only With Us properties here.
                     </p>
                     <Link href="" class="text-accent ">
@@ -311,7 +314,8 @@ onMounted(() => {
                         </h3>
                     </div>
                     <p>
-                        We can help you find your dream home by guiding you through a few simple steps and matching you with
+                        We can help you find your dream home by guiding you through a few simple steps and matching you
+                        with
                         tailor-made property listings.
                     </p>
                 </Card>
@@ -325,8 +329,10 @@ onMounted(() => {
                         </h3>
                     </div>
                     <p>
-                        What are the things you’re really looking for in your next property? Create a Wish List of features,
-                        from deal-breakers to nice-to-haves, then we’ll sort your property search results accordingly. It’s
+                        What are the things you’re really looking for in your next property? Create a Wish List of
+                        features,
+                        from deal-breakers to nice-to-haves, then we’ll sort your property search results accordingly.
+                        It’s
                         that simple.
                     </p>
                 </Card>
@@ -340,7 +346,8 @@ onMounted(() => {
                         </h3>
                     </div>
                     <p>
-                        Need to find a property near your workplace, children’s school or train station? We’ll help you find
+                        Need to find a property near your workplace, children’s school or train station? We’ll help you
+                        find
                         your dream property in the right location.
                     </p>
                 </Card>
@@ -354,7 +361,8 @@ onMounted(() => {
                         </h3>
                     </div>
                     <p>
-                        Our online valuation service gives you a free and instant estimate of your home’s current value in
+                        Our online valuation service gives you a free and instant estimate of your home’s current value
+                        in
                         minutes.
                     </p>
                 </Card>
@@ -365,11 +373,11 @@ onMounted(() => {
 </template>
 
 <style scoped>
-    select::-ms-expand {
-        display: none;
-    }
+select::-ms-expand {
+    display: none;
+}
 
-    #property-type {
-        background-image: none;
-    }
+#property-type {
+    background-image: none;
+}
 </style>

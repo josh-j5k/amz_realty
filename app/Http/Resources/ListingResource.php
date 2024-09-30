@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ListingResource extends JsonResource
@@ -20,17 +21,18 @@ class ListingResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $listingImg = [];
-        $listingImage = ListingImageResource::collection($this->listingImage);
-        foreach ($listingImage as $listing_img) {
-            array_push($listingImg, $listing_img['listing_image']);
+
+        $images = [];
+        foreach ($this->uploads as $image) {
+            $images[] = dir('Images') ? "/Images$image->url" : $image->url;
         }
         return [
             'id' => $this->id,
+            'ref' => $this->ref,
             'title' => $this->title,
             'location' => $this->location,
             'propertyStatus' => $this->property_status,
-            'listingImage' => $listingImg,
+            'images' => $images,
             'propertyType' => $this->property_type,
             'price' => $this->price,
             'description' => $this->description,

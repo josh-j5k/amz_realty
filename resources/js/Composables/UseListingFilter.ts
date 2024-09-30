@@ -1,6 +1,6 @@
 import { router } from '@inertiajs/vue3';
 import { reactive, ref } from 'vue';
-import { form } from '@/types/listings';
+import { type form } from '@/types/listings';
 
 
 const form = reactive(<form>{
@@ -13,18 +13,16 @@ const priceError = ref(false)
 const status = ref('any')
 const propertyType = ref(<string[]>[])
 
-const price = ref(
-    {
-        min: '',
-        max: '',
-    }
-)
+const price = ref(<{ min: string, max: string }>{})
 
-
+type price = {
+    min: string | null,
+    max: string | null
+}
 const statusCheckbox = ref([status.value])
 export function useListingFilter() {
 
-    function setInputsValues(location: string | null, Status: string, priceMin: string, priceMax: string, property: string[]) {
+    function setInputsValues(location: string | null, Status: string, fPrice: price, property: string[]) {
         if (location !== null) {
             locations.value = location
             form.location = location
@@ -32,15 +30,21 @@ export function useListingFilter() {
         if (Status !== 'any') {
             form.status = Status
         }
-        if (priceMin.length > 0 && priceMax.length === 0) {
-            form.price = 'over'.concat(priceMin)
-        } else if (priceMin.length === 0 && priceMax.length > 0) {
-            form.price = 'under'.concat(priceMax)
-        } else if (priceMin.length > 0 && priceMax.length > 0) {
-            form.price = 'over'.concat(priceMin) + '|' + 'under'.concat(priceMax)
-        } else {
 
+        if (fPrice.min && fPrice.min.length > 0 && fPrice.max === null) {
+            form.price = 'over'.concat(fPrice.min)
+            price.value.min = fPrice.min
+
+        } else if (fPrice.min === null && fPrice.max && fPrice.max.length > 0) {
+            form.price = 'under'.concat(fPrice.max)
+            price.value.max = fPrice.max
+        } else if (fPrice.min && fPrice.min.length > 0 && fPrice.max && fPrice.max.length > 0) {
+            form.price = 'over'.concat(fPrice.min) + '|' + 'under'.concat(fPrice.max)
+            price.value.max = fPrice.max
+            price.value.min = fPrice.min
         }
+
+
         if (property.length > 0) {
             property.forEach((item, index) => {
                 if (index === 0) {
@@ -57,8 +61,7 @@ export function useListingFilter() {
         status.value = Status
         statusCheckbox.value = [Status]
         propertyType.value = property
-        price.value.min = priceMin
-        price.value.max = priceMax
+
     }
     function submit(input: any, key: string, value: string): void {
         input[key] = value
