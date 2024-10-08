@@ -5,14 +5,15 @@ const options = {
     strictBounds: false,
 };
 const loader = new Loader({
-    apiKey: "AIzaSyAj3t8m1tT8R9LuME3pcNedY9IK6aUjsu4",
+    apiKey: import.meta.env.VITE_GOOGLE_MAPS_API,
     version: "weekly",
     libraries: ['places'],
 });
+
 export function useGoogleMaps() {
     const inputValue = ref('')
     function usePlaces(input: HTMLInputElement, value: string) {
-        async function load() {
+        (async function () {
             const result = await loader.importLibrary('places')
 
             const autocomplete = new result.Autocomplete(input, options)
@@ -22,8 +23,8 @@ export function useGoogleMaps() {
                 value = place.formatted_address
                 inputValue.value = value
             })
-        }
-        load()
+        })()
+
     }
     return { usePlaces, inputValue }
 }

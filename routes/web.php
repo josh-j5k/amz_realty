@@ -23,14 +23,6 @@ use App\Models\Listing;
 */
 
 
-Route::get('/welcome', function () {
-    return Inertia::render('Welcome', [
-        'canLogin' => Route::has('login'),
-        'canRegister' => Route::has('register'),
-        'laravelVersion' => Application::VERSION,
-        'phpVersion' => PHP_VERSION,
-    ]);
-});
 Route::get('/', function () {
     $listing = ListingResource::collection(Listing::latest()->limit(4)->get());
     return Inertia::render(
@@ -48,24 +40,29 @@ Route::get('/about-us', function () {
 Route::prefix('listings')
     ->controller(ListingController::class)->name('listings.')
     ->group(function () {
-        Route::get('/',  'index')->name('index');
+        Route::get('/', 'index')->name('index');
         Route::get('/create', 'create')->name('create');
-        Route::post('/', 'store')->name('store');
-        Route::post('/{listing}', 'update')->name('update');
-        Route::delete('/{listing}', 'destroy')->name('delete');
         Route::get('/{listing}', 'show')->name('show');
     });
 
 
-Route::middleware('auth')->prefix('au/{user_id}')->name('user.')
-    ->group(function () {
-        Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-        Route::get('/messages', [DashboardController::class, 'messages'])->name('dashboard.messages');
-        Route::get('/saved', [DashboardController::class, 'saved'])->name('dashboard.saved');
-        Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-        Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-        Route::post('/profile', [ProfileController::class, 'updateAvatar'])->name('profile.update.avatar');
-        Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+Route::middleware('auth')->group(function () {
+    Route::prefix('listings')->group(function () {
+        Route::post('/', [ListingController::class, 'store'])->name('store');
+        Route::post('/{listing}', [ListingController::class, 'update'])->name('update');
+        Route::delete('/{listing}', [ListingController::class, 'delete'])->name('delete');
     });
+    Route::post('bookmark', function () { });
+    Route::prefix('au/{user_id}')->name('user.')
+        ->group(function () {
+            Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+            Route::get('/messages', [DashboardController::class, 'messages'])->name('dashboard.messages');
+            Route::get('/saved', [DashboardController::class, 'saved'])->name('dashboard.saved');
+            Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+            Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+            Route::post('/profile', [ProfileController::class, 'updateAvatar'])->name('profile.update.avatar');
+            Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+        });
+});
 
 require __DIR__ . '/auth.php';
